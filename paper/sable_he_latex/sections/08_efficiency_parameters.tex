@@ -1,0 +1,101 @@
+\section{Efficiency and parameter constraints}
+
+This section gives symbolic efficiency formulas.  It does not certify concrete security.  A real submission should include a parameter estimator and independent cryptanalysis.
+
+\subsection{Ciphertext and key sizes}
+
+Let $N=n+1$ and $w_0=(k+1)(k+2)$.
+
+\begin{center}
+\begin{tabular}{lll}
+\toprule
+Object & Dense size & Sparse/structured size\\
+\midrule
+Compact input ciphertext & $N$ field elements & $O(k\log n+\log q)$ bits plus values\\
+One GSW matrix ciphertext & $N^2$ field elements & $O(Nw)$ field/index pairs\\
+Expansion key & $N$ GSW matrices & $O(N^2(k+2))$ field/index pairs\\
+Compaction key & $N$ CLPN ciphertexts & $O(Nm_cn_c)$ dense, seedable in practice\\
+Compacted output & $R$ CLPN ciphertexts & independent of circuit size\\
+\bottomrule
+\end{tabular}
+\end{center}
+
+The expansion key is large but amortized.  It is published once per key and reused for many input ciphertexts.  The final compact output does not grow with the evaluated circuit.
+
+\subsection{Evaluation costs}
+
+For row-sparse matrices with row supports $w_1,w_2$:
+\[
+    \EvalAdd: O(N(w_1+w_2)),
+    \qquad
+    \EvalMul: O(Nw_1w_2)
+\]
+field operations, ignoring sorting/merging overhead.  After depth $D$,
+\[
+    w_D=w_0^{2^D}.
+\]
+Thus \sable{} is a low-depth scheme.  It is realistic to target degree-2, degree-4, or possibly degree-8 computations before considering further compression or bootstrapping.
+
+\subsection{Correctness budget}
+
+A conservative correctness target is
+\[
+    \varepsilon_f+\varepsilon_{\rm cmp}(B)<\frac12.
+\]
+A stronger practical target is
+\[
+    \varepsilon_f+\varepsilon_{\rm cmp}(B)\le 0.1,
+\]
+so that a moderate replica count $R$ gives negligible final failure.  Using the bound from Section~6,
+\[
+    \varepsilon_f
+    \le
+    A(k+2)\eta\prod_{r=0}^{D-1}(1+w_0^{2^r}).
+\]
+Therefore a simple design inequality is
+\[
+    \eta
+    \le
+    \frac{\tau}{A(k+2)\prod_{r=0}^{D-1}(1+w_0^{2^r})}
+\]
+for target sparse-LPN evaluation error $\tau$.
+
+For the compactor, if the final row support is $B$, the effective q-ary error rate is
+\[
+    \eta_{c,B}=\frac{q-1}{q}\left(1-\left(1-\frac{q\eta_c}{q-1}\right)^B\right).
+\]
+The code should be chosen so that decoding at this error rate fails with probability at most the desired $\varepsilon_{\rm cmp}(B)$.
+
+\subsection{Illustrative non-secure toy parameters}
+
+The following parameters are only for debugging a Python prototype:
+\[
+    q=127,\quad n=64,\quad k=3,\quad D=1,\quad R=9.
+\]
+They are intentionally small and not secure.  Their purpose is to validate algebraic correctness and serialization.
+
+A research-grade estimator must choose $n,k,q,\eta,n_c,m_c,\eta_c$ jointly.  The estimator should output:
+\begin{itemize}
+    \item estimated classical and quantum cost of sparse-LPN distinguishing;
+    \item estimated cost of dense q-ary LPN/code distinguishing;
+    \item estimated ISD cost for the relevant code parameters;
+    \item total number of LPN samples exposed by input ciphertexts and evaluation keys;
+    \item correctness failure estimates before and after replication.
+\end{itemize}
+
+\subsection{Parameter-selection recipe}
+
+A practical research workflow is:
+\begin{enumerate}
+    \item Fix the application class, especially multiplicative depth $D$ and addition budget $A$.
+    \item Choose a small sparse row weight $k$ that keeps multiplication feasible.
+    \item Compute $w_0=(k+1)(k+2)$ and the depth growth $w_D=w_0^{2^D}$.
+    \item Choose $\eta$ small enough for correctness but not so small that low-noise LPN attacks become cheap.
+    \item Choose $q$ to balance message space, q-ary error behavior, and implementation simplicity.
+    \item Choose $\mathsf{Code}$ and $(n_c,m_c,\eta_c)$ so that compaction decoding succeeds at row support $B\le\min(N,w_D)$.
+    \item Run attack estimators and increase dimensions until the desired security category is reached.
+\end{enumerate}
+
+\subsection{Benchmark baselines}
+
+The natural baselines are TFHE/FHEW for Boolean circuits, BFV/BGV for exact arithmetic, and CKKS for approximate arithmetic \cite{DucasMicciancio2015,CGGI2020,FanVercauteren2012,BGV2014,CKKS2017}.  \sable{} should not be expected to dominate those mature lattice schemes broadly.  It should be evaluated on the specific workloads where code-based assumption diversity and low-degree structure matter.

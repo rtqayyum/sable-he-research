@@ -1,0 +1,811 @@
+{
+  "keygen_time_s": 0.009987346000343678,
+  "note": "Pure-Python validation prototype. Do not compare wall-clock directly against optimized FHE libraries.",
+  "operations": [
+    "add",
+    "sub",
+    "neg",
+    "scalar_mul",
+    "add_const",
+    "mul",
+    "square",
+    "affine",
+    "dot4",
+    "poly2",
+    "product4",
+    "quadratic_form",
+    "and",
+    "or",
+    "xor",
+    "not",
+    "nand",
+    "nor",
+    "xnor",
+    "implies"
+  ],
+  "preset": "c4_projective_toy_clean",
+  "profiles": {
+    "add": {
+      "additions": 1,
+      "bfv_bgv_ct_adds": 1,
+      "bfv_bgv_ct_muls": 0,
+      "ciphertext_multiplications": 0,
+      "inputs": 2,
+      "multiplicative_depth": 0,
+      "name": "add",
+      "notes": "encrypted x+y over F_q",
+      "public_constants": 0,
+      "scalar_muls": 0,
+      "subtractions": 0,
+      "tfhe_boolean_gate_proxy": 0
+    },
+    "add_const": {
+      "additions": 1,
+      "bfv_bgv_ct_adds": 1,
+      "bfv_bgv_ct_muls": 0,
+      "ciphertext_multiplications": 0,
+      "inputs": 1,
+      "multiplicative_depth": 0,
+      "name": "add_const",
+      "notes": "x+c using public exact cI_N",
+      "public_constants": 1,
+      "scalar_muls": 0,
+      "subtractions": 0,
+      "tfhe_boolean_gate_proxy": 0
+    },
+    "affine": {
+      "additions": 2,
+      "bfv_bgv_ct_adds": 2,
+      "bfv_bgv_ct_muls": 0,
+      "ciphertext_multiplications": 0,
+      "inputs": 2,
+      "multiplicative_depth": 0,
+      "name": "affine",
+      "notes": "3x+2y+5",
+      "public_constants": 1,
+      "scalar_muls": 2,
+      "subtractions": 0,
+      "tfhe_boolean_gate_proxy": 0
+    },
+    "and": {
+      "additions": 0,
+      "bfv_bgv_ct_adds": 0,
+      "bfv_bgv_ct_muls": 1,
+      "ciphertext_multiplications": 1,
+      "inputs": 2,
+      "multiplicative_depth": 1,
+      "name": "and",
+      "notes": "Boolean AND as xy",
+      "public_constants": 0,
+      "scalar_muls": 0,
+      "subtractions": 0,
+      "tfhe_boolean_gate_proxy": 1
+    },
+    "dot4": {
+      "additions": 4,
+      "bfv_bgv_ct_adds": 4,
+      "bfv_bgv_ct_muls": 0,
+      "ciphertext_multiplications": 0,
+      "inputs": 4,
+      "multiplicative_depth": 0,
+      "name": "dot4",
+      "notes": "public-coefficient dot product",
+      "public_constants": 1,
+      "scalar_muls": 4,
+      "subtractions": 0,
+      "tfhe_boolean_gate_proxy": 0
+    },
+    "implies": {
+      "additions": 1,
+      "bfv_bgv_ct_adds": 2,
+      "bfv_bgv_ct_muls": 1,
+      "ciphertext_multiplications": 1,
+      "inputs": 2,
+      "multiplicative_depth": 1,
+      "name": "implies",
+      "notes": "Boolean implication as 1-x+xy",
+      "public_constants": 1,
+      "scalar_muls": 0,
+      "subtractions": 1,
+      "tfhe_boolean_gate_proxy": 1
+    },
+    "mul": {
+      "additions": 0,
+      "bfv_bgv_ct_adds": 0,
+      "bfv_bgv_ct_muls": 1,
+      "ciphertext_multiplications": 1,
+      "inputs": 2,
+      "multiplicative_depth": 1,
+      "name": "mul",
+      "notes": "encrypted multiplication x*y",
+      "public_constants": 0,
+      "scalar_muls": 0,
+      "subtractions": 0,
+      "tfhe_boolean_gate_proxy": 1
+    },
+    "nand": {
+      "additions": 0,
+      "bfv_bgv_ct_adds": 1,
+      "bfv_bgv_ct_muls": 1,
+      "ciphertext_multiplications": 1,
+      "inputs": 2,
+      "multiplicative_depth": 1,
+      "name": "nand",
+      "notes": "Boolean NAND as 1-xy",
+      "public_constants": 1,
+      "scalar_muls": 0,
+      "subtractions": 1,
+      "tfhe_boolean_gate_proxy": 1
+    },
+    "neg": {
+      "additions": 0,
+      "bfv_bgv_ct_adds": 0,
+      "bfv_bgv_ct_muls": 0,
+      "ciphertext_multiplications": 0,
+      "inputs": 1,
+      "multiplicative_depth": 0,
+      "name": "neg",
+      "notes": "public scalar -1 times encrypted x",
+      "public_constants": 0,
+      "scalar_muls": 1,
+      "subtractions": 0,
+      "tfhe_boolean_gate_proxy": 0
+    },
+    "nor": {
+      "additions": 1,
+      "bfv_bgv_ct_adds": 3,
+      "bfv_bgv_ct_muls": 1,
+      "ciphertext_multiplications": 1,
+      "inputs": 2,
+      "multiplicative_depth": 1,
+      "name": "nor",
+      "notes": "Boolean NOR as 1-(x+y-xy)",
+      "public_constants": 1,
+      "scalar_muls": 0,
+      "subtractions": 1,
+      "tfhe_boolean_gate_proxy": 1
+    },
+    "not": {
+      "additions": 0,
+      "bfv_bgv_ct_adds": 1,
+      "bfv_bgv_ct_muls": 0,
+      "ciphertext_multiplications": 0,
+      "inputs": 1,
+      "multiplicative_depth": 0,
+      "name": "not",
+      "notes": "Boolean NOT as 1-x",
+      "public_constants": 1,
+      "scalar_muls": 0,
+      "subtractions": 1,
+      "tfhe_boolean_gate_proxy": 0
+    },
+    "or": {
+      "additions": 1,
+      "bfv_bgv_ct_adds": 2,
+      "bfv_bgv_ct_muls": 1,
+      "ciphertext_multiplications": 1,
+      "inputs": 2,
+      "multiplicative_depth": 1,
+      "name": "or",
+      "notes": "Boolean OR as x+y-xy",
+      "public_constants": 0,
+      "scalar_muls": 0,
+      "subtractions": 1,
+      "tfhe_boolean_gate_proxy": 1
+    },
+    "poly2": {
+      "additions": 2,
+      "bfv_bgv_ct_adds": 2,
+      "bfv_bgv_ct_muls": 2,
+      "ciphertext_multiplications": 2,
+      "inputs": 1,
+      "multiplicative_depth": 2,
+      "name": "poly2",
+      "notes": "3+2x+5x^2 via Horner",
+      "public_constants": 2,
+      "scalar_muls": 1,
+      "subtractions": 0,
+      "tfhe_boolean_gate_proxy": 2
+    },
+    "product4": {
+      "additions": 0,
+      "bfv_bgv_ct_adds": 0,
+      "bfv_bgv_ct_muls": 3,
+      "ciphertext_multiplications": 3,
+      "inputs": 4,
+      "multiplicative_depth": 2,
+      "name": "product4",
+      "notes": "balanced product x1*x2*x3*x4",
+      "public_constants": 0,
+      "scalar_muls": 0,
+      "subtractions": 0,
+      "tfhe_boolean_gate_proxy": 3
+    },
+    "quadratic_form": {
+      "additions": 2,
+      "bfv_bgv_ct_adds": 2,
+      "bfv_bgv_ct_muls": 2,
+      "ciphertext_multiplications": 2,
+      "inputs": 4,
+      "multiplicative_depth": 1,
+      "name": "quadratic_form",
+      "notes": "x1*x2+x3*x4+5",
+      "public_constants": 1,
+      "scalar_muls": 0,
+      "subtractions": 0,
+      "tfhe_boolean_gate_proxy": 2
+    },
+    "scalar_mul": {
+      "additions": 0,
+      "bfv_bgv_ct_adds": 0,
+      "bfv_bgv_ct_muls": 0,
+      "ciphertext_multiplications": 0,
+      "inputs": 1,
+      "multiplicative_depth": 0,
+      "name": "scalar_mul",
+      "notes": "public scalar times encrypted x",
+      "public_constants": 0,
+      "scalar_muls": 1,
+      "subtractions": 0,
+      "tfhe_boolean_gate_proxy": 0
+    },
+    "square": {
+      "additions": 0,
+      "bfv_bgv_ct_adds": 0,
+      "bfv_bgv_ct_muls": 1,
+      "ciphertext_multiplications": 1,
+      "inputs": 1,
+      "multiplicative_depth": 1,
+      "name": "square",
+      "notes": "encrypted square x^2",
+      "public_constants": 0,
+      "scalar_muls": 0,
+      "subtractions": 0,
+      "tfhe_boolean_gate_proxy": 1
+    },
+    "sub": {
+      "additions": 0,
+      "bfv_bgv_ct_adds": 1,
+      "bfv_bgv_ct_muls": 0,
+      "ciphertext_multiplications": 0,
+      "inputs": 2,
+      "multiplicative_depth": 0,
+      "name": "sub",
+      "notes": "encrypted x-y over F_q",
+      "public_constants": 0,
+      "scalar_muls": 0,
+      "subtractions": 1,
+      "tfhe_boolean_gate_proxy": 0
+    },
+    "xnor": {
+      "additions": 1,
+      "bfv_bgv_ct_adds": 3,
+      "bfv_bgv_ct_muls": 1,
+      "ciphertext_multiplications": 1,
+      "inputs": 2,
+      "multiplicative_depth": 1,
+      "name": "xnor",
+      "notes": "Boolean XNOR as 1-(x+y-2xy)",
+      "public_constants": 1,
+      "scalar_muls": 1,
+      "subtractions": 1,
+      "tfhe_boolean_gate_proxy": 1
+    },
+    "xor": {
+      "additions": 1,
+      "bfv_bgv_ct_adds": 2,
+      "bfv_bgv_ct_muls": 1,
+      "ciphertext_multiplications": 1,
+      "inputs": 2,
+      "multiplicative_depth": 1,
+      "name": "xor",
+      "notes": "Boolean XOR as x+y-2xy",
+      "public_constants": 0,
+      "scalar_muls": 1,
+      "subtractions": 1,
+      "tfhe_boolean_gate_proxy": 1
+    }
+  },
+  "summary_by_operation": {
+    "add": {
+      "build_eval_time_s": {
+        "max": 0.00044360399988363497,
+        "mean": 0.0003721570003108354,
+        "median": 0.0003567460007616319,
+        "min": 0.00034187399978691246
+      },
+      "compact_decrypt_time_s": {
+        "max": 0.0009950379990186775,
+        "mean": 0.0009046507992024999,
+        "median": 0.000956240999585134,
+        "min": 0.0007657299993297784
+      },
+      "failures": 0,
+      "max_row_support_seen": 4,
+      "max_total_output_nnz_seen": 140,
+      "successes": 5,
+      "total_time_s": {
+        "max": 0.001399844999468769,
+        "mean": 0.0012768077995133353,
+        "median": 0.0013365519989747554,
+        "min": 0.0011076039991166908
+      },
+      "trials": 5
+    },
+    "add_const": {
+      "build_eval_time_s": {
+        "max": 0.00022793599964643363,
+        "mean": 0.00021403019964054691,
+        "median": 0.00021394599934865255,
+        "min": 0.0001947979999386007
+      },
+      "compact_decrypt_time_s": {
+        "max": 0.0008299749988509575,
+        "mean": 0.0007060014002490788,
+        "median": 0.0007327010007429635,
+        "min": 0.0005202669999562204
+      },
+      "failures": 0,
+      "max_row_support_seen": 4,
+      "max_total_output_nnz_seen": 145,
+      "successes": 5,
+      "total_time_s": {
+        "max": 0.0010579109984973911,
+        "mean": 0.0009200315998896258,
+        "median": 0.0009429620004084427,
+        "min": 0.0007150649998948211
+      },
+      "trials": 5
+    },
+    "affine": {
+      "build_eval_time_s": {
+        "max": 0.0005724650000047404,
+        "mean": 0.0005204640005104011,
+        "median": 0.0005127969998284243,
+        "min": 0.0004987660013284767
+      },
+      "compact_decrypt_time_s": {
+        "max": 0.0008755210001254454,
+        "mean": 0.0007880705998104531,
+        "median": 0.0008235249988501891,
+        "min": 0.0006619670002692146
+      },
+      "failures": 0,
+      "max_row_support_seen": 5,
+      "max_total_output_nnz_seen": 168,
+      "successes": 5,
+      "total_time_s": {
+        "max": 0.0013742870014539221,
+        "mean": 0.0013085346003208543,
+        "median": 0.00133660199935548,
+        "min": 0.001174764000097639
+      },
+      "trials": 5
+    },
+    "and": {
+      "build_eval_time_s": {
+        "max": 0.0005408479992183857,
+        "mean": 0.0004573505993903382,
+        "median": 0.00045017399861535523,
+        "min": 0.00036852299854217563
+      },
+      "compact_decrypt_time_s": {
+        "max": 0.0011118000002170447,
+        "mean": 0.0009586606003722409,
+        "median": 0.0009136179996858118,
+        "min": 0.0008983660009107552
+      },
+      "failures": 0,
+      "max_row_support_seen": 7,
+      "max_total_output_nnz_seen": 191,
+      "successes": 5,
+      "total_time_s": {
+        "max": 0.0016526479994354304,
+        "mean": 0.001416011199762579,
+        "median": 0.0013931960002082633,
+        "min": 0.0012668889994529309
+      },
+      "trials": 5
+    },
+    "dot4": {
+      "build_eval_time_s": {
+        "max": 0.00107611800012819,
+        "mean": 0.001000668600318022,
+        "median": 0.0009892300004139543,
+        "min": 0.0009667970007285476
+      },
+      "compact_decrypt_time_s": {
+        "max": 0.001075476999176317,
+        "mean": 0.0009579773999575991,
+        "median": 0.0009567510005581426,
+        "min": 0.0008331389999511885
+      },
+      "failures": 0,
+      "max_row_support_seen": 7,
+      "max_total_output_nnz_seen": 207,
+      "successes": 5,
+      "total_time_s": {
+        "max": 0.002151594999304507,
+        "mean": 0.001958646000275621,
+        "median": 0.0019235480012866901,
+        "min": 0.001808478000384639
+      },
+      "trials": 5
+    },
+    "implies": {
+      "build_eval_time_s": {
+        "max": 0.0006746149992977735,
+        "mean": 0.0006187250000948552,
+        "median": 0.000618733000010252,
+        "min": 0.0005691500009561423
+      },
+      "compact_decrypt_time_s": {
+        "max": 0.001216134000060265,
+        "mean": 0.0010585054002149263,
+        "median": 0.0009828999991441378,
+        "min": 0.0009568820005370071
+      },
+      "failures": 0,
+      "max_row_support_seen": 10,
+      "max_total_output_nnz_seen": 253,
+      "successes": 5,
+      "total_time_s": {
+        "max": 0.0018907489993580384,
+        "mean": 0.0016772304003097815,
+        "median": 0.0016023740008677123,
+        "min": 0.0015520500001002802
+      },
+      "trials": 5
+    },
+    "mul": {
+      "build_eval_time_s": {
+        "max": 0.0005185160007386003,
+        "mean": 0.0004750791998958448,
+        "median": 0.0004756519992952235,
+        "min": 0.000434280000263243
+      },
+      "compact_decrypt_time_s": {
+        "max": 0.0011178990007465472,
+        "mean": 0.0009821332005230943,
+        "median": 0.0010374009998486144,
+        "min": 0.0008248270005424274
+      },
+      "failures": 0,
+      "max_row_support_seen": 7,
+      "max_total_output_nnz_seen": 182,
+      "successes": 5,
+      "total_time_s": {
+        "max": 0.0016145619993039872,
+        "mean": 0.0014572124004189392,
+        "median": 0.0014716810001118574,
+        "min": 0.0013388860006671166
+      },
+      "trials": 5
+    },
+    "nand": {
+      "build_eval_time_s": {
+        "max": 0.0005809069989481941,
+        "mean": 0.0005358127997169504,
+        "median": 0.0005349289986043004,
+        "min": 0.0004989469998690765
+      },
+      "compact_decrypt_time_s": {
+        "max": 0.001162696000392316,
+        "mean": 0.0010517778002395062,
+        "median": 0.001028317001328105,
+        "min": 0.0010122229996341048
+      },
+      "failures": 0,
+      "max_row_support_seen": 8,
+      "max_total_output_nnz_seen": 212,
+      "successes": 5,
+      "total_time_s": {
+        "max": 0.00174360299934051,
+        "mean": 0.0015875905999564565,
+        "median": 0.0015578990005451487,
+        "min": 0.0015353960006905254
+      },
+      "trials": 5
+    },
+    "neg": {
+      "build_eval_time_s": {
+        "max": 0.00028705300064757466,
+        "mean": 0.0002305402002093615,
+        "median": 0.00021854300030099694,
+        "min": 0.00018345100033911876
+      },
+      "compact_decrypt_time_s": {
+        "max": 0.0009761599994817516,
+        "mean": 0.0007871253998018801,
+        "median": 0.000780992000727565,
+        "min": 0.0005254449988569831
+      },
+      "failures": 0,
+      "max_row_support_seen": 3,
+      "max_total_output_nnz_seen": 110,
+      "successes": 5,
+      "total_time_s": {
+        "max": 0.0011880229994858382,
+        "mean": 0.0010176656000112417,
+        "median": 0.0010205460002907785,
+        "min": 0.0007206129994301591
+      },
+      "trials": 5
+    },
+    "nor": {
+      "build_eval_time_s": {
+        "max": 0.0007795909987180494,
+        "mean": 0.0006895955997606506,
+        "median": 0.000682486999721732,
+        "min": 0.000600065000980976
+      },
+      "compact_decrypt_time_s": {
+        "max": 0.0010637290015438339,
+        "mean": 0.0009863711999059887,
+        "median": 0.0010229789986624382,
+        "min": 0.000846558999910485
+      },
+      "failures": 0,
+      "max_row_support_seen": 9,
+      "max_total_output_nnz_seen": 265,
+      "successes": 5,
+      "total_time_s": {
+        "max": 0.0018433200002618833,
+        "mean": 0.0016759667996666394,
+        "median": 0.001676152998697944,
+        "min": 0.0015177900004346156
+      },
+      "trials": 5
+    },
+    "not": {
+      "build_eval_time_s": {
+        "max": 0.00024724500144657213,
+        "mean": 0.0002169661998777883,
+        "median": 0.00020989000040572137,
+        "min": 0.00020635399960156064
+      },
+      "compact_decrypt_time_s": {
+        "max": 0.0006961079998291098,
+        "mean": 0.0005871083994861692,
+        "median": 0.000575418998778332,
+        "min": 0.0005198669987294124
+      },
+      "failures": 0,
+      "max_row_support_seen": 4,
+      "max_total_output_nnz_seen": 135,
+      "successes": 5,
+      "total_time_s": {
+        "max": 0.0009024619994306704,
+        "mean": 0.0008040745993639576,
+        "median": 0.0007853089991840534,
+        "min": 0.0007671120001759846
+      },
+      "trials": 5
+    },
+    "or": {
+      "build_eval_time_s": {
+        "max": 0.0007326409995584982,
+        "mean": 0.000586329200086766,
+        "median": 0.0005624299992632587,
+        "min": 0.00046939200001361314
+      },
+      "compact_decrypt_time_s": {
+        "max": 0.001242153000930557,
+        "mean": 0.0010653238001395947,
+        "median": 0.0010965180008497555,
+        "min": 0.0008985259992186911
+      },
+      "failures": 0,
+      "max_row_support_seen": 9,
+      "max_total_output_nnz_seen": 237,
+      "successes": 5,
+      "total_time_s": {
+        "max": 0.001974794000489055,
+        "mean": 0.0016516530002263607,
+        "median": 0.0016257290008070413,
+        "min": 0.0013679179992323043
+      },
+      "trials": 5
+    },
+    "poly2": {
+      "build_eval_time_s": {
+        "max": 0.0007610530010424554,
+        "mean": 0.0006612776000110898,
+        "median": 0.0006178719995659776,
+        "min": 0.0006062539996491978
+      },
+      "compact_decrypt_time_s": {
+        "max": 0.001141153999924427,
+        "mean": 0.0009961717998521636,
+        "median": 0.0009896100000332808,
+        "min": 0.0008500940002704738
+      },
+      "failures": 0,
+      "max_row_support_seen": 9,
+      "max_total_output_nnz_seen": 254,
+      "successes": 5,
+      "total_time_s": {
+        "max": 0.0019022070009668823,
+        "mean": 0.0016574493998632533,
+        "median": 0.0016074819995992584,
+        "min": 0.0015556449998257449
+      },
+      "trials": 5
+    },
+    "product4": {
+      "build_eval_time_s": {
+        "max": 0.0013924139984737849,
+        "mean": 0.0013255819998448715,
+        "median": 0.0013533370001823641,
+        "min": 0.001231727999766008
+      },
+      "compact_decrypt_time_s": {
+        "max": 0.001648903000386781,
+        "mean": 0.0014989938001235715,
+        "median": 0.0015047899996716296,
+        "min": 0.0013552599994000047
+      },
+      "failures": 0,
+      "max_row_support_seen": 12,
+      "max_total_output_nnz_seen": 353,
+      "successes": 5,
+      "total_time_s": {
+        "max": 0.0030085689995758003,
+        "mean": 0.002824575799968443,
+        "median": 0.0027746039995690808,
+        "min": 0.0026015889998234343
+      },
+      "trials": 5
+    },
+    "quadratic_form": {
+      "build_eval_time_s": {
+        "max": 0.001456770000004326,
+        "mean": 0.0011735696003597695,
+        "median": 0.0010949650004477007,
+        "min": 0.0010449319997860584
+      },
+      "compact_decrypt_time_s": {
+        "max": 0.0014380510001501534,
+        "mean": 0.0012335155999608105,
+        "median": 0.0012605100000655511,
+        "min": 0.0010299690002284478
+      },
+      "failures": 0,
+      "max_row_support_seen": 11,
+      "max_total_output_nnz_seen": 296,
+      "successes": 5,
+      "total_time_s": {
+        "max": 0.0028948210001544794,
+        "mean": 0.00240708520032058,
+        "median": 0.002454061001117225,
+        "min": 0.0020749010000145063
+      },
+      "trials": 5
+    },
+    "scalar_mul": {
+      "build_eval_time_s": {
+        "max": 0.00022215799981495366,
+        "mean": 0.0001909120001073461,
+        "median": 0.00018958000146085396,
+        "min": 0.0001720140007819282
+      },
+      "compact_decrypt_time_s": {
+        "max": 0.0006850500012660632,
+        "mean": 0.0006256468001083704,
+        "median": 0.0006478760005848017,
+        "min": 0.0005049049996159738
+      },
+      "failures": 0,
+      "max_row_support_seen": 3,
+      "max_total_output_nnz_seen": 110,
+      "successes": 5,
+      "total_time_s": {
+        "max": 0.0008779950003372505,
+        "mean": 0.0008165588002157165,
+        "median": 0.0008363839988305699,
+        "min": 0.0006944850010768278
+      },
+      "trials": 5
+    },
+    "square": {
+      "build_eval_time_s": {
+        "max": 0.00033806899955379777,
+        "mean": 0.0003084171996306395,
+        "median": 0.00030155399872455746,
+        "min": 0.0002902590003941441
+      },
+      "compact_decrypt_time_s": {
+        "max": 0.0011140940005134325,
+        "mean": 0.0009726574000524125,
+        "median": 0.0010509809999348363,
+        "min": 0.0007834160005586455
+      },
+      "failures": 0,
+      "max_row_support_seen": 7,
+      "max_total_output_nnz_seen": 224,
+      "successes": 5,
+      "total_time_s": {
+        "max": 0.0014350980000017444,
+        "mean": 0.001281074599683052,
+        "median": 0.0013525349986593938,
+        "min": 0.001074616000551032
+      },
+      "trials": 5
+    },
+    "sub": {
+      "build_eval_time_s": {
+        "max": 0.0005020000007789349,
+        "mean": 0.00036492820036073683,
+        "median": 0.00033310099934169557,
+        "min": 0.0003204219992767321
+      },
+      "compact_decrypt_time_s": {
+        "max": 0.0011724809992301743,
+        "mean": 0.0008815771998342825,
+        "median": 0.000911015000383486,
+        "min": 0.0006426380004995735
+      },
+      "failures": 0,
+      "max_row_support_seen": 4,
+      "max_total_output_nnz_seen": 140,
+      "successes": 5,
+      "total_time_s": {
+        "max": 0.00150558199857187,
+        "mean": 0.0012465054001950192,
+        "median": 0.0012511770000855904,
+        "min": 0.0009726750013214769
+      },
+      "trials": 5
+    },
+    "xnor": {
+      "build_eval_time_s": {
+        "max": 0.000808292001238442,
+        "mean": 0.0007606160001159878,
+        "median": 0.0007771769996907096,
+        "min": 0.0006907289989612764
+      },
+      "compact_decrypt_time_s": {
+        "max": 0.001411111999914283,
+        "mean": 0.0011133528001664671,
+        "median": 0.0010544859997025924,
+        "min": 0.000980396998784272
+      },
+      "failures": 0,
+      "max_row_support_seen": 10,
+      "max_total_output_nnz_seen": 267,
+      "successes": 5,
+      "total_time_s": {
+        "max": 0.0021882889996049926,
+        "mean": 0.001873968800282455,
+        "median": 0.0018415470003674272,
+        "min": 0.0017090410001401324
+      },
+      "trials": 5
+    },
+    "xor": {
+      "build_eval_time_s": {
+        "max": 0.0007125409993022913,
+        "mean": 0.0006480541993369116,
+        "median": 0.0006242709987418493,
+        "min": 0.0006021490007697139
+      },
+      "compact_decrypt_time_s": {
+        "max": 0.001133121999373543,
+        "mean": 0.0010458654000103707,
+        "median": 0.0010455629999341909,
+        "min": 0.0009609980006644037
+      },
+      "failures": 0,
+      "max_row_support_seen": 9,
+      "max_total_output_nnz_seen": 236,
+      "successes": 5,
+      "total_time_s": {
+        "max": 0.0017644339986873092,
+        "mean": 0.0016939195993472822,
+        "median": 0.001735271000143257,
+        "min": 0.001585268999406253
+      },
+      "trials": 5
+    }
+  }
+}

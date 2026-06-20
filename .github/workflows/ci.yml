@@ -1,0 +1,22 @@
+name: sable-research-ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install package
+        run: python -m pip install -e . pytest
+      - name: Run tests
+        run: pytest -q
+      - name: Run C8 readiness gate
+        run: python tools/c8_readiness_gate.py --json --write docs/generated/c8_gate_status.json
+      - name: Generate toy KAT vectors
+        run: PYTHONPATH=src python tools/generate_kat_vectors.py --out vectors/sable_c7_toy_clean_kat.json

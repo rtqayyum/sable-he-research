@@ -1,0 +1,4 @@
+toy_depth2 balanced_product_depth_1: depth=1 mul=1 SABLE-mul-proxy=6400 TFHE-gate-proxy=1 fail=0.000214
+toy_depth2 balanced_product_depth_2: depth=2 mul=3 SABLE-mul-proxy=4915200 TFHE-gate-proxy=3 fail=0.000474
+toy_depth2 quadratic_form_4_terms: depth=1 mul=4 SABLE-mul-proxy=25600 TFHE-gate-proxy=7 fail=0.000249
+toy_depth2 quadratic_form_16_terms: depth=1 mul=16 SABLE-mul-proxy=102400 TFHE-gate-proxy=31 fail=0.000451

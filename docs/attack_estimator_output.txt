@@ -1,0 +1,27 @@
+Preset: toy_noisy  target=128 bits
+Samples: GSW rows=625 dim=24 eta=0.002; CLPN diff rows=81000 dim=24 eta_eff=0.00199899
+Minimum finite screen bits: 0.06
+Passes screening target: False
+Attack screens:
+  - clean-subset linear solving [GSW/sparse-LPN expansion-key screen]: bits=0.07 status=critical
+    625 row-level objects, dimension 24, eta=0.002; low eta makes random clean systems likely.
+  - Prange information-set decoding [GSW/sparse-LPN expansion-key screen]: bits=0.06 status=critical
+    First-order random-code decoding estimate using expansion-key row count.
+  - BKW-style parity/noisy-linear learning [GSW/sparse-LPN expansion-key screen]: bits=23.85 status=critical
+    Coarse q-ary BKW screen; use a specialized estimator before claiming security.
+  - clean-subset linear solving [CLPN compaction-key row-difference screen]: bits=0.07 status=critical
+    81000 difference samples, dimension 24, effective eta=0.00199899.
+  - Prange information-set decoding [CLPN compaction-key row-difference screen]: bits=0.07 status=critical
+    First-order random-code decoding estimate on row-difference CLPN samples.
+  - BKW-style parity/noisy-linear learning [CLPN compaction-key row-difference screen]: bits=23.84 status=critical
+    Coarse q-ary BKW screen for the compaction secret.
+  - sparse-row collision entropy [row-distribution sanity screen]: bits=22.06 status=informational
+    row entropy approximately 22.06 bits; birthday excess log2(samples)-H/2 = -1.74.
+Blockers:
+  - GSW/sparse-LPN expansion-key screen: clean-subset linear solving at 0.07 bits (critical)
+  - GSW/sparse-LPN expansion-key screen: Prange information-set decoding at 0.06 bits (critical)
+  - GSW/sparse-LPN expansion-key screen: BKW-style parity/noisy-linear learning at 23.85 bits (critical)
+  - CLPN compaction-key row-difference screen: clean-subset linear solving at 0.07 bits (critical)
+  - CLPN compaction-key row-difference screen: Prange information-set decoding at 0.07 bits (critical)
+  - CLPN compaction-key row-difference screen: BKW-style parity/noisy-linear learning at 23.84 bits (critical)
+Screening estimate only.  This is not a certified sparse-LPN/q-ary-LPN security estimate; it is meant to identify obviously unsafe parameter regimes and guide deeper cryptanalysis.

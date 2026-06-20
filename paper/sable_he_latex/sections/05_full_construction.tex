@@ -1,0 +1,141 @@
+\section{Full construction}
+
+This section defines the \sable{} scheme.  The scheme is secret-key encryption with a public evaluation key.
+
+\subsection{Parameters}
+
+A parameter set is
+\[
+    \Pi=(q,n,k,\eta,D,A,R,n_c,m_c,\eta_c,\mathsf{Code}).
+\]
+The parameters mean:
+\begin{center}
+\begin{tabular}{ll}
+\toprule
+Parameter & Meaning\\
+\midrule
+$q$ & prime plaintext/noise field modulus, $q\ge 3$\\
+$n$ & sparse-LPN secret dimension\\
+$k$ & sparse row weight\\
+$\eta$ & sparse-LPN q-ary error probability\\
+$D$ & supported multiplicative depth\\
+$A$ & conservative addition/monomial budget\\
+$R$ & number of independent replicas for failure amplification\\
+$n_c,m_c$ & compactor secret length and code block length\\
+$\eta_c$ & compactor q-ary error probability\\
+$\mathsf{Code}$ & linear q-ary error-correcting code for compaction\\
+\bottomrule
+\end{tabular}
+\end{center}
+Let $N=n+1$.
+
+\subsection{KeyGen}
+
+\begin{algobox}
+\AlgTitle{$\KeyGen$}
+\begin{enumerate}
+    \item Choose parameters $\Pi$ for security parameter $\lambda$ and depth $D$.
+    \item Sample independent secrets
+    \[
+        t\leftarrow\F_q^n,\qquad s\leftarrow\F_q^n,
+        \qquad r\leftarrow\F_q^{n_c}.
+    \]
+    \item Define $\tilde{t}=(-t,1)$ and $\tilde{s}=(-s,1)$.
+    \item For each $i\in[N]$, generate an expansion-key matrix
+    \[
+        \mathsf{EK}^{\rm exp}_i=\GSW\Enc_s(\tilde{t}_i).
+    \]
+    \item For each $i\in[N]$, generate a compaction-key ciphertext
+    \[
+        \mathsf{EK}^{\rm cmp}_i=\CLPN\Enc_r(\tilde{s}_i).
+    \]
+    \item Output
+    \[
+        \sk=(t,s,r),
+        \qquad
+        \ek=(\Pi,\mathsf{EK}^{\rm exp},\mathsf{EK}^{\rm cmp}).
+    \]
+\end{enumerate}
+\end{algobox}
+
+\subsection{Enc}
+
+For a message $\mu\in\F_q$, generate $R$ independent compact ciphertexts:
+\[
+    c^{(j)}=\Regev\Enc_t(\mu),\qquad j=1,\ldots,R.
+\]
+Return
+\[
+    \ct=(c^{(1)},\ldots,c^{(R)}).
+\]
+Replicas are used only to reduce the decryption-failure probability.  They may be omitted in toy experiments.
+
+\subsection{Expand}
+
+For each replica,
+\[
+    C^{(j)}=\sum_{i=1}^{N}c_i^{(j)}\mathsf{EK}^{\rm exp}_i.
+\]
+Return
+\[
+    \mathsf{CT}=(C^{(1)},\ldots,C^{(R)}).
+\]
+The result is a vector of GSW-style matrix ciphertexts under secret $s$.
+
+\subsection{Homomorphic evaluation}
+
+For expanded ciphertexts
+\[
+    \mathsf{CT}_1=(C_1^{(1)},\ldots,C_1^{(R)}),
+    \qquad
+    \mathsf{CT}_2=(C_2^{(1)},\ldots,C_2^{(R)}),
+\]
+define
+\[
+    \EvalAdd(\mathsf{CT}_1,\mathsf{CT}_2)=
+    \left(C_1^{(j)}+C_2^{(j)}\right)_{j=1}^{R},
+\]
+and
+\[
+    \EvalMul(\mathsf{CT}_1,\mathsf{CT}_2)=
+    \left(C_1^{(j)}C_2^{(j)}\right)_{j=1}^{R}.
+\]
+Multiplication may be oriented so that the matrix with smaller row support is placed on the left, because the error bound for multiplication is asymmetric.
+
+\subsection{Compact}
+
+For each evaluated replica $C_*^{(j)}$:
+\begin{enumerate}
+    \item Let $\rho_*^{(j)}\in\F_q^N$ be the last row of $C_*^{(j)}$.
+    \item Homomorphically evaluate the linear form $x\mapsto\rho_*^{(j)}\cdot x$ on the compaction-key encryptions of $\tilde{s}_i$:
+    \[
+        Z^{(j)}=
+        \mathsf{CLPN.EvalLin}
+        \left(\rho_*^{(j)};
+        \mathsf{EK}^{\rm cmp}_1,\ldots,\mathsf{EK}^{\rm cmp}_N\right).
+    \]
+\end{enumerate}
+Return
+\[
+    \mathsf{ct}_{\rm out}=(Z^{(1)},\ldots,Z^{(R)}).
+\]
+
+\subsection{Dec}
+
+For each replica, compute
+\[
+    y^{(j)}=\CLPN\Dec_r(Z^{(j)}).
+\]
+Return the plurality value among $y^{(1)},\ldots,y^{(R)}$.
+
+\subsection{Correctness intuition}
+
+If evaluation gives
+\[
+    C_*^{(j)}\tilde{s}=f(\mu_1,\ldots,\mu_m)\tilde{s}+e_*^{(j)},
+\]
+then the last row $\rho_*^{(j)}$ satisfies
+\[
+    \rho_*^{(j)}\cdot\tilde{s}=f(\mu_1,\ldots,\mu_m)+e_{*,N}^{(j)}.
+\]
+The compaction key encrypts the coordinates of $\tilde{s}$.  Therefore $\Compact$ produces a code/LPN encryption of the decryption value.  If both the sparse-LPN evaluation error and the code/LPN compaction error are decoded correctly, decryption returns $f(\mu_1,\ldots,\mu_m)$.

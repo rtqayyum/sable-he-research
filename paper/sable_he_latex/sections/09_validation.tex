@@ -1,0 +1,80 @@
+\section{Validation plan}
+
+\sable{} should be validated in four parallel tracks: formal proofs, parameter estimation, prototype implementation, and benchmark comparison.
+
+\subsection{Formal proof track}
+
+The formal proof track should produce a machine-checkable or at least reviewer-checkable proof package for:
+\begin{enumerate}
+    \item sparse-LPN zero-vector pseudorandomness;
+    \item GSW-style scalar encryption security as zero encryption plus diagonal shift;
+    \item expansion correctness;
+    \item row-support and coordinate-error invariants under addition and multiplication;
+    \item code/LPN compaction correctness;
+    \item hybrid IND-CPA security.
+\end{enumerate}
+The proof should explicitly track sample counts.  This matters because the evaluation key exposes $O(N^2)$ sparse-LPN rows and the compaction key exposes $O(Nm_c)$ dense q-ary LPN samples.
+
+\subsection{Parameter-estimation track}
+
+The estimator should be a separate, versioned artifact.  It should compute at least:
+\begin{itemize}
+    \item sparse-LPN distinguishing cost for $(n,k,q,\eta,M)$;
+    \item q-ary LPN/code distinguishing cost for $(n_c,m_c,q,\eta_c,M_c)$;
+    \item information-set decoding estimates for the compaction code;
+    \item low-noise attack costs as $\eta$ and $\eta_c$ decrease;
+    \item correctness failure from the exact q-ary piling-up formula;
+    \item final failure after $R$ replicas.
+\end{itemize}
+No parameter set should be described as secure until this estimator and independent review agree.
+
+\subsection{Prototype track}
+
+The first Python library should implement the following objects:
+\begin{itemize}
+    \item finite-field arithmetic modulo a prime $q$;
+    \item sparse vectors and row-sparse matrices;
+    \item q-ary symmetric noise sampling;
+    \item compact sparse-LPN input encryption;
+    \item GSW-style sparse-LPN matrices;
+    \item expansion, addition, multiplication, and compaction;
+    \item repetition-code decoding for initial tests;
+    \item a pluggable code interface for BCH/LDPC/CRT-style compaction later.
+\end{itemize}
+
+Core unit tests should verify:
+\begin{enumerate}
+    \item $c\cdot\tilde{t}=\mu+e$ for compact input ciphertexts;
+    \item $X\tilde{s}=\alpha\tilde{s}+e$ for GSW-style encryptions;
+    \item $\Expand(c)\tilde{s}=\mu\tilde{s}+e'$;
+    \item addition and multiplication decrypt to correct low-degree arithmetic values with expected failure rates;
+    \item compaction returns the same value as direct last-row decryption;
+    \item empirical failure rates match the formulas in Section~6.
+\end{enumerate}
+
+\subsection{Benchmark track}
+
+Benchmark on workloads that match the design:
+\begin{itemize}
+    \item degree-2 private feature interaction:
+    \[
+        f(x)=\sum_i a_ix_i+\sum_{i<j}b_{ij}x_ix_j;
+    \]
+    \item encrypted voting with polynomial validity checks;
+    \item private counting with pairwise fraud/anomaly indicators;
+    \item small Boolean circuits represented arithmetically over $\F_q$;
+    \item secure aggregation plus low-degree validation.
+\end{itemize}
+Metrics should include input ciphertext size, expansion-key size, compaction-key size, expansion time, multiplication time, compaction time, final ciphertext size, empirical failure probability, and estimated security bits.
+
+\subsection{Success criteria for a publishable paper}
+
+A strong paper based on \sable{} should provide:
+\begin{enumerate}
+    \item a clean theorem statement under standard or carefully justified assumptions;
+    \item an implementation that is small enough for independent reproduction;
+    \item security estimates against known LPN and decoding attacks;
+    \item a comparison against sparse-LPN SHE with number-theoretic LHE compaction;
+    \item a comparison against TFHE/FHEW on small Boolean workloads;
+    \item evidence that the all-code compactor is not merely aesthetic but changes assumption structure meaningfully.
+\end{enumerate}

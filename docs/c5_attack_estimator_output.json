@@ -1,0 +1,113 @@
+{
+  "params": "c4_projective_toy_noisy",
+  "q": 7,
+  "N": 17,
+  "block_size": 2,
+  "n_c": 24,
+  "m_c": 97,
+  "eta_c": 0.0005,
+  "num_blocks": 9,
+  "c4_public_entries": 65,
+  "c4_public_clpn_rows": 6305,
+  "c4_dense_public_field_elements": 157625,
+  "c2_public_entries_if_full_dictionary": 390,
+  "c4_vs_c2_entry_ratio": 0.16666666666666666,
+  "max_active_blocks": 9,
+  "c4_compaction_terms_bound": 9,
+  "c4_compaction_noise_bound": 0.00448951427916912,
+  "c4_compaction_repetition_failure_bound": 2.057193159519669e-21,
+  "block_surfaces": [
+    {
+      "width": 2,
+      "projective_entries": 8,
+      "public_clpn_rows": 776,
+      "min_relation_weight_heuristic": 3,
+      "relation_noise_rate": 0.001499125170138996,
+      "relation_repetition_failure_bound": 1.1556711354645594e-21,
+      "log2_relation_choice_upper_bound": 10.977279923499914,
+      "flag": "watch: many low-weight projective relations"
+    },
+    {
+      "width": 2,
+      "projective_entries": 8,
+      "public_clpn_rows": 776,
+      "min_relation_weight_heuristic": 3,
+      "relation_noise_rate": 0.001499125170138996,
+      "relation_repetition_failure_bound": 1.1556711354645594e-21,
+      "log2_relation_choice_upper_bound": 10.977279923499914,
+      "flag": "watch: many low-weight projective relations"
+    },
+    {
+      "width": 2,
+      "projective_entries": 8,
+      "public_clpn_rows": 776,
+      "min_relation_weight_heuristic": 3,
+      "relation_noise_rate": 0.001499125170138996,
+      "relation_repetition_failure_bound": 1.1556711354645594e-21,
+      "log2_relation_choice_upper_bound": 10.977279923499914,
+      "flag": "watch: many low-weight projective relations"
+    },
+    {
+      "width": 2,
+      "projective_entries": 8,
+      "public_clpn_rows": 776,
+      "min_relation_weight_heuristic": 3,
+      "relation_noise_rate": 0.001499125170138996,
+      "relation_repetition_failure_bound": 1.1556711354645594e-21,
+      "log2_relation_choice_upper_bound": 10.977279923499914,
+      "flag": "watch: many low-weight projective relations"
+    },
+    {
+      "width": 2,
+      "projective_entries": 8,
+      "public_clpn_rows": 776,
+      "min_relation_weight_heuristic": 3,
+      "relation_noise_rate": 0.001499125170138996,
+      "relation_repetition_failure_bound": 1.1556711354645594e-21,
+      "log2_relation_choice_upper_bound": 10.977279923499914,
+      "flag": "watch: many low-weight projective relations"
+    },
+    {
+      "width": 2,
+      "projective_entries": 8,
+      "public_clpn_rows": 776,
+      "min_relation_weight_heuristic": 3,
+      "relation_noise_rate": 0.001499125170138996,
+      "relation_repetition_failure_bound": 1.1556711354645594e-21,
+      "log2_relation_choice_upper_bound": 10.977279923499914,
+      "flag": "watch: many low-weight projective relations"
+    },
+    {
+      "width": 2,
+      "projective_entries": 8,
+      "public_clpn_rows": 776,
+      "min_relation_weight_heuristic": 3,
+      "relation_noise_rate": 0.001499125170138996,
+      "relation_repetition_failure_bound": 1.1556711354645594e-21,
+      "log2_relation_choice_upper_bound": 10.977279923499914,
+      "flag": "watch: many low-weight projective relations"
+    },
+    {
+      "width": 2,
+      "projective_entries": 8,
+      "public_clpn_rows": 776,
+      "min_relation_weight_heuristic": 3,
+      "relation_noise_rate": 0.001499125170138996,
+      "relation_repetition_failure_bound": 1.1556711354645594e-21,
+      "log2_relation_choice_upper_bound": 10.977279923499914,
+      "flag": "watch: many low-weight projective relations"
+    },
+    {
+      "width": 1,
+      "projective_entries": 1,
+      "public_clpn_rows": 97,
+      "min_relation_weight_heuristic": 2,
+      "relation_noise_rate": 0.000999708333333452,
+      "relation_repetition_failure_bound": 1.0492089325923748e-21,
+      "log2_relation_choice_upper_bound": -Infinity,
+      "flag": "watch: many low-weight projective relations"
+    }
+  ],
+  "global_flag": "watch",
+  "warning": "Diagnostic screen only; not a security proof or a certified parameter estimator."
+}

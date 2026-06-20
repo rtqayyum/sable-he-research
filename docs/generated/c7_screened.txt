@@ -1,0 +1,64 @@
+{
+  "key_estimate": {
+    "N": 18,
+    "block_size": 1,
+    "dense_fallback_terms_bound": 18,
+    "eta_dense_fallback_bound": 0.008955513530131512,
+    "eta_preferred_bound": 0.008955513530131512,
+    "mode": "coordinate",
+    "num_blocks": 18,
+    "params": "c7_standard_toy_noisy",
+    "preferred_terms_bound": 18,
+    "public_clpn_rows": 1746,
+    "public_entries": 18,
+    "public_field_elements_dense": 43650,
+    "q": 7,
+    "relation_note": "coordinate blocks are linearly independent; no within-block kernel relations",
+    "relation_screen_weight": 4,
+    "repetition_failure_bound_dense_fallback": 4.836046463475252e-21,
+    "repetition_failure_bound_preferred": 4.836046463475252e-21,
+    "security_status": "main research default"
+  },
+  "note": "Fast wrapper. Use run_c7_basis_screen.py for sampled basis details and run_c7_arithmetic_suite.py for operation tests.",
+  "readiness": {
+    "default_estimate": {
+      "N": 18,
+      "block_size": 1,
+      "dense_fallback_terms_bound": 18,
+      "eta_dense_fallback_bound": 0.008955513530131512,
+      "eta_preferred_bound": 0.008955513530131512,
+      "mode": "coordinate",
+      "num_blocks": 18,
+      "params": "c7_standard_toy_noisy",
+      "preferred_terms_bound": 18,
+      "public_clpn_rows": 1746,
+      "public_entries": 18,
+      "public_field_elements_dense": 43650,
+      "q": 7,
+      "relation_note": "coordinate blocks are linearly independent; no within-block kernel relations",
+      "relation_screen_weight": 4,
+      "repetition_failure_bound_dense_fallback": 4.836046463475252e-21,
+      "repetition_failure_bound_preferred": 4.836046463475252e-21,
+      "security_status": "main research default"
+    },
+    "experimental_candidates": [
+      "C7 screened-random additive masks",
+      "C4 projective compaction",
+      "C2/C3 dictionaries"
+    ],
+    "main_candidate": "C7 coordinate relation-resistant compaction",
+    "not_ready_for": [
+      "production deployment",
+      "standardization claims",
+      "certified concrete security without independent LPN estimation"
+    ],
+    "remaining_open_science_questions": [
+      "tight sparse/q-ary LPN estimator with large public sample surfaces",
+      "stronger error-correcting compactor beyond repetition decoding",
+      "measured OpenFHE/TFHE/BFV/BGV/CKKS benchmarks on identical circuits"
+    ],
+    "status": "ready as a research prototype and manuscript package",
+    "stop_condition_met": true,
+    "version": "v0.9-C7"
+  }
+}

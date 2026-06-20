@@ -1,0 +1,30 @@
+\section{C5 Baseline and Public-Surface Diagnostics}
+\label{app:c5-baselines}
+
+C5 separates measured prototype timing from baseline comparison.  The SABLE
+repository is a pure-Python validation prototype, whereas mature libraries
+such as OpenFHE, SEAL, Concrete, and TFHE-family implementations use
+optimized C, C++, Rust, compiler passes, and architecture-specific kernels.
+Therefore the current package reports operation-count and surface-area
+proxies rather than claiming wall-clock superiority.
+
+The fair baseline mapping is workload-dependent.  TFHE/FHEW-style schemes
+are the closest comparison for Boolean gates and programmable function
+evaluation \cite{DucasMicciancio2015,CGGI2020}.  BFV and BGV are the closest
+comparison for exact modular or integer arithmetic \cite{FanVercauteren2012,BGV2014}.
+CKKS is the closest comparison for approximate real or complex arithmetic,
+but it is not the natural baseline for exact finite-field outputs
+\cite{CKKS2017}.
+
+The C5 public-surface screen also records that C4 projective compaction
+removes two-term projective duplicates but necessarily introduces many
+three-term linear relations once the block width is at least two.  For public
+representatives \(u,v,w\) of projective lines, many choices satisfy
+\[
+    au+bv-cw=0
+\]
+for non-zero field elements \(a,b,c\).  This relation surface does not by
+itself break the CLPN layer, but it does give an adversary many public noisy
+linear combinations to examine.  Consequently, the C5 conclusion is that C4
+is smaller than C2/C3, but a security-grade claim requires a dedicated
+large-sample q-ary-LPN analysis of the projective public surface.

@@ -1,0 +1,25 @@
+{
+  "preset": "c2_toy_clean",
+  "projective_T1": {
+    "basis_entries": 8,
+    "capacity_ratio": 1.0,
+    "comment": "diagnostic only; not a security proof",
+    "low_weight_relation_found": 1,
+    "max_terms": 1,
+    "q": 7,
+    "relation_weight_screen": 3,
+    "sample_coverage_rate": 1.0,
+    "width": 2
+  },
+  "random_M12_T2": {
+    "basis_entries": 8,
+    "capacity_ratio": 1.0,
+    "comment": "diagnostic only; not a security proof",
+    "low_weight_relation_found": 1,
+    "max_terms": 2,
+    "q": 7,
+    "relation_weight_screen": 3,
+    "sample_coverage_rate": 1.0,
+    "width": 2
+  }
+}

@@ -1,0 +1,29 @@
+Traceback (most recent call last):
+  File "<frozen runpy>", line 198, in _run_module_as_main
+  File "<frozen runpy>", line 88, in _run_code
+  File "/mnt/data/sable_c7_work/sable_c6_relations_final/src/sable/c7_relation_screen.py", line 240, in <module>
+    main()
+    ~~~~^^
+  File "/mnt/data/sable_c7_work/sable_c6_relations_final/src/sable/c7_relation_screen.py", line 224, in main
+    report = estimate_c7_relations(
+        PRESETS[args.preset],
+    ...<5 lines>...
+        target_bits=args.target_bits,
+    )
+  File "/mnt/data/sable_c7_work/sable_c6_relations_final/src/sable/c7_relation_screen.py", line 94, in estimate_c7_relations
+    est = estimate_c7_key(
+        params,
+    ...<4 lines>...
+        relation_screen_weight=relation_screen_weight,
+    )
+  File "/mnt/data/sable_c7_work/sable_c6_relations_final/src/sable/clpn_c7_screened.py", line 65, in estimate_c7_key
+    return _rr.estimate_c7_key(
+           ~~~~~~~~~~~~~~~~~~~^
+        params,
+        ^^^^^^^
+    ...<4 lines>...
+        **kwargs,
+        ^^^^^^^^^
+    )
+    ^
+TypeError: estimate_c7_key() got an unexpected keyword argument 'basis_size'

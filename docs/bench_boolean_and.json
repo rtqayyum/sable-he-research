@@ -1,0 +1,224 @@
+{
+  "summary": {
+    "preset": "toy_noisy",
+    "gate": "and",
+    "keygen_time_s": 0.05800956599978235,
+    "tracemalloc_current_bytes": 786690,
+    "tracemalloc_peak_bytes": 1570106,
+    "summary": {
+      "trials": 10,
+      "successes": 10,
+      "failures": 0,
+      "input_time_s": {
+        "mean": 0.014533558499942955,
+        "median": 0.014241918499919848,
+        "min": 0.013671622999936517,
+        "max": 0.017099995000080526
+      },
+      "eval_time_s": {
+        "mean": 0.02119624740007566,
+        "median": 0.02113136850016417,
+        "min": 0.020560946999921725,
+        "max": 0.02202908400022352
+      },
+      "compact_decrypt_time_s": {
+        "mean": 0.5678767902998516,
+        "median": 0.5688449499998569,
+        "min": 0.49025444399967455,
+        "max": 0.6440999479996208
+      },
+      "total_time_s": {
+        "mean": 0.6036065961998702,
+        "median": 0.6040518669997255,
+        "min": 0.5258566640000026,
+        "max": 0.679035444999954
+      },
+      "max_row_support_seen": 25,
+      "max_total_output_nnz_seen": 5697
+    },
+    "note": "Python validation prototype timing only; not an optimized cryptographic library benchmark.",
+    "first_failures": []
+  },
+  "rows": [
+    {
+      "ok": true,
+      "expected": 0,
+      "got": 0,
+      "input_time_s": 0.017099995000080526,
+      "eval_time_s": 0.02202908400022352,
+      "compact_decrypt_time_s": 0.6335399739996319,
+      "total_time_s": 0.672669052999936,
+      "max_row_support": 24,
+      "total_output_nnz": 5564,
+      "values": {
+        "x": 0,
+        "y": 0
+      },
+      "trial": 0,
+      "preset": "toy_noisy",
+      "gate": "and"
+    },
+    {
+      "ok": true,
+      "expected": 1,
+      "got": 1,
+      "input_time_s": 0.013671622999936517,
+      "eval_time_s": 0.020560946999921725,
+      "compact_decrypt_time_s": 0.6028053099998942,
+      "total_time_s": 0.6370378799997525,
+      "max_row_support": 25,
+      "total_output_nnz": 5560,
+      "values": {
+        "x": 1,
+        "y": 1
+      },
+      "trial": 1,
+      "preset": "toy_noisy",
+      "gate": "and"
+    },
+    {
+      "ok": true,
+      "expected": 1,
+      "got": 1,
+      "input_time_s": 0.014392204999694513,
+      "eval_time_s": 0.02106808500002444,
+      "compact_decrypt_time_s": 0.5042349519999334,
+      "total_time_s": 0.5396952419996524,
+      "max_row_support": 25,
+      "total_output_nnz": 5641,
+      "values": {
+        "x": 1,
+        "y": 1
+      },
+      "trial": 2,
+      "preset": "toy_noisy",
+      "gate": "and"
+    },
+    {
+      "ok": true,
+      "expected": 0,
+      "got": 0,
+      "input_time_s": 0.013925916999596666,
+      "eval_time_s": 0.02088602699996045,
+      "compact_decrypt_time_s": 0.6070064670002466,
+      "total_time_s": 0.6418184109998037,
+      "max_row_support": 25,
+      "total_output_nnz": 5587,
+      "values": {
+        "x": 0,
+        "y": 0
+      },
+      "trial": 3,
+      "preset": "toy_noisy",
+      "gate": "and"
+    },
+    {
+      "ok": true,
+      "expected": 0,
+      "got": 0,
+      "input_time_s": 0.014266849999785336,
+      "eval_time_s": 0.02191441400009353,
+      "compact_decrypt_time_s": 0.5348845899998196,
+      "total_time_s": 0.5710658539996984,
+      "max_row_support": 25,
+      "total_output_nnz": 5697,
+      "values": {
+        "x": 0,
+        "y": 1
+      },
+      "trial": 4,
+      "preset": "toy_noisy",
+      "gate": "and"
+    },
+    {
+      "ok": true,
+      "expected": 0,
+      "got": 0,
+      "input_time_s": 0.0154958540001644,
+      "eval_time_s": 0.021297072999914235,
+      "compact_decrypt_time_s": 0.6403634480002438,
+      "total_time_s": 0.6771563750003224,
+      "max_row_support": 24,
+      "total_output_nnz": 5632,
+      "values": {
+        "x": 0,
+        "y": 0
+      },
+      "trial": 5,
+      "preset": "toy_noisy",
+      "gate": "and"
+    },
+    {
+      "ok": true,
+      "expected": 0,
+      "got": 0,
+      "input_time_s": 0.014551019999998971,
+      "eval_time_s": 0.021051200000329118,
+      "compact_decrypt_time_s": 0.49025444399967455,
+      "total_time_s": 0.5258566640000026,
+      "max_row_support": 25,
+      "total_output_nnz": 5555,
+      "values": {
+        "x": 0,
+        "y": 1
+      },
+      "trial": 6,
+      "preset": "toy_noisy",
+      "gate": "and"
+    },
+    {
+      "ok": true,
+      "expected": 0,
+      "got": 0,
+      "input_time_s": 0.013710460000311286,
+      "eval_time_s": 0.021225037000021985,
+      "compact_decrypt_time_s": 0.6440999479996208,
+      "total_time_s": 0.679035444999954,
+      "max_row_support": 24,
+      "total_output_nnz": 5661,
+      "values": {
+        "x": 1,
+        "y": 0
+      },
+      "trial": 7,
+      "preset": "toy_noisy",
+      "gate": "and"
+    },
+    {
+      "ok": true,
+      "expected": 0,
+      "got": 0,
+      "input_time_s": 0.01421698700005436,
+      "eval_time_s": 0.020735954999963724,
+      "compact_decrypt_time_s": 0.49226075399974434,
+      "total_time_s": 0.5272136959997624,
+      "max_row_support": 24,
+      "total_output_nnz": 5636,
+      "values": {
+        "x": 0,
+        "y": 1
+      },
+      "trial": 8,
+      "preset": "toy_noisy",
+      "gate": "and"
+    },
+    {
+      "ok": true,
+      "expected": 0,
+      "got": 0,
+      "input_time_s": 0.014004673999806982,
+      "eval_time_s": 0.021194652000303904,
+      "compact_decrypt_time_s": 0.5293180159997064,
+      "total_time_s": 0.5645173419998173,
+      "max_row_support": 25,
+      "total_output_nnz": 5670,
+      "values": {
+        "x": 1,
+        "y": 0
+      },
+      "trial": 9,
+      "preset": "toy_noisy",
+      "gate": "and"
+    }
+  ]
+}

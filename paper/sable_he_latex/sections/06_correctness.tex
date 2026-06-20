@@ -1,0 +1,172 @@
+\section{Correctness analysis}
+
+\subsection{Good evaluation ciphertexts}
+
+\begin{definition}[Good GSW-style ciphertext]
+Let $C\in\F_q^{N\times N}$.  We say that $C$ is $(w,\varepsilon)$-good for $\mu\in\F_q$ under secret $s$ if:
+\begin{enumerate}
+    \item every row of $C$ has Hamming support at most $w$;
+    \item writing
+    \[
+        C\tilde{s}=\mu\tilde{s}+e,
+    \]
+    every coordinate satisfies
+    \[
+        \Pr[e_j\ne 0]\le \varepsilon.
+    \]
+\end{enumerate}
+\end{definition}
+
+This definition tracks only row support and coordinatewise error probability.  It deliberately does not require independence between all error coordinates after evaluation.  The proofs use union bounds, so this weaker invariant is enough.
+
+\subsection{Fresh expansion quality}
+
+Let
+\[
+    w_0=(k+1)(k+2),
+    \qquad
+    \varepsilon_0=(k+2)\eta.
+\]
+
+\begin{lemma}[Fresh expanded ciphertext quality]
+\label{lem:fresh-quality}
+For a compact encryption $c=\Regev\Enc_t(\mu)$, the expanded ciphertext $C=\Expand(c)$ is $(w_0,\varepsilon_0)$-good for $\mu$.
+\end{lemma}
+
+\begin{proof}
+The compact ciphertext $c$ has at most $k+1$ nonzero coordinates: at most $k$ from $a$ and one final coordinate.  Each expansion-key matrix has row support at most $k+2$ because it is a sparse-LPN zero matrix plus a diagonal shift.  Therefore each row of $C=\sum_i c_i\mathsf{EK}^{\rm exp}_i$ has support at most $(k+1)(k+2)=w_0$.
+
+By Lemma~\ref{lem:expansion-identity},
+\[
+    C\tilde{s}=\mu\tilde{s}+e_0\tilde{s}+\sum_{i\in\supp(c)}c_ie^{(i)}.
+\]
+For a fixed coordinate $j$, the term $e_0\tilde{s}_j$ is nonzero only if $e_0\ne 0$ and $\tilde{s}_j\ne0$, so it is nonzero with probability at most $\eta$.  The summation contains at most $k+1$ independent GSW error coordinates, each nonzero with probability $\eta$.  A union bound gives
+\[
+    \Pr[e'_j\ne0]\le \eta+(k+1)\eta=(k+2)\eta.
+\]
+\end{proof}
+
+\subsection{Addition and multiplication invariants}
+
+\begin{lemma}[Homomorphic addition]
+\label{lem:add-good}
+If $C_1$ is $(w_1,\varepsilon_1)$-good for $\mu_1$ and $C_2$ is $(w_2,\varepsilon_2)$-good for $\mu_2$, then $C_1+C_2$ is $(w_1+w_2,\varepsilon_1+\varepsilon_2)$-good for $\mu_1+\mu_2$.
+\end{lemma}
+
+\begin{proof}
+Row support is subadditive.  Also,
+\[
+    (C_1+C_2)\tilde{s}
+    =C_1\tilde{s}+C_2\tilde{s}
+    =(\mu_1+\mu_2)\tilde{s}+e_1+e_2.
+\]
+For each coordinate, $e_{1,j}+e_{2,j}$ is nonzero only if at least one of $e_{1,j},e_{2,j}$ is nonzero, except for possible cancellation.  Thus
+\[
+    \Pr[e_{1,j}+e_{2,j}\ne0]
+    \le \varepsilon_1+\varepsilon_2.
+\]
+\end{proof}
+
+\begin{lemma}[Homomorphic multiplication]
+\label{lem:mul-good}
+If $C_1$ is $(w_1,\varepsilon_1)$-good for $\mu_1$ and $C_2$ is $(w_2,\varepsilon_2)$-good for $\mu_2$, then $C_1C_2$ is $(w_1w_2,\varepsilon_1+w_1\varepsilon_2)$-good for $\mu_1\mu_2$.
+\end{lemma}
+
+\begin{proof}
+A row of $C_1C_2$ is a linear combination of at most $w_1$ rows of $C_2$, each of support at most $w_2$.  Hence the row support is at most $w_1w_2$.
+
+For correctness,
+\[
+    C_2\tilde{s}=\mu_2\tilde{s}+e_2,
+\]
+so
+\[
+    C_1C_2\tilde{s}=C_1(\mu_2\tilde{s}+e_2)=\mu_2C_1\tilde{s}+C_1e_2.
+\]
+Using $C_1\tilde{s}=\mu_1\tilde{s}+e_1$, we get
+\[
+    C_1C_2\tilde{s}=\mu_1\mu_2\tilde{s}+\mu_2e_1+C_1e_2.
+\]
+For a fixed output coordinate $j$, the term $(\mu_2e_1)_j$ is nonzero with probability at most $\varepsilon_1$.  The $j$th coordinate of $C_1e_2$ depends on at most $w_1$ coordinates of $e_2$, each nonzero with probability at most $\varepsilon_2$.  By a union bound,
+\[
+    \Pr[(C_1e_2)_j\ne0]\le w_1\varepsilon_2.
+\]
+Combining the two bad events gives the claimed bound.
+\end{proof}
+
+\subsection{Depth bound}
+
+For a balanced multiplication tree of depth $D$ starting from fresh expanded ciphertexts, define recursively
+\[
+    w_{r+1}=w_r^2,
+    \qquad
+    \varepsilon_{r+1}\le (1+w_r)\varepsilon_r,
+\]
+with $w_0=(k+1)(k+2)$ and $\varepsilon_0=(k+2)\eta$.  Hence
+\[
+    w_D=w_0^{2^D}.
+\]
+A conservative closed-form bound is
+\[
+    \varepsilon_D
+    \le
+    \varepsilon_0\prod_{r=0}^{D-1}(1+w_r)
+    \le
+    (k+2)\eta\prod_{r=0}^{D-1}(1+w_0^{2^r}).
+\]
+For $w_0\ge2$, this is roughly
+\[
+    \varepsilon_D=O\left(\eta\,w_0^{2^D-1}\right).
+\]
+If at most $A$ additive branches are combined, a conservative final bound is
+\[
+    \varepsilon_f\le A(k+2)\eta\prod_{r=0}^{D-1}(1+w_0^{2^r}).
+\]
+
+\subsection{Compaction correctness}
+
+Let $B$ be the number of nonzero entries in the final row $\rho_*$ used for compaction.  For a repetition-code compactor, $B$ independent nonzero scalar multiples of q-ary symmetric errors yield effective error probability
+\[
+    \eta_{c,B}=\frac{q-1}{q}\left(1-\left(1-\frac{q\eta_c}{q-1}\right)^B\right).
+\]
+For a general code $\mathsf{Code}$, let
+\[
+    \varepsilon_{\rm cmp}(B)
+\]
+be the decoder's failure probability at this effective error rate and block length $m_c$.
+
+\begin{theorem}[One-replica correctness]
+\label{thm:one-replica-correctness}
+Suppose $C_*$ is $(w,\varepsilon)$-good for $\mu_*=f(\mu_1,\ldots,\mu_m)$ and the final row has support $B\le w$.  Then one compacted replica decrypts correctly with probability at least
+\[
+    1-\varepsilon-\varepsilon_{\rm cmp}(B).
+\]
+\end{theorem}
+
+\begin{proof}
+Write
+\[
+    C_*\tilde{s}=\mu_*\tilde{s}+e_*.
+\]
+Let $\rho_*$ be the last row.  Since $\tilde{s}_N=1$,
+\[
+    \rho_*\cdot\tilde{s}=\mu_*+e_{*,N}.
+\]
+By goodness, $\Pr[e_{*,N}\ne0]\le\varepsilon$.  If $e_{*,N}=0$, the compactor homomorphically evaluates the linear form $\rho_*\cdot x$ on encryptions of $\tilde{s}_i$ and therefore decrypts to $\mu_*$ unless the code decoder fails.  The decoder failure probability is $\varepsilon_{\rm cmp}(B)$.  A union bound proves the theorem.
+\end{proof}
+
+\begin{theorem}[Replicated correctness]
+\label{thm:replicated-correctness}
+Let
+\[
+    p=\varepsilon+\varepsilon_{\rm cmp}(B)<1/2.
+\]
+With $R$ independent replicas and plurality decoding, the final failure probability is at most
+\[
+    \exp\left(-2R\left(\frac12-p\right)^2\right).
+\]
+\end{theorem}
+
+\begin{proof}
+Treat each replica as a Bernoulli trial that fails with probability at most $p$.  Majority/plurality fails only if at least half the replicas fail.  Hoeffding's inequality gives the stated bound.  For $q>2$, plurality failure is at most the majority-failure event in which the correct value appears in fewer than half the replicas.
+\end{proof}

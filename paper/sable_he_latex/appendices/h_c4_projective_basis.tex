@@ -1,0 +1,109 @@
+\section{C4 Projective Sparse Additive-Basis Compaction}
+\label{app:c4-projective}
+
+This appendix records the C4 compaction refinement implemented in the validation repository.  The purpose of C4 is to reduce the public surface of the C2/C3 full block dictionary while preserving the small compaction-noise count that made block compaction attractive.
+
+\subsection{Projective dictionary idea}
+
+Let a final GSW last-row block be
+\[
+  \alpha = (\alpha_1,\ldots,\alpha_b) \in \F_q^b,
+\]
+and let the corresponding block of the extended GSW secret be
+\[
+  s_B = (s_1,\ldots,s_b) \in \F_q^b.
+\]
+A full C2 dictionary stores an encryption of
+\[
+  \langle \alpha,s_B\rangle
+\]
+for every nonzero \(\alpha\in\F_q^b\).  Hence one block requires
+\[
+  q^b-1
+\]
+public CLPN entries.
+
+C4 observes that the linearly homomorphic compactor can scale ciphertexts.  Therefore it is unnecessary to publish separate entries for all scalar multiples of the same coefficient vector.  Let
+\[
+  \mathbb P^{b-1}(\F_q)
+\]
+denote the set of one-dimensional subspaces of \(\F_q^b\).  For each projective line, choose one representative \(u\) whose first nonzero coordinate is normalized to one.  The number of representatives is
+\[
+  \left|\mathbb P^{b-1}(\F_q)\right|
+  = \frac{q^b-1}{q-1}.
+\]
+For every representative \(u\), the public C4 key stores
+\[
+  \Enc_{\mathrm{CLPN}}(\langle u,s_B\rangle).
+\]
+
+For any nonzero \(\alpha\in\F_q^b\), there exists a unique scalar \(\lambda\in\F_q^\ast\) and a unique normalized representative \(u\) such that
+\[
+  \alpha = \lambda u.
+\]
+The evaluator then computes
+\[
+  \lambda\cdot \Enc_{\mathrm{CLPN}}(\langle u,s_B\rangle),
+\]
+which is a CLPN encryption of
+\[
+  \lambda\langle u,s_B\rangle = \langle \alpha,s_B\rangle.
+\]
+
+\subsection{C4 correctness theorem}
+
+\begin{theorem}[Projective C4 block correctness]
+Let \(q\) be prime and let \(B\subseteq\{1,\ldots,N\}\) be a block of width \(b\).  Suppose the C4 public key contains CLPN encryptions of \(\langle u,s_B\rangle\) for every projective representative \(u\in\mathbb P^{b-1}(\F_q)\).  Then for every coefficient block \(\alpha\in\F_q^b\), C4 homomorphically produces a CLPN encryption of \(\langle \alpha,s_B\rangle\) using zero CLPN terms if \(\alpha=0\), and one CLPN term otherwise.
+\end{theorem}
+
+\begin{proof}
+If \(\alpha=0\), the inner product is zero and the compactor contributes the zero CLPN ciphertext.  If \(\alpha\ne 0\), let \(i\) be the first index for which \(\alpha_i\ne 0\).  Set
+\[
+  \lambda = \alpha_i
+  \quad\text{and}\quad
+  u = \lambda^{-1}\alpha.
+\]
+Then the first nonzero coordinate of \(u\) is one, so \(u\) is exactly the projective representative stored by the public key.  By CLPN linear homomorphism,
+\[
+  \lambda\cdot \Enc_{\mathrm{CLPN}}(\langle u,s_B\rangle)
+	ag{1}
+\]
+is a CLPN encryption of
+\[
+  \lambda\langle u,s_B\rangle
+  = \langle \lambda u,s_B\rangle
+  = \langle \alpha,s_B\rangle.
+\]
+This proves the claim.
+\end{proof}
+
+\subsection{Public-surface comparison}
+
+For a block of width \(b\), the C4 projective dictionary has
+\[
+  M_{\mathrm{C4}}(b,q)=\frac{q^b-1}{q-1}
+\]
+entries, while C2/C3 full dictionaries have
+\[
+  M_{\mathrm{C2}}(b,q)=q^b-1.
+\]
+Thus
+\[
+  \frac{M_{\mathrm{C4}}}{M_{\mathrm{C2}}}=\frac{1}{q-1}.
+\]
+The compaction-noise term count remains one per active block, as in C2/C3.  Therefore C4 is not a storage-only transformation: it reduces both materialized key size and public CLPN sample count relative to full block dictionaries.
+
+The cost is that C4 still publishes a structured family of related encryptions, one for every projective line in each block.  This does not by itself prove insecurity, but it is a public relation surface that must be analyzed by sparse-LPN and q-ary-LPN attack screens.
+
+\subsection{Validation status}
+
+The validation repository implements:
+\begin{itemize}
+  \item projective representatives and sparse decomposition;
+  \item random additive-basis coverage screens;
+  \item C4 key generation, compaction, and decryption;
+  \item C4 public-surface estimates against v1, C2, and C3;
+  \item end-to-end toy arithmetic-circuit tests.
+\end{itemize}
+
+The implementation should be interpreted as a research validation prototype.  The C4 construction improves the compaction-key public surface over C2/C3, but it does not remove the need for full LPN attack-cost estimation, large-sample analysis, and independent cryptanalysis.

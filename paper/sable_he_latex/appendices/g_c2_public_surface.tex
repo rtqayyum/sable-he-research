@@ -1,0 +1,57 @@
+\section{C2/C3 Public-Sample Surface Screen}
+\label{app:c2-public-surface}
+
+C2 and C3 reduce final compaction noise by replacing coordinate-wise compaction with a block dictionary.  The security cost is a much larger public q-ary LPN surface.  This appendix records the screening model used by the validation repository.  It is not a certified cryptanalytic estimator; it is a conservative design screen intended to expose surfaces that must be analyzed before any concrete security claim.
+
+\paragraph{Dictionary row count.}
+For block widths $\ell_j$, the C2 dictionary publishes
+\[
+  E = \sum_j (q^{\ell_j}-1)
+\]
+CLPN ciphertexts.  Each ciphertext contains $m_c$ noisy rows under the same compaction secret $r\in\mathbb F_q^{n_c}$, so the direct dictionary surface contains $E m_c$ public rows.  Seeded C3 changes only the representation of the public matrices: it stores a seed for each matrix and the corresponding $b$ vector.  Since the adversary can regenerate the public matrices from the seeds, the LPN sample count is unchanged.
+
+\paragraph{Within-entry row differences.}
+A CLPN dictionary entry has rows
+\[
+  b_i = \langle A_i,r\rangle + x + e_i \pmod q,
+\]
+where $x$ is the encrypted block inner product.  Subtracting two rows from the same entry cancels $x$:
+\[
+  b_i-b_j = \langle A_i-A_j,r\rangle + (e_i-e_j) \pmod q.
+\]
+Thus each dictionary entry yields up to $\binom{m_c}{2}$ message-eliminating q-ary LPN-like rows.  The effective noise rate is estimated by the q-ary piling-up formula with two terms,
+\[
+  \eta^{(2)} = \frac{q-1}{q}\left(1-\left(1-\frac{q\eta_c}{q-1}\right)^2\right).
+\]
+The validation code records the raw within-entry surface as
+\[
+  E\binom{m_c}{2}.
+\]
+
+\paragraph{Cross-entry dictionary differences.}
+Inside one block, two dictionary entries for coefficient tuples $u$ and $v$ encrypt
+\[
+  \langle u,s_{\mathrm{block}}\rangle,\qquad \langle v,s_{\mathrm{block}}\rangle.
+\]
+A row difference between these entries gives
+\[
+  b_{u,i}-b_{v,j}
+  = \langle A_{u,i}-A_{v,j},r\rangle
+  + \langle u-v,s_{\mathrm{block}}\rangle
+  + e_{u,i}-e_{v,j}.
+\]
+This is a noisy linear equation in the joint secret $(r,s_{\mathrm{block}})$ of dimension at most $n_c+\max_j\ell_j$.  The raw ordered surface is conservatively screened using
+\[
+  \sum_j \binom{q^{\ell_j}-1}{2} m_c^2
+\]
+rows, again with two-term q-ary piling-up noise.  These rows are not all independent, so the repository reports them as a red-flag screening surface rather than a proof of insecurity.
+
+\paragraph{Implication for C3.}
+Seeded C3 is still valuable because it avoids materializing $E m_c n_c$ public field elements for dense matrices and keeps only $E m_c$ field elements for the $b$ vectors plus seed metadata.  However, seeded storage does not reduce the within-entry or cross-entry surfaces above.  Therefore the next construction-level problem is not storage but relation control: a publishable C4 variant should avoid a fully closed block dictionary, restrict tuple sets, randomize dictionary availability, or replace the compactor with a code/LPN LHE layer whose public entries do not create so many plaintext-cancelling row differences.
+
+\paragraph{Validation artifact.}
+The repository implements this screen in the module
+\begin{center}
+\path{src/sable/c2_attack_surface.py}.
+\end{center}
+The generated toy and design reports in the documentation folder show that the current presets remain research-only.  This is expected and useful: the screen identifies the next mathematical bottleneck rather than certifying parameters.

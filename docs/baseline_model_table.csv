@@ -1,0 +1,5 @@
+params,workload,inputs,depth,additions,multiplications,boolean_gate_proxy,sable_input_sparse_entries,sable_expansion_key_sparse_entries,sable_final_expanded_sparse_entries_capped,sable_multiplication_cost_proxy,sable_per_replica_failure_bound,sable_final_failure_bound
+toy_depth2,balanced_product_depth_1,2,1,0,1,1,34,1250,6800,6400,0.0015,0.00021409804364206337
+toy_depth2,balanced_product_depth_2,4,2,0,3,3,34,1250,10625,4915200,0.025500000000000002,0.00047361845863293
+toy_depth2,quadratic_form_4_terms,8,1,3,4,7,34,1250,6800,25600,0.006,0.0002492076682638829
+toy_depth2,quadratic_form_16_terms,32,1,15,16,31,34,1250,6800,102400,0.024,0.0004512071550872598

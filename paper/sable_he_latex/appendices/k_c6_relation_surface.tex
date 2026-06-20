@@ -1,0 +1,101 @@
+\section{C6 Projective-Relation Surface Estimator}
+\label{app:c6-relation-surface}
+
+C6 adds a dedicated attack-surface screen for the C4 projective compactor.
+The C4 construction publishes one representative of each one-dimensional
+subspace in a block.  For a block of width $b$ over $\F_q$, the number of
+public representatives is
+\[
+    M_b = \frac{q^b-1}{q-1}.
+\]
+This is a factor of roughly $q$ smaller than the non-zero C2 dictionary, but
+it is still a highly structured public set.
+
+\paragraph{Projective-line relations.}
+The important C6 correction is that a full projective block of width
+$b\geq 2$ has many weight-three linear dependencies.  The number of
+projective lines in $\mathrm{PG}(b-1,q)$ is the Gaussian binomial coefficient
+\[
+    {b \brack 2}_q
+    =
+    \frac{(q^b-1)(q^{b-1}-1)}{(q^2-1)(q-1)}.
+\]
+Every projective line has $q+1$ points, and every triple of distinct points
+on that line is linearly dependent.  Thus the raw number of weight-three
+projective-line relations in one block is
+\[
+    R_{3,b}
+    =
+    {b \brack 2}_q {q+1 \choose 3}.
+\]
+For $b=1$ this number is zero; for every $b\geq 2$ it is positive.  This
+replaces the earlier rough C5 heuristic that treated the generic minimum
+relation weight as $b+1$.  The generic statement is true for arbitrary
+vectors in general position, but the complete projective set is not in
+general position: it contains complete projective lines.
+
+\paragraph{Known-zero CLPN combinations.}
+Let the C4 key contain CLPN ciphertexts of
+$\langle u_j,s_B\rangle$ for public block masks $u_j$.  If
+\[
+    a u_i + b u_j + c u_k = 0
+\]
+for non-zero $a,b,c\in\F_q$, then the same linear combination of the three
+CLPN ciphertexts encrypts the known message zero.  The resulting row-level
+samples have q-ary symmetric noise rate
+\[
+    \eta_3
+    =
+    \frac{q-1}{q}
+    \left(1-
+    \left(1-\frac{q\eta_c}{q-1}\right)^3
+    \right),
+\]
+by the q-ary piling-up formula.  These relation-derived samples must be
+screened separately from ordinary row differences inside a single CLPN
+ciphertext, which have effective noise $\eta_2$.
+
+\paragraph{Raw count versus rank-capped count.}
+The raw number $R_{3,b}$ should not be interpreted as an independence count.
+The space of all linear relations among the $M_b$ public projective
+representatives has dimension
+\[
+    K_b = M_b-b.
+\]
+Therefore the C6 estimator reports both
+\[
+    m_c \sum_B R_{3,b_B}
+\]
+as a raw low-weight relation surface and
+\[
+    m_c \sum_B K_{b_B}
+\]
+as a rank-capped independence proxy.  Both quantities matter: the raw count
+measures the adversary's search surface, while the rank-capped count prevents
+the screen from pretending that all low-weight relations are independent.
+
+\paragraph{C6 diagnostic verdict.}
+The C6 validation package screens four surfaces:
+\begin{enumerate}
+    \item sparse-LPN expansion-key rows;
+    \item C4 CLPN row-difference samples;
+    \item C4 weight-three relation samples with rank-capped counting;
+    \item C4 weight-three relation samples with raw upper-bound counting.
+\end{enumerate}
+The current C6 result rejects full projective C4 as the main security
+candidate for block width at least two.  This is not a correctness failure;
+it is a public-surface warning.  The algebraic compactor works, but abundant
+weight-three public relations give an attacker known-zero q-ary-LPN-style
+samples at low accumulated noise.  This interacts directly with the known
+importance of BKW-style algorithms and information-set-decoding attacks for
+LPN and code-based cryptography \cite{BlumKalaiWasserman2003,BogosEtAl2015,Prange1962,Stern1989,MayMeurerThomae2011,BeckerJouxMayMeurer2012}.
+
+\paragraph{Implication for the next construction.}
+C7 should replace the full projective dictionary with a relation-resistant
+compaction layer.  Possible directions are incomplete randomized additive
+bases with screened sparse-kernel weight, salted block masks that prevent
+public cancellation to known-zero messages, or a decoding-based compactor
+whose public generator has no abundant low-weight kernel.  The target
+property is no longer only coverage; the public basis must also have high
+minimum sparse-kernel weight while maintaining compaction noise low enough for
+correctness.

@@ -1,0 +1,42 @@
+\section{C5 Arithmetic Operation Suite and External Baseline Plan}
+\label{app:c5-arithmetic}
+
+The core construction is not limited to multiplication.  Once a compact input ciphertext is expanded into the GSW-style representation, the encrypted message space is the prime field $\F_q$.  If $C\tilde{s}=\mu\tilde{s}+e$, then linear public operations are immediate and nonlinear multiplication is matrix multiplication.
+
+\paragraph{Native field operations.}
+For expanded ciphertexts $C,C'$ and public $a,b\in\F_q$:
+\begin{align*}
+\Enc(0) &:= 0,\\
+\Enc(b) &:= bI,\\
+\Enc(\mu)+\Enc(\nu) &:= C+C',\\
+\Enc(\mu)-\Enc(\nu) &:= C-C',\\
+ a\Enc(\mu) &:= aC,\\
+\Enc(\mu)\Enc(\nu) &:= CC'.
+\end{align*}
+The identity construction is exact because $(bI)\tilde{s}=b\tilde{s}$.  These operations support addition, subtraction, negation, public-scalar multiplication, public-constant addition, multiplication, squaring, public powers, and arbitrary low-degree public polynomials by composition.
+
+\paragraph{Division and inversion.}
+Encrypted division is not a native operation.  For a nonzero field element $x\in\F_q^*$, one may evaluate
+\[
+  x^{-1}=x^{q-2}
+\]
+by Fermat's little theorem.  This consumes multiplicative depth $O(\log q)$ by square-and-multiply and is undefined at $x=0$.  Therefore the prototype exposes nonzero inversion only as a validation tool for small $q$, not as a recommended primitive.
+
+\paragraph{Boolean gates.}
+Bits are encoded as $0,1\in\F_q$.  The validation code tests the polynomial gates
+\begin{align*}
+\mathsf{AND}(x,y)&=xy,\\
+\mathsf{OR}(x,y)&=x+y-xy,\\
+\mathsf{NOT}(x)&=1-x,\\
+\mathsf{XOR}(x,y)&=x+y-2xy.
+\end{align*}
+Since the construction uses odd prime fields, XOR is not linear in this encoding.  This is a design tradeoff of the current q-ary sparse-LPN formulation.
+
+\paragraph{Tested operations.}
+Version C5 adds tests for constants, zero, one, addition, subtraction, negation, public-scalar multiplication, public-constant addition/subtraction, multiplication, oriented multiplication, square, powers, nonzero inverse, nonzero division, affine polynomials, and Boolean AND/OR/XOR/NOT/NAND/NOR/XNOR.
+
+\paragraph{Baseline families.}
+The external comparison plan separates exact arithmetic, approximate arithmetic, and Boolean/integer circuits.  OpenFHE documents support for BFV and BGV for integer arithmetic, CKKS for approximate real arithmetic, and FHEW/TFHE-style Boolean/arbitrary-function bootstrapping \cite{OpenFHEDocs2026}.  Microsoft SEAL supports BFV, BGV, and CKKS and is a natural exact/approximate arithmetic baseline \cite{MicrosoftSEAL2026}.  TFHE-rs targets Boolean, short-integer, and integer circuits and documents common integer arithmetic operations \cite{ZamaTFHERsDocs2026}.  The TFHE construction of Chillotti, Gama, Georgieva, and Izabachene remains the relevant Boolean-gate baseline \cite{CGGI2020}.
+
+\paragraph{Interpretation of C5 measurements.}
+The included timings are pure-Python prototype timings on toy parameters.  They validate operation semantics and expose relative costs inside the prototype.  They must not be interpreted as speed claims against optimized OpenFHE, SEAL, or TFHE-rs implementations.  The repository therefore includes an operation-support matrix and an optional external benchmark harness, but it does not fabricate wall-clock numbers for libraries that are not installed in the validation environment.

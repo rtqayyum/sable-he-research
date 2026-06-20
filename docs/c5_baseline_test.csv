@@ -1,0 +1,5 @@
+operation,inputs,sable_depth,sable_ct_adds_or_subs,sable_public_scalar_muls,sable_public_constants,sable_ct_muls,sable_final_row_support_est,sable_failure_bound_est,sable_c4_public_entries,sable_c4_public_clpn_rows,sable_c4_surface_3term_rate_sample,tfhe_fhew_bootstrap_gate_proxy,bfv_bgv_ciphertext_adds,bfv_bgv_ciphertext_muls,ckks_applicable,notes
+add,2,0,1,0,0,0,16,0.0,49,1813,1.0,,1,0,approximate-only,encrypted x+y over F_q
+mul,2,1,0,0,0,1,16,0.0,49,1813,1.0,,0,1,approximate-only,encrypted multiplication x*y
+and,2,1,0,0,0,1,16,0.0,49,1813,1.0,1,0,1,not preferred for Boolean exactness,Boolean AND as xy
+xor,2,1,2,1,0,1,16,0.0,49,1813,1.0,1,2,1,not preferred for Boolean exactness,Boolean XOR as x+y-2xy

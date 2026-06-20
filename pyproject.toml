@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sable-he-research"
+version = "0.2.0"
+description = "Federated-learning aggregation and research toolkit for SABLE-HE, a code/LPN-based leveled homomorphic-encryption candidate."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+authors = [{name = "SABLE-HE research draft contributors"}]
+maintainers = [{name = "SABLE-HE research draft contributors"}]
+keywords = ["homomorphic encryption", "post-quantum cryptography", "LPN", "code-based cryptography", "research prototype", "federated learning", "secure aggregation", "FedAvg"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Science/Research",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Security :: Cryptography",
+  "Topic :: Scientific/Engineering :: Mathematics",
+  "Typing :: Typed"
+]
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=7", "build>=1.2", "twine>=5"]
+numpy = ["numpy>=1.24"]
+fl = ["numpy>=1.24"]
+tensorflow = ["tensorflow>=2.15"]
+keras = ["keras>=3.0"]
+torch = ["torch>=2.0"]
+all = ["numpy>=1.24", "tensorflow>=2.15", "keras>=3.0", "torch>=2.0"]
+docs = []
+
+[project.scripts]
+sable-he = "sable.cli:main"
+sable-he-estimate = "sable.estimator:main"
+sable-he-baselines = "sable.baselines:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+sable = ["py.typed"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
+addopts = "-q"

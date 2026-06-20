@@ -1,0 +1,303 @@
+{
+  "params": {
+    "name": "c7_standard_toy_noisy",
+    "q": 7,
+    "n": 17,
+    "k": 1,
+    "eta": 0.0005,
+    "n_c": 24,
+    "m_c": 97,
+    "eta_c": 0.0005,
+    "replicas": 11,
+    "c2_block_size": 3
+  },
+  "target_bits": 128.0,
+  "counts": {
+    "q": 7,
+    "N": 18,
+    "block_size": 1,
+    "num_blocks": 18,
+    "c7_entries": 18,
+    "c4_projective_entries": 18,
+    "c2_full_dictionary_entries": 108,
+    "c7_public_clpn_rows": 1746,
+    "row_difference_samples": 83808,
+    "row_difference_noise": 0.000999708333333452,
+    "screened_relation_samples_rank_cap": 0,
+    "relation_noise_for_min_weight": null,
+    "expansion_key_rows": 324,
+    "block_profiles": [
+      {
+        "width": 1,
+        "entries": 1,
+        "kernel_dimension": 0,
+        "screened_relation_weight_below": 1,
+        "low_weight_relations_found": 0,
+        "minimum_relation_weight_observed": null,
+        "relation_noise_at_observed_weight": null,
+        "warning": "coordinate-only block; no surplus-mask relation surface"
+      },
+      {
+        "width": 1,
+        "entries": 1,
+        "kernel_dimension": 0,
+        "screened_relation_weight_below": 1,
+        "low_weight_relations_found": 0,
+        "minimum_relation_weight_observed": null,
+        "relation_noise_at_observed_weight": null,
+        "warning": "coordinate-only block; no surplus-mask relation surface"
+      },
+      {
+        "width": 1,
+        "entries": 1,
+        "kernel_dimension": 0,
+        "screened_relation_weight_below": 1,
+        "low_weight_relations_found": 0,
+        "minimum_relation_weight_observed": null,
+        "relation_noise_at_observed_weight": null,
+        "warning": "coordinate-only block; no surplus-mask relation surface"
+      },
+      {
+        "width": 1,
+        "entries": 1,
+        "kernel_dimension": 0,
+        "screened_relation_weight_below": 1,
+        "low_weight_relations_found": 0,
+        "minimum_relation_weight_observed": null,
+        "relation_noise_at_observed_weight": null,
+        "warning": "coordinate-only block; no surplus-mask relation surface"
+      },
+      {
+        "width": 1,
+        "entries": 1,
+        "kernel_dimension": 0,
+        "screened_relation_weight_below": 1,
+        "low_weight_relations_found": 0,
+        "minimum_relation_weight_observed": null,
+        "relation_noise_at_observed_weight": null,
+        "warning": "coordinate-only block; no surplus-mask relation surface"
+      },
+      {
+        "width": 1,
+        "entries": 1,
+        "kernel_dimension": 0,
+        "screened_relation_weight_below": 1,
+        "low_weight_relations_found": 0,
+        "minimum_relation_weight_observed": null,
+        "relation_noise_at_observed_weight": null,
+        "warning": "coordinate-only block; no surplus-mask relation surface"
+      },
+      {
+        "width": 1,
+        "entries": 1,
+        "kernel_dimension": 0,
+        "screened_relation_weight_below": 1,
+        "low_weight_relations_found": 0,
+        "minimum_relation_weight_observed": null,
+        "relation_noise_at_observed_weight": null,
+        "warning": "coordinate-only block; no surplus-mask relation surface"
+      },
+      {
+        "width": 1,
+        "entries": 1,
+        "kernel_dimension": 0,
+        "screened_relation_weight_below": 1,
+        "low_weight_relations_found": 0,
+        "minimum_relation_weight_observed": null,
+        "relation_noise_at_observed_weight": null,
+        "warning": "coordinate-only block; no surplus-mask relation surface"
+      },
+      {
+        "width": 1,
+        "entries": 1,
+        "kernel_dimension": 0,
+        "screened_relation_weight_below": 1,
+        "low_weight_relations_found": 0,
+        "minimum_relation_weight_observed": null,
+        "relation_noise_at_observed_weight": null,
+        "warning": "coordinate-only block; no surplus-mask relation surface"
+      },
+      {
+        "width": 1,
+        "entries": 1,
+        "kernel_dimension": 0,
+        "screened_relation_weight_below": 1,
+        "low_weight_relations_found": 0,
+        "minimum_relation_weight_observed": null,
+        "relation_noise_at_observed_weight": null,
+        "warning": "coordinate-only block; no surplus-mask relation surface"
+      },
+      {
+        "width": 1,
+        "entries": 1,
+        "kernel_dimension": 0,
+        "screened_relation_weight_below": 1,
+        "low_weight_relations_found": 0,
+        "minimum_relation_weight_observed": null,
+        "relation_noise_at_observed_weight": null,
+        "warning": "coordinate-only block; no surplus-mask relation surface"
+      },
+      {
+        "width": 1,
+        "entries": 1,
+        "kernel_dimension": 0,
+        "screened_relation_weight_below": 1,
+        "low_weight_relations_found": 0,
+        "minimum_relation_weight_observed": null,
+        "relation_noise_at_observed_weight": null,
+        "warning": "coordinate-only block; no surplus-mask relation surface"
+      },
+      {
+        "width": 1,
+        "entries": 1,
+        "kernel_dimension": 0,
+        "screened_relation_weight_below": 1,
+        "low_weight_relations_found": 0,
+        "minimum_relation_weight_observed": null,
+        "relation_noise_at_observed_weight": null,
+        "warning": "coordinate-only block; no surplus-mask relation surface"
+      },
+      {
+        "width": 1,
+        "entries": 1,
+        "kernel_dimension": 0,
+        "screened_relation_weight_below": 1,
+        "low_weight_relations_found": 0,
+        "minimum_relation_weight_observed": null,
+        "relation_noise_at_observed_weight": null,
+        "warning": "coordinate-only block; no surplus-mask relation surface"
+      },
+      {
+        "width": 1,
+        "entries": 1,
+        "kernel_dimension": 0,
+        "screened_relation_weight_below": 1,
+        "low_weight_relations_found": 0,
+        "minimum_relation_weight_observed": null,
+        "relation_noise_at_observed_weight": null,
+        "warning": "coordinate-only block; no surplus-mask relation surface"
+      },
+      {
+        "width": 1,
+        "entries": 1,
+        "kernel_dimension": 0,
+        "screened_relation_weight_below": 1,
+        "low_weight_relations_found": 0,
+        "minimum_relation_weight_observed": null,
+        "relation_noise_at_observed_weight": null,
+        "warning": "coordinate-only block; no surplus-mask relation surface"
+      },
+      {
+        "width": 1,
+        "entries": 1,
+        "kernel_dimension": 0,
+        "screened_relation_weight_below": 1,
+        "low_weight_relations_found": 0,
+        "minimum_relation_weight_observed": null,
+        "relation_noise_at_observed_weight": null,
+        "warning": "coordinate-only block; no surplus-mask relation surface"
+      },
+      {
+        "width": 1,
+        "entries": 1,
+        "kernel_dimension": 0,
+        "screened_relation_weight_below": 1,
+        "low_weight_relations_found": 0,
+        "minimum_relation_weight_observed": null,
+        "relation_noise_at_observed_weight": null,
+        "warning": "coordinate-only block; no surplus-mask relation surface"
+      }
+    ]
+  },
+  "lpn_screens": [
+    {
+      "name": "C7_expansion_key_sparse_LPN_rows",
+      "n": 17,
+      "q": 7,
+      "eta": 0.0005,
+      "samples": 324,
+      "row_weight": 1,
+      "sample_to_dimension_ratio": 19.058823529411764,
+      "expected_errors": 0.162,
+      "expected_clean_samples": 323.838,
+      "base_surface": {
+        "name": "C7_expansion_key_sparse_LPN_rows",
+        "n": 17,
+        "q": 7,
+        "eta": 0.0005,
+        "samples": 324,
+        "row_weight": 1,
+        "conservative_min_bits": 11.147204924942228,
+        "warnings": [
+          "public/evaluation key exposes at least as many samples as the secret dimension",
+          "very small sparse row weight; use only for tests unless justified by a proof/estimator"
+        ]
+      },
+      "qary_bkw_block_scan": {
+        "bits": 8.936637939002571,
+        "block_size": 2,
+        "levels": 9,
+        "table_bits": 5.614709844115208,
+        "detection_bits": 0.862021285083582,
+        "log2_required_samples": 5.614709844115208,
+        "finite_samples_available": true
+      },
+      "conservative_min_bits": 8.936637939002571,
+      "passes_target_screen": false,
+      "warnings": [
+        "public/evaluation key exposes at least as many samples as the secret dimension",
+        "very small sparse row weight; use only for tests unless justified by a proof/estimator",
+        "q-ary block-BKW screen below 128 bits"
+      ]
+    },
+    {
+      "name": "C7_CLPN_row_differences",
+      "n": 24,
+      "q": 7,
+      "eta": 0.000999708333333452,
+      "samples": 83808,
+      "row_weight": null,
+      "sample_to_dimension_ratio": 3492.0,
+      "expected_errors": 83.78355600000994,
+      "expected_clean_samples": 83724.21644399999,
+      "base_surface": {
+        "name": "C7_CLPN_row_differences",
+        "n": 24,
+        "q": 7,
+        "eta": 0.000999708333333452,
+        "samples": 83808,
+        "row_weight": null,
+        "conservative_min_bits": 11.422064766172813,
+        "warnings": [
+          "public/evaluation key exposes at least as many samples as the secret dimension"
+        ]
+      },
+      "qary_bkw_block_scan": {
+        "bits": 11.591989767615125,
+        "block_size": 3,
+        "levels": 8,
+        "table_bits": 8.422064766172813,
+        "detection_bits": 0.8620212850836153,
+        "log2_required_samples": 8.422064766172813,
+        "finite_samples_available": true
+      },
+      "conservative_min_bits": 11.422064766172813,
+      "passes_target_screen": false,
+      "warnings": [
+        "public/evaluation key exposes at least as many samples as the secret dimension",
+        "very large public sample-to-dimension ratio; multi-sample LPN attacks require specialist review",
+        "q-ary block-BKW screen below 128 bits"
+      ]
+    }
+  ],
+  "minimum_screen_bits": 8.936637939002571,
+  "verdict": "requires-parameter-work",
+  "blockers": [
+    "C7_expansion_key_sparse_LPN_rows below target: 8.94 bits",
+    "C7_expansion_key_sparse_LPN_rows: q-ary block-BKW screen below 128 bits",
+    "C7_CLPN_row_differences below target: 11.42 bits",
+    "C7_CLPN_row_differences: very large public sample-to-dimension ratio; multi-sample LPN attacks require specialist review",
+    "C7_CLPN_row_differences: q-ary block-BKW screen below 128 bits"
+  ],
+  "interpretation": "C7 avoids the complete projective line surface by publishing only coordinate vectors plus screened random masks. It is correctness-safe because the coordinate basis alone spans every block, and it is structurally safer than C4 because low-weight relations are explicitly screened. This is not a proof of concrete security; it is a relation-surface filter that must be combined with LPN attack estimation."
+}

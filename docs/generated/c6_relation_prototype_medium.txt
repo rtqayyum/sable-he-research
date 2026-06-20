@@ -1,0 +1,47 @@
+C6 relation-surface screen for prototype_medium  target=128 bits
+q=65537 N=513 block_size=2 blocks=257 n_c=256 m_c=1024 eta_c=9.5367431640625e-07
+C4 entries=16777729  C2 entries=1099545247744  C4/C2=1.52588e-05
+C4 public CLPN rows=17180394496
+Row-difference samples=8787771784704  eta2=1.90735e-06
+Raw weight-3 relations=12010148767727616  rows=12298392338153078784  eta3=2.86102e-06
+Rank-capped relation dimension=16777216  rows=17179869184
+Minimum finite screen bits=24.00070444127384
+Verdict=reject-for-current-security-claim
+
+LPN screens:
+  - C6_expansion_key_sparse_LPN_rows: n=512 samples=263169 eta=9.5367431640625e-07 min_bits=27.00070444127384 passes=False
+      warning: public/evaluation key exposes at least as many samples as the secret dimension
+      warning: very small sparse row weight; use only for tests unless justified by a proof/estimator
+      warning: q-ary block-BKW screen is sample-limited on this fixed public surface
+  - C6_C4_CLPN_row_differences: n=256 samples=8787771784704 eta=1.9073477233316758e-06 min_bits=24.00070444127384 passes=False
+      warning: public/evaluation key exposes at least as many samples as the secret dimension
+      warning: very large public sample-to-dimension ratio; multi-sample LPN attacks require specialist review
+      warning: q-ary block-BKW screen is sample-limited on this fixed public surface
+  - C6_C4_weight3_relations_rank_capped: n=256 samples=17179869184 eta=2.8610202206652566e-06 min_bits=24.001056661910717 passes=False
+      warning: public/evaluation key exposes at least as many samples as the secret dimension
+      warning: very large public sample-to-dimension ratio; multi-sample LPN attacks require specialist review
+      warning: q-ary block-BKW screen is sample-limited on this fixed public surface
+  - C6_C4_weight3_relations_raw_upper_bound: n=256 samples=12298392338153078784 eta=2.8610202206652566e-06 min_bits=24.001056661910717 passes=False
+      warning: public/evaluation key exposes at least as many samples as the secret dimension
+      warning: very large public sample-to-dimension ratio; multi-sample LPN attacks require specialist review
+      warning: q-ary block-BKW screen is sample-limited on this fixed public surface
+
+Blockers / required follow-up:
+  - C6_expansion_key_sparse_LPN_rows below target: 27.00 bits
+  - C6_expansion_key_sparse_LPN_rows: public/evaluation key exposes at least as many samples as the secret dimension
+  - C6_expansion_key_sparse_LPN_rows: q-ary block-BKW screen is sample-limited on this fixed public surface
+  - C6_C4_CLPN_row_differences below target: 24.00 bits
+  - C6_C4_CLPN_row_differences: public/evaluation key exposes at least as many samples as the secret dimension
+  - C6_C4_CLPN_row_differences: very large public sample-to-dimension ratio; multi-sample LPN attacks require specialist review
+  - C6_C4_CLPN_row_differences: q-ary block-BKW screen is sample-limited on this fixed public surface
+  - C6_C4_weight3_relations_rank_capped below target: 24.00 bits
+  - C6_C4_weight3_relations_rank_capped: public/evaluation key exposes at least as many samples as the secret dimension
+  - C6_C4_weight3_relations_rank_capped: very large public sample-to-dimension ratio; multi-sample LPN attacks require specialist review
+  - C6_C4_weight3_relations_rank_capped: q-ary block-BKW screen is sample-limited on this fixed public surface
+  - C6_C4_weight3_relations_raw_upper_bound below target: 24.00 bits
+  - C6_C4_weight3_relations_raw_upper_bound: public/evaluation key exposes at least as many samples as the secret dimension
+  - C6_C4_weight3_relations_raw_upper_bound: very large public sample-to-dimension ratio; multi-sample LPN attacks require specialist review
+  - C6_C4_weight3_relations_raw_upper_bound: q-ary block-BKW screen is sample-limited on this fixed public surface
+  - C4 projective blocks of width >= 2 expose weight-3 zero-message relation combinations; this must be addressed before security claims.
+
+C6 is a diagnostic screening layer, not a certified cryptanalysis result. It corrects the C5 relation-weight heuristic by counting weight-3 projective-line relations in C4. A security-grade design should avoid full projective block dictionaries of width >= 2 or prove that the resulting relation-derived samples do not help known LPN attacks.

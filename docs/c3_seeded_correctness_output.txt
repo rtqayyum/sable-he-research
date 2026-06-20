@@ -1,0 +1,4 @@
+preset=c2_toy_clean q=7 N=13 block=2
+dictionary_entries=294
+mul: got=1 expected=1
+xy_plus_z: got=5 expected=5

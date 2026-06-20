@@ -1,0 +1,16 @@
+C8 readiness artifacts
+======================
+
+SECURITY.md
+docs/compliance/c8_status_matrix.md
+docs/compliance/c8_why_not_production_or_certified.md
+docs/compliance/c8_certification_strategy.md
+docs/security/c8_production_hardening_requirements.md
+docs/standardization/c8_submission_package_checklist.md
+docs/c8_final_readiness_statement.md
+tools/c8_readiness_gate.py
+tools/generate_kat_vectors.py
+vectors/sable_c7_toy_clean_kat.json
+.github/workflows/ci.yml
+RELEASE_NOTES_v1.0_C8_READINESS.md
+VERSION

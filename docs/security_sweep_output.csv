@@ -1,0 +1,13 @@
+preset,depth,correctness_failure_bound,best_attack_screen_bits,instance_statuses,warnings
+toy_clean,0,0,0.00,toy/broken-screen|toy/broken-screen,toy preset: algebraic validation only, not a security parameter set | zero-noise preset: useful for algebra tests but not cryptographic | attack screening does not meet target; inspect security_screen block
+toy_clean,1,0,0.00,toy/broken-screen|toy/broken-screen,toy preset: algebraic validation only, not a security parameter set | zero-noise preset: useful for algebra tests but not cryptographic | attack screening does not meet target; inspect security_screen block
+toy_clean,2,0,0.00,toy/broken-screen|toy/broken-screen,toy preset: algebraic validation only, not a security parameter set | zero-noise preset: useful for algebra tests but not cryptographic | attack screening does not meet target; inspect security_screen block
+toy_noisy,0,0.00486637,18.46,toy/broken-screen|toy/broken-screen,toy preset: algebraic validation only, not a security parameter set | attack screening does not meet target; inspect security_screen block
+toy_noisy,1,0.0206343,18.46,toy/broken-screen|toy/broken-screen,toy preset: algebraic validation only, not a security parameter set | attack screening does not meet target; inspect security_screen block
+toy_noisy,2,1,18.46,toy/broken-screen|toy/broken-screen,evaluated GSW error is high; reduce eta, k, depth, or additions | toy preset: algebraic validation only, not a security parameter set | attack screening does not meet target; inspect security_screen block
+toy_depth2,0,0.000205554,16.28,toy/broken-screen|toy/broken-screen,toy preset: algebraic validation only, not a security parameter set | attack screening does not meet target; inspect security_screen block
+toy_depth2,1,0.000214098,16.28,toy/broken-screen|toy/broken-screen,toy preset: algebraic validation only, not a security parameter set | attack screening does not meet target; inspect security_screen block
+toy_depth2,2,0.000473618,16.28,toy/broken-screen|toy/broken-screen,toy preset: algebraic validation only, not a security parameter set | attack screening does not meet target; inspect security_screen block
+prototype_medium,0,1.85594e-07,40.00,toy/broken-screen|toy/broken-screen,attack screening does not meet target; inspect security_screen block
+prototype_medium,1,1.86474e-07,40.00,toy/broken-screen|toy/broken-screen,attack screening does not meet target; inspect security_screen block
+prototype_medium,2,6.5721e-07,40.00,toy/broken-screen|toy/broken-screen,attack screening does not meet target; inspect security_screen block

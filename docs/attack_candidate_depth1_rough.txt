@@ -1,0 +1,25 @@
+Preset: candidate_depth1_rough  target=128 bits
+Samples: GSW rows=263169 dim=512 eta=0.000976562; CLPN diff rows=4302305280 dim=512 eta_eff=0.000122067
+Minimum finite screen bits: 0.09
+Passes screening target: False
+Attack screens:
+  - clean-subset linear solving [GSW/sparse-LPN expansion-key screen]: bits=0.72 status=critical
+    263169 row-level objects, dimension 512, eta=0.000976562; low eta makes random clean systems likely.
+  - Prange information-set decoding [GSW/sparse-LPN expansion-key screen]: bits=0.72 status=critical
+    First-order random-code decoding estimate using expansion-key row count.
+  - BKW-style parity/noisy-linear learning [GSW/sparse-LPN expansion-key screen]: bits=11824.51 status=above-target
+    Coarse q-ary BKW screen; use a specialized estimator before claiming security.
+  - clean-subset linear solving [CLPN compaction-key row-difference screen]: bits=0.09 status=critical
+    4302305280 difference samples, dimension 512, effective eta=0.000122067.
+  - Prange information-set decoding [CLPN compaction-key row-difference screen]: bits=0.09 status=critical
+    First-order random-code decoding estimate on row-difference CLPN samples.
+  - BKW-style parity/noisy-linear learning [CLPN compaction-key row-difference screen]: bits=1477.39 status=above-target
+    Coarse q-ary BKW screen for the compaction secret.
+  - sparse-row collision entropy [row-distribution sanity screen]: bits=72.41 status=informational
+    row entropy approximately 72.41 bits; birthday excess log2(samples)-H/2 = -18.20.
+Blockers:
+  - GSW/sparse-LPN expansion-key screen: clean-subset linear solving at 0.72 bits (critical)
+  - GSW/sparse-LPN expansion-key screen: Prange information-set decoding at 0.72 bits (critical)
+  - CLPN compaction-key row-difference screen: clean-subset linear solving at 0.09 bits (critical)
+  - CLPN compaction-key row-difference screen: Prange information-set decoding at 0.09 bits (critical)
+Screening estimate only.  This is not a certified sparse-LPN/q-ary-LPN security estimate; it is meant to identify obviously unsafe parameter regimes and guide deeper cryptanalysis.

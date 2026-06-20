@@ -1,0 +1,66 @@
+\section{Introduction}
+
+Homomorphic encryption (HE) allows a server to evaluate functions on encrypted data and return an encrypted result.  Modern practical HE is dominated by lattice assumptions, especially LWE, RLWE, and their ring/module variants.  This dominance is scientifically understandable: lattice HE has a mature lineage from Gentry's first FHE construction, BGV, GSW, BFV, CKKS, FHEW, and TFHE \cite{Gentry2009,BGV2014,GSW2013,FanVercauteren2012,CKKS2017,DucasMicciancio2015,CGGI2020}.  However, it also creates an assumption-diversity problem.  Post-quantum cryptography already benefits from several hardness families: lattices, codes, multivariate equations, hash-based signatures, and isogeny-style problems.  In contrast, post-quantum HE remains much more concentrated around lattices.
+
+Recent work makes a code-based direction credible.  Corrigan-Gibbs, Henzinger, Kalai, and Vaikuntanathan construct somewhat homomorphic encryption from sparse LPN plus a linearly homomorphic encryption primitive \cite{CorriganGibbsHenzingerKalaiVaikuntanathan2024}.  Their work is the closest technical ancestor of this document.  It shows that sparse LPN can support bounded multiplication through a GSW-like approximate-eigenvector method.  Separately, Bitzer, Egger, Liu, and Wachter-Zeh propose post-quantum secure aggregation via code-based homomorphic encryption under LPN-style assumptions \cite{BitzerEggerLiuWachterZeh2026}.  A recent review also explicitly identifies code-based HE as an underexplored direction for post-quantum homomorphic encryption \cite{BhoiArakalaCormanRao2025}.  Random-code/rank-metric SHE has also recently been studied \cite{AguilarMelchorDyserynGaborit2025}.
+
+The construction proposed here is called \sable, short for \emph{Sparse-LPN All-Code Bounded-depth Leveled Homomorphic Encryption}.  Its central idea is:
+\[
+\boxed{
+\text{sparse-LPN GSW-style nonlinear evaluation}
+\;+
+\text{q-ary LPN/code-based linear compaction}
+\;=
+\text{all-code-based leveled SHE}.
+}
+\]
+The sparse-LPN layer handles bounded multiplication.  The q-ary code/LPN layer homomorphically evaluates the final linear decryption map and compresses the output.  The proposed compaction layer is the main design change relative to sparse-LPN SHE constructions that instantiate linear homomorphism using non-code assumptions such as DDH or DCR.
+
+\subsection{Research objective}
+
+The objective is not to claim a complete full FHE scheme.  The objective is to design a mathematically coherent, non-lattice, post-quantum candidate for the following target functionality:
+\[
+\calF_{D,A,q} =
+\left\{
+ f:\F_q^m\to\F_q
+ \;\middle|\;
+ f \text{ is represented by an arithmetic circuit of multiplicative depth }D
+ \text{ and addition budget }A
+\right\}.
+\]
+Here $q\ge 3$ is prime.  Boolean inputs can be embedded as $0,1\in\F_q$.  Arithmetic multiplication gives AND, while OR, NOT, and XOR can be represented by low-degree polynomials:
+\[
+\operatorname{AND}(x,y)=xy,
+\qquad
+\operatorname{OR}(x,y)=x+y-xy,
+\qquad
+\operatorname{NOT}(x)=1-x,
+\qquad
+\operatorname{XOR}(x,y)=x+y-2xy.
+\]
+This makes \sable{} a candidate for private low-degree analytics, voting/counting with nonlinear checks, secure aggregation plus low-degree validation, private feature-interaction models, and small Boolean circuits.
+
+\subsection{Contributions}
+
+This draft makes four contributions.
+
+\begin{enumerate}
+    \item It formulates an all-code-based leveled SHE candidate using two independent LPN-style layers: sparse LPN for nonlinear evaluation and q-ary LPN/code encryption for linear compaction.
+    \item It gives precise algorithms: $\KeyGen$, compact input $\Enc$, $\Expand$, $\EvalAdd$, $\EvalMul$, $\Compact$, and $\Dec$.
+    \item It proves correctness by tracking a row-sparsity and coordinate-error invariant.  The invariant is inherited from the approximate-eigenvector technique of GSW and from sparse-LPN SHE analysis \cite{GSW2013,CorriganGibbsHenzingerKalaiVaikuntanathan2024}.
+    \item It gives a hybrid IND-CPA security proof under explicit sparse-LPN and q-ary LPN assumptions, plus an attack and validation checklist for parameter selection.
+\end{enumerate}
+
+\subsection{Non-goals}
+
+The following are intentionally outside the first version.
+\begin{itemize}
+    \item \textbf{No full bootstrapping claim.}  The construction is leveled and supports a predetermined bounded multiplicative depth.
+    \item \textbf{No deployment-grade concrete parameters.}  Parameter tables in this document are formulas and illustrative examples only.  Security estimation must be done separately.
+    \item \textbf{No CCA security.}  The security target is IND-CPA for a secret-key HE scheme with public evaluation keys.
+    \item \textbf{No claim of superiority over lattice FHE.}  Mature lattice libraries remain the practical baseline.  The scientific contribution is assumption diversity and a code-based path to bounded homomorphism.
+\end{itemize}
+
+\subsection{Relationship to post-quantum standardization}
+
+NIST's first post-quantum standards are for key establishment and signatures, not homomorphic encryption.  FIPS 203 specifies ML-KEM and relates its security to Module-LWE, while FIPS 204 specifies ML-DSA for digital signatures \cite{NISTFIPS203,NISTFIPS204}.  HE security guidance is maintained separately by the HomomorphicEncryption.org community \cite{AlbrechtEtAl2024HEGuidelines,HEStandard2018}.  Thus \sable{} should not be read as a NIST-standardized primitive.  It is a research proposal in the code-based HE family.

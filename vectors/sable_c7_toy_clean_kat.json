@@ -1,0 +1,83 @@
+{
+  "c7_basis_digest": "241f21f74218b8a7f2cf1c5037f97d14bffe12a037939bad6a2355d7f7bd8de0",
+  "cases": {
+    "add": {
+      "compact_digest": "dbc18d37ed069285b3f032a2d641ef670092d4b2a06a13868b6ddcfe44b8b7e4",
+      "expanded_digest": "7ca01db723fe6078e10b700d4e9d8c9ad2d10f5a54aff564dab96b4a5bd18720",
+      "expected": 1,
+      "observed": 1
+    },
+    "and_bit": {
+      "compact_digest": "b0288ae98eca9d3fe2fe22d8890b917373427dc2056f4aa91e7e07e7ee031f48",
+      "expanded_digest": "365bed24a9aa9a3e6481cd4b21ef6fab3c7e4616dbca9b46308293f604494640",
+      "expected": 0,
+      "observed": 0
+    },
+    "mul": {
+      "compact_digest": "b0288ae98eca9d3fe2fe22d8890b917373427dc2056f4aa91e7e07e7ee031f48",
+      "expanded_digest": "365bed24a9aa9a3e6481cd4b21ef6fab3c7e4616dbca9b46308293f604494640",
+      "expected": 0,
+      "observed": 0
+    },
+    "neg_x": {
+      "compact_digest": "cd1a8589164ac20fed5166b8136f7ee0c591690ba164c7ec62872c5f2267ee01",
+      "expanded_digest": "6408a621040de451ef2bcc69272aeb3bbf347b76a5b6ec7fad8c7148cc2ba873",
+      "expected": 6,
+      "observed": 6
+    },
+    "or_bit": {
+      "compact_digest": "97a0835aa9e1a156932087dcca265d6794763585133fb5aee9e5397d3cb23989",
+      "expanded_digest": "5d12e912d5b14025deebc4b6b204c10983bda4e76eb5168b1a4d1f1848c31280",
+      "expected": 1,
+      "observed": 1
+    },
+    "scalar_3_x": {
+      "compact_digest": "ba63592ace00432764973badf21be73b79fdb1069b028fdc9e3ee3f28ab4705f",
+      "expanded_digest": "ef87d69101140294a974a602a38ba945a3911ad1c0d8db1928306f086cbce0f6",
+      "expected": 3,
+      "observed": 3
+    },
+    "square_x": {
+      "compact_digest": "ed92275252ca41e67ef43f0e142abc248c45791b1e6c9e5ac2e2e8072e23fb5b",
+      "expanded_digest": "ab025f6a1713572f3fd717d55c2c91717231cc0708d261699a6e4446b958a82f",
+      "expected": 1,
+      "observed": 1
+    },
+    "sub": {
+      "compact_digest": "90cbc88ebbd9263a0c6cb634f2dc00f4ff7494867fde6c112c75cdb7b4052142",
+      "expanded_digest": "316021ea42f95f87d27b8dfed3cec483fa03bafdfe425d47fb099b31cb291873",
+      "expected": 1,
+      "observed": 1
+    },
+    "xor_bit": {
+      "compact_digest": "39a90ba6a80d236846beba1f49e13213336288db73a98d0e4928794a5e7b53c9",
+      "expanded_digest": "a6919518f3301611e0b57bc817ceb2d8e7504ddec665fa18ec900583e48e841f",
+      "expected": 1,
+      "observed": 1
+    }
+  },
+  "params": {
+    "c2_block_size": 3,
+    "eta": 0.0,
+    "eta_c": 0.0,
+    "k": 1,
+    "m_c": 37,
+    "n": 14,
+    "n_c": 16,
+    "name": "c7_standard_toy_clean",
+    "q": 7,
+    "replicas": 3
+  },
+  "plaintexts": {
+    "x": 1,
+    "y": 0
+  },
+  "public_key_digest": "22f912b6d559bacdaf1413716d424180be86df9bb8b7b00fe05232eb2b3f52f3",
+  "seeds": {
+    "key": 111,
+    "x": 222,
+    "y": 333
+  },
+  "suite": "sable-c7-toy-clean-kat",
+  "warning": "toy regression vector only, not a security validation vector"
+}

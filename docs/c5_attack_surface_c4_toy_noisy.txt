@@ -1,0 +1,22 @@
+C5 C4-projective attack-surface screen: preset=c4_projective_toy_noisy
+q=7 N=17 block_size=2 blocks=9
+public C4 entries=65
+public CLPN rows=6305
+dense public field elements=157625
+C2 full-dictionary entries=390
+C4/C2 entry ratio=0.166667
+compaction terms bound=9
+compaction q-ary noise bound=0.00448951
+compaction repetition failure bound=2.05719e-21
+global flag=watch
+block surfaces:
+  block[0] width=2 entries=8 rows=776 rel_w=3 rel_noise=0.00149913 log2_rel_choices<=10.977 flag=watch: many low-weight projective relations
+  block[1] width=2 entries=8 rows=776 rel_w=3 rel_noise=0.00149913 log2_rel_choices<=10.977 flag=watch: many low-weight projective relations
+  block[2] width=2 entries=8 rows=776 rel_w=3 rel_noise=0.00149913 log2_rel_choices<=10.977 flag=watch: many low-weight projective relations
+  block[3] width=2 entries=8 rows=776 rel_w=3 rel_noise=0.00149913 log2_rel_choices<=10.977 flag=watch: many low-weight projective relations
+  block[4] width=2 entries=8 rows=776 rel_w=3 rel_noise=0.00149913 log2_rel_choices<=10.977 flag=watch: many low-weight projective relations
+  block[5] width=2 entries=8 rows=776 rel_w=3 rel_noise=0.00149913 log2_rel_choices<=10.977 flag=watch: many low-weight projective relations
+  block[6] width=2 entries=8 rows=776 rel_w=3 rel_noise=0.00149913 log2_rel_choices<=10.977 flag=watch: many low-weight projective relations
+  block[7] width=2 entries=8 rows=776 rel_w=3 rel_noise=0.00149913 log2_rel_choices<=10.977 flag=watch: many low-weight projective relations
+  block[8] width=1 entries=1 rows=97 rel_w=2 rel_noise=0.000999708 log2_rel_choices<=-inf flag=watch: many low-weight projective relations
+Diagnostic screen only; not a security proof or a certified parameter estimator.

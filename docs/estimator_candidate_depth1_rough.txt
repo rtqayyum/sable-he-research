@@ -1,0 +1,18 @@
+Preset: candidate_depth1_rough  q=65537 n=512 k=3 R=41
+Depth: 1  additions multiplier: 1
+Fresh quality:     w=16 eps=0.00488281
+Evaluated quality: w=256 eps=0.0830078
+Compaction B=256 eta_B=0.015504
+Per-replica failure bound: 0.0830078
+Final replicated failure bound: 6.42201e-07
+Size estimates:
+  input_ciphertext_sparse_entries: 164
+  expansion_key_sparse_entries: 1052676
+  compaction_key_field_entries_dense_toy: 1077940224
+  fresh_expanded_sparse_entries: 336528
+  final_expanded_sparse_entries_capped: 5384448
+  multiplication_cost_proxy: 33619968
+Security screen min bits: 0.09017119184795394 passes=False
+Warnings:
+  - attack screening does not meet target; inspect security_screen block
+screening estimate only; requires external sparse-LPN/q-ary-LPN cryptanalysis

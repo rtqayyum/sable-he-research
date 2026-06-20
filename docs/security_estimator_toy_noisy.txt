@@ -1,0 +1,59 @@
+Preset: toy_noisy  q=127 n=24 k=2 n_c=24 m_c=81
+Depth=1 additions=1
+Public sample counts:
+  expansion_gsw_rows: 625
+  fresh_regev_rows_from_extra_ciphertexts: 0
+  total_public_sparse_lpn_rows: 625
+  compaction_lpn_rows: 2025
+Sparse row-space diagnostics:
+  row_space_log2: 22.063
+  public_sparse_rows_log2: 9.288
+  birthday_margin_log2: 1.744
+  full_space_margin_log2: 12.775
+  public_sparse_rows: 625
+
+Layer: sparse_lpn_gsw_expansion
+  dimension=24 modulus=127 samples=625 eta=0.002
+  expected_errors=1.25
+  minimum attack cost: 2^12.95 via prange_isd_clean_set
+    - exhaustive_secret_search: time=2^167.73, memory=2^4.58, samples=2^0.00
+      model: try all q^n secrets and test against samples
+      caveat: baseline only; ignores algebraic shortcuts and parallelization
+    - prange_isd_clean_set: time=2^12.95, memory=2^9.17, samples=2^9.29
+      model: C(m,n)/C(m-t,n) clean-set trials plus dense linear algebra
+      caveat: rough random-code model; sparse-row structure may change rank and success probabilities
+    - low_noise_error_support_search: time=2^44.37, memory=2^9.17, samples=2^9.29
+      model: enumerate error positions and q-ary nonzero values, then solve
+      caveat: very pessimistic/naive, but useful for detecting dangerously tiny expected error counts
+    - bkw_block_scan: time=2^23.87, memory=2^13.98, samples=2^23.85
+      model: min over block size b=2, levels=12; table q^b plus 1/bias^2 samples
+      caveat: coarse first-pass BKW model; ignores advanced coded-BKW and sparse-specific improvements
+  warning: expected error count is very small; low-noise attacks and direct decoding deserve special scrutiny
+  warning: heuristic attack cost below 80 bits
+
+Layer: qary_lpn_compaction
+  dimension=24 modulus=127 samples=2025 eta=0.001
+  expected_errors=2.025
+  minimum attack cost: 2^12.89 via prange_isd_clean_set
+    - exhaustive_secret_search: time=2^167.73, memory=2^4.58, samples=2^0.00
+      model: try all q^n secrets and test against samples
+      caveat: baseline only; ignores algebraic shortcuts and parallelization
+    - prange_isd_clean_set: time=2^12.89, memory=2^9.17, samples=2^10.98
+      model: C(m,n)/C(m-t,n) clean-set trials plus dense linear algebra
+      caveat: rough random-code model; sparse-row structure may change rank and success probabilities
+    - low_noise_error_support_search: time=2^64.13, memory=2^9.17, samples=2^10.98
+      model: enumerate error positions and q-ary nonzero values, then solve
+      caveat: very pessimistic/naive, but useful for detecting dangerously tiny expected error counts
+    - bkw_block_scan: time=2^17.59, memory=2^13.98, samples=2^11.92
+      model: min over block size b=2, levels=12; table q^b plus 1/bias^2 samples
+      caveat: coarse first-pass BKW model; ignores advanced coded-BKW and sparse-specific improvements
+  warning: expected error count is very small; low-noise attacks and direct decoding deserve special scrutiny
+  warning: heuristic attack cost below 80 bits
+
+Overall minimum attack cost: 2^12.89 via qary_lpn_compaction:prange_isd_clean_set
+Interpretation: toy or weak by this heuristic model
+Global warnings:
+  - sparse row sample space is close to birthday-collision range; increase n/k/q or seed rows carefully
+  - toy preset: not intended to provide cryptographic security
+  - overall heuristic attack cost is below 128 bits
+This is a heuristic estimator, not a security proof or certification.

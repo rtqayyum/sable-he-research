@@ -1,0 +1,70 @@
+\section{C3 Seeded Block-Dictionary Storage}
+\label{app:c3-seeded}
+
+The C2 block-dictionary compactor reduces the number of accumulated CLPN noise
+terms by publishing encryptions of all nonzero block inner products
+$\langle u,\tilde{s}^{(j)}\rangle$.  Its direct implementation, however, stores a
+full CLPN matrix $A$ and vector $b$ for every dictionary entry.  This appendix
+records a storage refinement implemented in the validation repository.
+
+\paragraph{Seeded CLPN ciphertexts.}
+For each dictionary entry, sample a public seed $\sigma$ and define
+$A_\sigma\in\F_q^{m_c\times n_c}$ by a deterministic expander.  Instead of
+storing $(A_\sigma,b)$, the public key stores
+\[
+  (\sigma,b),
+  \qquad
+  b=A_\sigma r + x\mathbf{1}+e,
+\]
+where $x=\langle u,\tilde{s}^{(j)}\rangle$ is the dictionary plaintext and $r$
+is the CLPN compaction secret.  Linear homomorphic addition concatenates seeded
+matrix terms and adds the corresponding $b$ vectors.  To decrypt an aggregate
+ciphertext, the holder of $r$ regenerates the required rows of each
+$A_\sigma$ and plurality-decodes the residual.
+
+\paragraph{Correctness.}
+Let a compacted C3 ciphertext be the linear combination
+\[
+  (b,\{(\alpha_t,\sigma_t)\}_{t=1}^T),
+  \qquad
+  b=\sum_{t=1}^T\alpha_t b_t .
+\]
+Then
+\[
+  b-\sum_{t=1}^T\alpha_t A_{\sigma_t}r
+  =\left(\sum_{t=1}^T\alpha_t x_t\right)\mathbf{1}
+   +\sum_{t=1}^T\alpha_t e_t .
+\]
+Thus the plaintext and noise law are exactly those of dense C2.  Seeded storage
+changes materialization cost but not the correctness invariant.
+
+\paragraph{Security accounting.}
+The public matrices are derivable from the seeds, so C3 exposes the same q-ary
+LPN sample surface as dense C2: if the dictionary contains $M_{\mathrm{dict}}$ entries,
+then the public compaction surface contains $M_{\mathrm{dict}}m_c$ LPN rows.  Therefore
+seeding must not be claimed as a security improvement.  It is a key-size and
+memory-traffic optimization only.  The validation repository adds a dedicated
+q-ary/sparse-LPN surface estimator that reports the public sample count,
+sample-to-dimension ratio, no-clean-subset and Prange-style screens, and a
+q-ary block-BKW scan following the classical BKW line of work
+\cite{BlumKalaiWasserman2003,LevieilFouque2006,BogosEtAl2015,EsserEtAl2017LPNDecoded}.
+
+\paragraph{Storage comparison.}
+Ignoring small serialization overheads, dense C2 stores approximately
+\[
+  M_{\mathrm{dict}}m_c(n_c+1)
+\]
+field elements.  Seeded C3 stores approximately
+\[
+  M_{\mathrm{dict}}m_c + M_{\mathrm{dict}}\cdot\frac{\lambda_{\mathrm{seed}}}{\log_2 q}
+\]
+field-element equivalents, where $\lambda_{\mathrm{seed}}$ is the public seed length in
+bits.  The saving is therefore close to a factor of $n_c+1$ when $m_c$ is large
+relative to the seed length.  The public attack surface remains unchanged.
+
+\paragraph{Implemented status.}
+The validation package includes seeded CLPN encryption, seeded block-dictionary
+key generation, end-to-end clean multiplication tests, and a seeded C3 estimator.
+The implementation is still a research prototype and uses SHA-256-derived rows
+for reproducibility; a production design would require a specified, reviewed,
+constant-time PRG or XOF interface and independent cryptanalysis.

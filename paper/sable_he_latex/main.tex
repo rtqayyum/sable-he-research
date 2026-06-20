@@ -1,0 +1,47 @@
+\documentclass[11pt]{article}
+\input{macros.tex}
+
+\title{\sable: A Sparse-LPN and Code-LPN Candidate for All-Code-Based Leveled Homomorphic Encryption}
+\author{Research design draft\\Prepared as a mathematical construction and validation plan}
+\date{Draft v0.9 C7 relation-resistant milestone -- \today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+This document proposes \sable, a candidate post-quantum leveled homomorphic encryption construction for bounded-depth arithmetic circuits over a prime field, and records the final v0.9-C7 relation-resistant validation pass.  The construction combines a sparse-LPN GSW-style nonlinear evaluation layer with an LPN/code-based linearly homomorphic compaction layer.  The purpose is assumption diversification: the design avoids Ring-LWE, Module-LWE, DDH, DCR, RSA, pairings, and Paillier-type assumptions, and instead relies on sparse-LPN and q-ary LPN/code-decoding assumptions.  We give formal syntax, algorithms, correctness invariants, a hybrid security proof under stated assumptions, efficiency formulas, parameter constraints, and a validation plan.  The result should be read as a research-grade \candidate{} construction, not as a deployed or peer-reviewed cryptographic standard.
+\end{abstract}
+
+\paragraph{Status and intended use.}
+This is a theory-and-design manuscript.  It is suitable as the basis for a research paper, prototype library, security-estimation work, and cryptanalysis.  It does not certify concrete parameters as secure.  Any real deployment would require independent review, parameter estimation against current LPN and information-set-decoding attacks, side-channel review, and implementation audits.
+
+\tableofcontents
+
+\input{sections/01_introduction.tex}
+\input{sections/02_preliminaries.tex}
+\input{sections/03_design_overview.tex}
+\input{sections/04_core_primitives.tex}
+\input{sections/05_full_construction.tex}
+\input{sections/06_correctness.tex}
+\input{sections/07_security.tex}
+\input{sections/08_efficiency_parameters.tex}
+\input{sections/09_validation.tex}
+\input{sections/10_limitations_future.tex}
+
+\appendix
+\input{appendices/a_pseudocode.tex}
+\input{appendices/b_piling_up.tex}
+\input{appendices/c_reviewer_checklist.tex}
+\input{appendices/d_attack_screening.tex}
+\input{appendices/e_c2_block_dictionary.tex}
+\input{appendices/f_c3_seeded_dictionary.tex}
+\input{appendices/g_c2_public_surface.tex}
+\input{appendices/h_c4_projective_basis.tex}
+\input{appendices/i_c5_arithmetic_operations.tex}
+\input{appendices/j_c5_baselines_surface.tex}
+\input{appendices/k_c6_relation_surface.tex}
+\input{appendices/l_c7_relation_resistant.tex}
+
+\input{references_manual.tex}
+
+\end{document}

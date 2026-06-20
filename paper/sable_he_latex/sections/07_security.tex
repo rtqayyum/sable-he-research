@@ -1,0 +1,90 @@
+\section{Security analysis}
+
+The security claim is conditional and modular.  The construction is secure if the sparse-LPN and q-ary LPN/code distributions used in its layers are pseudorandom for the chosen parameter sizes and number of samples.  Concrete parameters require separate estimation.
+
+\subsection{Pseudorandomness of zero encryptions}
+
+The following proposition is immediate from Assumption~\ref{ass:sparse-lpn}.
+
+\begin{proposition}[Sparse-LPN zero ciphertext pseudorandomness]
+Sparse-LPN zero vectors of the form
+\[
+    (a,a\transpose u+e)
+\]
+are indistinguishable from sparse-supported vectors whose final coordinate is uniform in $\F_q$.  Likewise, sparse-LPN zero matrices $Z$ sampled rowwise are indistinguishable from matrices with the same row-support distribution and uniform final row entries.
+\end{proposition}
+
+Because $\GSW\Enc_s(\alpha)=Z+\alpha I_N$, semantic security of GSW-style scalar encryption follows by adding a fixed public shift to a pseudorandom matrix.  If the encrypted scalar is secret but independent of the GSW secret, the same argument applies after conditioning on that scalar.
+
+\subsection{IND-CPA theorem}
+
+\begin{theorem}[IND-CPA security of \sable]
+\label{thm:security}
+Assume:
+\begin{enumerate}
+    \item sparse q-ary LPN pseudorandomness for all compact input ciphertext samples under $t$;
+    \item sparse q-ary LPN pseudorandomness for all GSW-style zero rows under $s$ in the expansion key;
+    \item q-ary LPN/code semantic security for all compaction-key ciphertexts under $r$.
+\end{enumerate}
+Then \sable{} is IND-CPA secure for polynomially many encryption queries and polynomial-size public evaluation keys.
+\end{theorem}
+
+\begin{proof}
+Let $\calA$ be a polynomial-time IND-CPA adversary.  We define hybrids.
+
+\paragraph{Hybrid H0: real experiment.}
+The adversary receives the real evaluation key
+\[
+    \ek=(\mathsf{EK}^{\rm exp},\mathsf{EK}^{\rm cmp})
+\]
+and oracle encryptions under $t$.  The challenge ciphertext encrypts either $\mu_0$ or $\mu_1$ under $t$.
+
+\paragraph{Hybrid H1: replace the compaction key.}
+Replace each compaction-key ciphertext
+\[
+    \mathsf{EK}^{\rm cmp}_i=\CLPN\Enc_r(\tilde{s}_i)
+\]
+by an encryption of zero, or equivalently by a pseudorandom q-ary LPN/code ciphertext.  The messages $\tilde{s}_i$ may depend on $s$ but are independent of the compaction secret $r$.  By Assumption~\ref{ass:clpn}, the adversary's distinguishing advantage changes by at most a negligible quantity.
+
+\paragraph{Hybrid H2: replace the expansion key.}
+Replace each expansion-key matrix
+\[
+    \mathsf{EK}^{\rm exp}_i=\GSW\Enc_s(\tilde{t}_i)=Z_i+\tilde{t}_iI_N
+\]
+by a pseudorandom matrix with the same public support profile.  Conditioned on $t$, each $\tilde{t}_iI_N$ is a fixed shift and $Z_i$ is a sparse-LPN zero matrix under secret $s$.  By Assumption~\ref{ass:sparse-lpn}, replacing all such matrices changes the adversary's advantage negligibly.
+
+\paragraph{Hybrid H3: replace encryption-oracle outputs.}
+Now the evaluation key reveals no computational information about $t$.  Replace all compact input ciphertexts, including the challenge ciphertext, by sparse-supported pseudorandom vectors.  Each compact encryption has the form
+\[
+    (a,a\transpose t+e+\mu).
+\]
+For any fixed $\mu$, this is a fixed shift of a sparse-LPN sample.  By Assumption~\ref{ass:sparse-lpn}, encryptions of $\mu_0$ and $\mu_1$ are indistinguishable from pseudorandom vectors and hence from each other.
+
+In Hybrid H3 the adversary's view is independent of the challenge bit.  Therefore its advantage is zero in H3, and its advantage in H0 is bounded by the sum of the negligible hybrid gaps.
+\end{proof}
+
+\subsection{What the proof does and does not cover}
+
+The proof covers passive IND-CPA privacy for the abstract construction.  It does not cover:
+\begin{itemize}
+    \item chosen-ciphertext attacks;
+    \item maliciously generated public parameters;
+    \item side channels or timing leakage;
+    \item concrete attack costs for a particular parameter set;
+    \item algebraic attacks exploiting unexpected structure in an optimized implementation;
+    \item correctness failures that leak through repeated decryption attempts.
+\end{itemize}
+These issues must be addressed before any implementation is considered deployment-grade.
+
+\subsection{Relevant attack families}
+
+The most relevant attacks for concrete parameter selection include:
+\begin{itemize}
+    \item BKW-style LPN attacks \cite{BlumKalaiWasserman2003};
+    \item information-set decoding and Prange/Stern-style decoding attacks \cite{Prange1962,Stern1989};
+    \item low-noise LPN attacks when $\eta$ or $\eta_c$ is extremely small;
+    \item sample-amplification attacks, because the evaluation key contains many LPN samples;
+    \item distinguishing attacks against sparse public rows;
+    \item attacks exploiting the chain of encrypted secrets $t\to s\to r$.
+\end{itemize}
+The construction deliberately avoids circular encryption of a secret under itself.  The expansion key encrypts $\tilde{t}$ under independent secret $s$, and the compaction key encrypts $\tilde{s}$ under independent secret $r$.

@@ -1,0 +1,822 @@
+{
+  "preset": "c4_projective_toy_clean",
+  "repeats": 3,
+  "rows": [
+    {
+      "compact_seconds_median": 0.0006131049995019566,
+      "decrypt_seconds_median": 0.0001497310004197061,
+      "eval_seconds_median": 8.914099998946767e-05,
+      "eval_seconds_min": 6.378400030371267e-05,
+      "expanded_profile": {
+        "avg_total_nnz_per_replica": 43.0,
+        "max_row_support": 4,
+        "ncols": 13,
+        "nrows": 13,
+        "replicas": 3,
+        "total_nnz": 129
+      },
+      "operation": "add",
+      "proxy_comparison": {
+        "existing_method_proxies": {
+          "BFV_BGV": {
+            "ciphertext_additions": 1,
+            "ciphertext_multiplications": 0,
+            "interpretation": "best exact-arithmetic lattice baseline for modular integer/plaintext operations"
+          },
+          "CKKS": {
+            "interpretation": "best for approximate real/complex arithmetic, not exact finite-field outputs",
+            "relevance": "not needed for exact F_q"
+          },
+          "TFHE_FHEW": {
+            "gate_or_bootstrap_proxy": null,
+            "interpretation": "best fit for Boolean gates/comparisons/lookups; arithmetic integers decompose into many gates"
+          }
+        },
+        "operation": {
+          "additions": 1,
+          "bfv_bgv_additions": 1,
+          "bfv_bgv_multiplications": 0,
+          "ckks_relevance": "not needed for exact F_q",
+          "multiplications": 0,
+          "multiplicative_depth": 0,
+          "name": "add",
+          "notes": "linear addition",
+          "scalar_mults": 0,
+          "tfhe_boolean_gate_proxy": null
+        },
+        "params": "c4_projective_toy_clean",
+        "sable_c4": {
+          "c4_entries": 49,
+          "c4_public_clpn_rows": 1813,
+          "c4_terms_bound": 7,
+          "estimated_failure_bound": 0.0,
+          "expanded_sparse_entries_capped": 156,
+          "linear_proxy_component": 52,
+          "mul_proxy_component": 0,
+          "multiplicative_depth": 0,
+          "native_domain": "prime-field arithmetic F_q; Boolean via polynomial encodings on {0,1}",
+          "sparse_field_operation_proxy": 52
+        },
+        "warning": "proxy comparison only; not wall-clock superiority over OpenFHE, SEAL, or TFHE-rs"
+      },
+      "sample_decryption": 5
+    },
+    {
+      "compact_seconds_median": 0.0005224710002948996,
+      "decrypt_seconds_median": 0.00013084300007903948,
+      "eval_seconds_median": 5.784499990113545e-05,
+      "eval_seconds_min": 5.671399958373513e-05,
+      "expanded_profile": {
+        "avg_total_nnz_per_replica": 41.666666666666664,
+        "max_row_support": 4,
+        "ncols": 13,
+        "nrows": 13,
+        "replicas": 3,
+        "total_nnz": 125
+      },
+      "operation": "sub",
+      "proxy_comparison": {
+        "existing_method_proxies": {
+          "BFV_BGV": {
+            "ciphertext_additions": 1,
+            "ciphertext_multiplications": 0,
+            "interpretation": "best exact-arithmetic lattice baseline for modular integer/plaintext operations"
+          },
+          "CKKS": {
+            "interpretation": "best for approximate real/complex arithmetic, not exact finite-field outputs",
+            "relevance": "not needed for exact F_q"
+          },
+          "TFHE_FHEW": {
+            "gate_or_bootstrap_proxy": null,
+            "interpretation": "best fit for Boolean gates/comparisons/lookups; arithmetic integers decompose into many gates"
+          }
+        },
+        "operation": {
+          "additions": 1,
+          "bfv_bgv_additions": 1,
+          "bfv_bgv_multiplications": 0,
+          "ckks_relevance": "not needed for exact F_q",
+          "multiplications": 0,
+          "multiplicative_depth": 0,
+          "name": "sub",
+          "notes": "addition with -1 scaling",
+          "scalar_mults": 1,
+          "tfhe_boolean_gate_proxy": null
+        },
+        "params": "c4_projective_toy_clean",
+        "sable_c4": {
+          "c4_entries": 49,
+          "c4_public_clpn_rows": 1813,
+          "c4_terms_bound": 7,
+          "estimated_failure_bound": 0.0,
+          "expanded_sparse_entries_capped": 156,
+          "linear_proxy_component": 104,
+          "mul_proxy_component": 0,
+          "multiplicative_depth": 0,
+          "native_domain": "prime-field arithmetic F_q; Boolean via polynomial encodings on {0,1}",
+          "sparse_field_operation_proxy": 104
+        },
+        "warning": "proxy comparison only; not wall-clock superiority over OpenFHE, SEAL, or TFHE-rs"
+      },
+      "sample_decryption": 6
+    },
+    {
+      "compact_seconds_median": 0.00044260299910092726,
+      "decrypt_seconds_median": 0.00012682700071309227,
+      "eval_seconds_median": 4.743000135931652e-05,
+      "eval_seconds_min": 4.6287999794003554e-05,
+      "expanded_profile": {
+        "avg_total_nnz_per_replica": 37.666666666666664,
+        "max_row_support": 3,
+        "ncols": 13,
+        "nrows": 13,
+        "replicas": 3,
+        "total_nnz": 113
+      },
+      "operation": "scalar_mul",
+      "proxy_comparison": {
+        "existing_method_proxies": {
+          "BFV_BGV": {
+            "ciphertext_additions": 0,
+            "ciphertext_multiplications": 0,
+            "interpretation": "best exact-arithmetic lattice baseline for modular integer/plaintext operations"
+          },
+          "CKKS": {
+            "interpretation": "best for approximate real/complex arithmetic, not exact finite-field outputs",
+            "relevance": "not needed for exact F_q"
+          },
+          "TFHE_FHEW": {
+            "gate_or_bootstrap_proxy": null,
+            "interpretation": "best fit for Boolean gates/comparisons/lookups; arithmetic integers decompose into many gates"
+          }
+        },
+        "operation": {
+          "additions": 0,
+          "bfv_bgv_additions": 0,
+          "bfv_bgv_multiplications": 0,
+          "ckks_relevance": "not needed for exact F_q",
+          "multiplications": 0,
+          "multiplicative_depth": 0,
+          "name": "scalar_mul",
+          "notes": "public scalar multiply",
+          "scalar_mults": 1,
+          "tfhe_boolean_gate_proxy": null
+        },
+        "params": "c4_projective_toy_clean",
+        "sable_c4": {
+          "c4_entries": 49,
+          "c4_public_clpn_rows": 1813,
+          "c4_terms_bound": 7,
+          "estimated_failure_bound": 0.0,
+          "expanded_sparse_entries_capped": 156,
+          "linear_proxy_component": 52,
+          "mul_proxy_component": 0,
+          "multiplicative_depth": 0,
+          "native_domain": "prime-field arithmetic F_q; Boolean via polynomial encodings on {0,1}",
+          "sparse_field_operation_proxy": 52
+        },
+        "warning": "proxy comparison only; not wall-clock superiority over OpenFHE, SEAL, or TFHE-rs"
+      },
+      "sample_decryption": 3
+    },
+    {
+      "compact_seconds_median": 0.0009301430000050459,
+      "decrypt_seconds_median": 0.00015469800018763635,
+      "eval_seconds_median": 0.0002031800013355678,
+      "eval_seconds_min": 0.00020042600044689607,
+      "expanded_profile": {
+        "avg_total_nnz_per_replica": 64.66666666666667,
+        "max_row_support": 7,
+        "ncols": 13,
+        "nrows": 13,
+        "replicas": 3,
+        "total_nnz": 194
+      },
+      "operation": "mul",
+      "proxy_comparison": {
+        "existing_method_proxies": {
+          "BFV_BGV": {
+            "ciphertext_additions": 0,
+            "ciphertext_multiplications": 1,
+            "interpretation": "best exact-arithmetic lattice baseline for modular integer/plaintext operations"
+          },
+          "CKKS": {
+            "interpretation": "best for approximate real/complex arithmetic, not exact finite-field outputs",
+            "relevance": "multiplication is supported approximately"
+          },
+          "TFHE_FHEW": {
+            "gate_or_bootstrap_proxy": null,
+            "interpretation": "best fit for Boolean gates/comparisons/lookups; arithmetic integers decompose into many gates"
+          }
+        },
+        "operation": {
+          "additions": 0,
+          "bfv_bgv_additions": 0,
+          "bfv_bgv_multiplications": 1,
+          "ckks_relevance": "multiplication is supported approximately",
+          "multiplications": 1,
+          "multiplicative_depth": 1,
+          "name": "mul",
+          "notes": "field multiplication",
+          "scalar_mults": 0,
+          "tfhe_boolean_gate_proxy": null
+        },
+        "params": "c4_projective_toy_clean",
+        "sable_c4": {
+          "c4_entries": 49,
+          "c4_public_clpn_rows": 1813,
+          "c4_terms_bound": 7,
+          "estimated_failure_bound": 0.0,
+          "expanded_sparse_entries_capped": 507,
+          "linear_proxy_component": 208,
+          "mul_proxy_component": 3328,
+          "multiplicative_depth": 1,
+          "native_domain": "prime-field arithmetic F_q; Boolean via polynomial encodings on {0,1}",
+          "sparse_field_operation_proxy": 3536
+        },
+        "warning": "proxy comparison only; not wall-clock superiority over OpenFHE, SEAL, or TFHE-rs"
+      },
+      "sample_decryption": 6
+    },
+    {
+      "compact_seconds_median": 0.001023650000206544,
+      "decrypt_seconds_median": 0.00012804899961338378,
+      "eval_seconds_median": 0.00019213300038245507,
+      "eval_seconds_min": 0.00018627500139700714,
+      "expanded_profile": {
+        "avg_total_nnz_per_replica": 66.66666666666667,
+        "max_row_support": 7,
+        "ncols": 13,
+        "nrows": 13,
+        "replicas": 3,
+        "total_nnz": 200
+      },
+      "operation": "square",
+      "proxy_comparison": {
+        "existing_method_proxies": {
+          "BFV_BGV": {
+            "ciphertext_additions": 0,
+            "ciphertext_multiplications": 1,
+            "interpretation": "best exact-arithmetic lattice baseline for modular integer/plaintext operations"
+          },
+          "CKKS": {
+            "interpretation": "best for approximate real/complex arithmetic, not exact finite-field outputs",
+            "relevance": "multiplication is supported approximately"
+          },
+          "TFHE_FHEW": {
+            "gate_or_bootstrap_proxy": null,
+            "interpretation": "best fit for Boolean gates/comparisons/lookups; arithmetic integers decompose into many gates"
+          }
+        },
+        "operation": {
+          "additions": 0,
+          "bfv_bgv_additions": 0,
+          "bfv_bgv_multiplications": 1,
+          "ckks_relevance": "multiplication is supported approximately",
+          "multiplications": 1,
+          "multiplicative_depth": 1,
+          "name": "square",
+          "notes": "x^2",
+          "scalar_mults": 0,
+          "tfhe_boolean_gate_proxy": null
+        },
+        "params": "c4_projective_toy_clean",
+        "sable_c4": {
+          "c4_entries": 49,
+          "c4_public_clpn_rows": 1813,
+          "c4_terms_bound": 7,
+          "estimated_failure_bound": 0.0,
+          "expanded_sparse_entries_capped": 507,
+          "linear_proxy_component": 208,
+          "mul_proxy_component": 3328,
+          "multiplicative_depth": 1,
+          "native_domain": "prime-field arithmetic F_q; Boolean via polynomial encodings on {0,1}",
+          "sparse_field_operation_proxy": 3536
+        },
+        "warning": "proxy comparison only; not wall-clock superiority over OpenFHE, SEAL, or TFHE-rs"
+      },
+      "sample_decryption": 4
+    },
+    {
+      "compact_seconds_median": 0.0010225390014966251,
+      "decrypt_seconds_median": 0.0001321139989158837,
+      "eval_seconds_median": 0.000528479999047704,
+      "eval_seconds_min": 0.000514738998390385,
+      "expanded_profile": {
+        "avg_total_nnz_per_replica": 81.0,
+        "max_row_support": 9,
+        "ncols": 13,
+        "nrows": 13,
+        "replicas": 3,
+        "total_nnz": 243
+      },
+      "operation": "poly2",
+      "proxy_comparison": {
+        "existing_method_proxies": {
+          "BFV_BGV": {
+            "ciphertext_additions": 2,
+            "ciphertext_multiplications": 1,
+            "interpretation": "best exact-arithmetic lattice baseline for modular integer/plaintext operations"
+          },
+          "CKKS": {
+            "interpretation": "best for approximate real/complex arithmetic, not exact finite-field outputs",
+            "relevance": "approximate polynomial possible"
+          },
+          "TFHE_FHEW": {
+            "gate_or_bootstrap_proxy": null,
+            "interpretation": "best fit for Boolean gates/comparisons/lookups; arithmetic integers decompose into many gates"
+          }
+        },
+        "operation": {
+          "additions": 2,
+          "bfv_bgv_additions": 2,
+          "bfv_bgv_multiplications": 1,
+          "ckks_relevance": "approximate polynomial possible",
+          "multiplications": 1,
+          "multiplicative_depth": 1,
+          "name": "poly2",
+          "notes": "x^2 + 3x + 5",
+          "scalar_mults": 1,
+          "tfhe_boolean_gate_proxy": null
+        },
+        "params": "c4_projective_toy_clean",
+        "sable_c4": {
+          "c4_entries": 49,
+          "c4_public_clpn_rows": 1813,
+          "c4_terms_bound": 7,
+          "estimated_failure_bound": 0.0,
+          "expanded_sparse_entries_capped": 507,
+          "linear_proxy_component": 624,
+          "mul_proxy_component": 3328,
+          "multiplicative_depth": 1,
+          "native_domain": "prime-field arithmetic F_q; Boolean via polynomial encodings on {0,1}",
+          "sparse_field_operation_proxy": 3952
+        },
+        "warning": "proxy comparison only; not wall-clock superiority over OpenFHE, SEAL, or TFHE-rs"
+      },
+      "sample_decryption": 1
+    },
+    {
+      "compact_seconds_median": 0.0008476509992760839,
+      "decrypt_seconds_median": 0.00012898999921162613,
+      "eval_seconds_median": 0.0010270959992340067,
+      "eval_seconds_min": 0.0010182220012211474,
+      "expanded_profile": {
+        "avg_total_nnz_per_replica": 98.0,
+        "max_row_support": 11,
+        "ncols": 13,
+        "nrows": 13,
+        "replicas": 3,
+        "total_nnz": 294
+      },
+      "operation": "poly3",
+      "proxy_comparison": {
+        "existing_method_proxies": {
+          "BFV_BGV": {
+            "ciphertext_additions": 3,
+            "ciphertext_multiplications": 2,
+            "interpretation": "best exact-arithmetic lattice baseline for modular integer/plaintext operations"
+          },
+          "CKKS": {
+            "interpretation": "best for approximate real/complex arithmetic, not exact finite-field outputs",
+            "relevance": "approximate polynomial possible"
+          },
+          "TFHE_FHEW": {
+            "gate_or_bootstrap_proxy": null,
+            "interpretation": "best fit for Boolean gates/comparisons/lookups; arithmetic integers decompose into many gates"
+          }
+        },
+        "operation": {
+          "additions": 3,
+          "bfv_bgv_additions": 3,
+          "bfv_bgv_multiplications": 2,
+          "ckks_relevance": "approximate polynomial possible",
+          "multiplications": 2,
+          "multiplicative_depth": 2,
+          "name": "poly3",
+          "notes": "x^3 + 2x^2 + 3x + 4",
+          "scalar_mults": 2,
+          "tfhe_boolean_gate_proxy": null
+        },
+        "params": "c4_projective_toy_clean",
+        "sable_c4": {
+          "c4_entries": 49,
+          "c4_public_clpn_rows": 1813,
+          "c4_terms_bound": 7,
+          "estimated_failure_bound": 0.0,
+          "expanded_sparse_entries_capped": 507,
+          "linear_proxy_component": 16640,
+          "mul_proxy_component": 1703936,
+          "multiplicative_depth": 2,
+          "native_domain": "prime-field arithmetic F_q; Boolean via polynomial encodings on {0,1}",
+          "sparse_field_operation_proxy": 1720576
+        },
+        "warning": "proxy comparison only; not wall-clock superiority over OpenFHE, SEAL, or TFHE-rs"
+      },
+      "sample_decryption": 5
+    },
+    {
+      "compact_seconds_median": 0.0004643749998649582,
+      "decrypt_seconds_median": 0.00013396800022746902,
+      "eval_seconds_median": 8.634699952381197e-05,
+      "eval_seconds_min": 8.421500024269335e-05,
+      "expanded_profile": {
+        "avg_total_nnz_per_replica": 47.333333333333336,
+        "max_row_support": 4,
+        "ncols": 13,
+        "nrows": 13,
+        "replicas": 3,
+        "total_nnz": 142
+      },
+      "operation": "bool_not",
+      "proxy_comparison": {
+        "existing_method_proxies": {
+          "BFV_BGV": {
+            "ciphertext_additions": 1,
+            "ciphertext_multiplications": 0,
+            "interpretation": "best exact-arithmetic lattice baseline for modular integer/plaintext operations"
+          },
+          "CKKS": {
+            "interpretation": "best for approximate real/complex arithmetic, not exact finite-field outputs",
+            "relevance": "not a natural CKKS operation"
+          },
+          "TFHE_FHEW": {
+            "gate_or_bootstrap_proxy": 0,
+            "interpretation": "best fit for Boolean gates/comparisons/lookups; arithmetic integers decompose into many gates"
+          }
+        },
+        "operation": {
+          "additions": 1,
+          "bfv_bgv_additions": 1,
+          "bfv_bgv_multiplications": 0,
+          "ckks_relevance": "not a natural CKKS operation",
+          "multiplications": 0,
+          "multiplicative_depth": 0,
+          "name": "bool_not",
+          "notes": "1-x",
+          "scalar_mults": 1,
+          "tfhe_boolean_gate_proxy": 0
+        },
+        "params": "c4_projective_toy_clean",
+        "sable_c4": {
+          "c4_entries": 49,
+          "c4_public_clpn_rows": 1813,
+          "c4_terms_bound": 7,
+          "estimated_failure_bound": 0.0,
+          "expanded_sparse_entries_capped": 156,
+          "linear_proxy_component": 104,
+          "mul_proxy_component": 0,
+          "multiplicative_depth": 0,
+          "native_domain": "prime-field arithmetic F_q; Boolean via polynomial encodings on {0,1}",
+          "sparse_field_operation_proxy": 104
+        },
+        "warning": "proxy comparison only; not wall-clock superiority over OpenFHE, SEAL, or TFHE-rs"
+      },
+      "sample_decryption": 6
+    },
+    {
+      "compact_seconds_median": 0.0008927969993237639,
+      "decrypt_seconds_median": 0.00013003200001548976,
+      "eval_seconds_median": 0.0001873660003184341,
+      "eval_seconds_min": 0.00018419200023345184,
+      "expanded_profile": {
+        "avg_total_nnz_per_replica": 64.66666666666667,
+        "max_row_support": 7,
+        "ncols": 13,
+        "nrows": 13,
+        "replicas": 3,
+        "total_nnz": 194
+      },
+      "operation": "bool_and",
+      "proxy_comparison": {
+        "existing_method_proxies": {
+          "BFV_BGV": {
+            "ciphertext_additions": 0,
+            "ciphertext_multiplications": 1,
+            "interpretation": "best exact-arithmetic lattice baseline for modular integer/plaintext operations"
+          },
+          "CKKS": {
+            "interpretation": "best for approximate real/complex arithmetic, not exact finite-field outputs",
+            "relevance": "not a natural CKKS operation"
+          },
+          "TFHE_FHEW": {
+            "gate_or_bootstrap_proxy": 1,
+            "interpretation": "best fit for Boolean gates/comparisons/lookups; arithmetic integers decompose into many gates"
+          }
+        },
+        "operation": {
+          "additions": 0,
+          "bfv_bgv_additions": 0,
+          "bfv_bgv_multiplications": 1,
+          "ckks_relevance": "not a natural CKKS operation",
+          "multiplications": 1,
+          "multiplicative_depth": 1,
+          "name": "bool_and",
+          "notes": "xy",
+          "scalar_mults": 0,
+          "tfhe_boolean_gate_proxy": 1
+        },
+        "params": "c4_projective_toy_clean",
+        "sable_c4": {
+          "c4_entries": 49,
+          "c4_public_clpn_rows": 1813,
+          "c4_terms_bound": 7,
+          "estimated_failure_bound": 0.0,
+          "expanded_sparse_entries_capped": 507,
+          "linear_proxy_component": 208,
+          "mul_proxy_component": 3328,
+          "multiplicative_depth": 1,
+          "native_domain": "prime-field arithmetic F_q; Boolean via polynomial encodings on {0,1}",
+          "sparse_field_operation_proxy": 3536
+        },
+        "warning": "proxy comparison only; not wall-clock superiority over OpenFHE, SEAL, or TFHE-rs"
+      },
+      "sample_decryption": 6
+    },
+    {
+      "compact_seconds_median": 0.0008499639989167918,
+      "decrypt_seconds_median": 0.00013241499982541427,
+      "eval_seconds_median": 0.00032127399936143775,
+      "eval_seconds_min": 0.0003208640009688679,
+      "expanded_profile": {
+        "avg_total_nnz_per_replica": 79.33333333333333,
+        "max_row_support": 9,
+        "ncols": 13,
+        "nrows": 13,
+        "replicas": 3,
+        "total_nnz": 238
+      },
+      "operation": "bool_or",
+      "proxy_comparison": {
+        "existing_method_proxies": {
+          "BFV_BGV": {
+            "ciphertext_additions": 2,
+            "ciphertext_multiplications": 1,
+            "interpretation": "best exact-arithmetic lattice baseline for modular integer/plaintext operations"
+          },
+          "CKKS": {
+            "interpretation": "best for approximate real/complex arithmetic, not exact finite-field outputs",
+            "relevance": "not a natural CKKS operation"
+          },
+          "TFHE_FHEW": {
+            "gate_or_bootstrap_proxy": 1,
+            "interpretation": "best fit for Boolean gates/comparisons/lookups; arithmetic integers decompose into many gates"
+          }
+        },
+        "operation": {
+          "additions": 2,
+          "bfv_bgv_additions": 2,
+          "bfv_bgv_multiplications": 1,
+          "ckks_relevance": "not a natural CKKS operation",
+          "multiplications": 1,
+          "multiplicative_depth": 1,
+          "name": "bool_or",
+          "notes": "x+y-xy",
+          "scalar_mults": 0,
+          "tfhe_boolean_gate_proxy": 1
+        },
+        "params": "c4_projective_toy_clean",
+        "sable_c4": {
+          "c4_entries": 49,
+          "c4_public_clpn_rows": 1813,
+          "c4_terms_bound": 7,
+          "estimated_failure_bound": 0.0,
+          "expanded_sparse_entries_capped": 507,
+          "linear_proxy_component": 416,
+          "mul_proxy_component": 3328,
+          "multiplicative_depth": 1,
+          "native_domain": "prime-field arithmetic F_q; Boolean via polynomial encodings on {0,1}",
+          "sparse_field_operation_proxy": 3744
+        },
+        "warning": "proxy comparison only; not wall-clock superiority over OpenFHE, SEAL, or TFHE-rs"
+      },
+      "sample_decryption": 6
+    },
+    {
+      "compact_seconds_median": 0.0008382769992749672,
+      "decrypt_seconds_median": 0.00013896500058763195,
+      "eval_seconds_median": 0.0004444759997568326,
+      "eval_seconds_min": 0.00038126199979160447,
+      "expanded_profile": {
+        "avg_total_nnz_per_replica": 77.66666666666667,
+        "max_row_support": 9,
+        "ncols": 13,
+        "nrows": 13,
+        "replicas": 3,
+        "total_nnz": 233
+      },
+      "operation": "bool_xor",
+      "proxy_comparison": {
+        "existing_method_proxies": {
+          "BFV_BGV": {
+            "ciphertext_additions": 2,
+            "ciphertext_multiplications": 1,
+            "interpretation": "best exact-arithmetic lattice baseline for modular integer/plaintext operations"
+          },
+          "CKKS": {
+            "interpretation": "best for approximate real/complex arithmetic, not exact finite-field outputs",
+            "relevance": "not a natural CKKS operation"
+          },
+          "TFHE_FHEW": {
+            "gate_or_bootstrap_proxy": 1,
+            "interpretation": "best fit for Boolean gates/comparisons/lookups; arithmetic integers decompose into many gates"
+          }
+        },
+        "operation": {
+          "additions": 2,
+          "bfv_bgv_additions": 2,
+          "bfv_bgv_multiplications": 1,
+          "ckks_relevance": "not a natural CKKS operation",
+          "multiplications": 1,
+          "multiplicative_depth": 1,
+          "name": "bool_xor",
+          "notes": "x+y-2xy",
+          "scalar_mults": 1,
+          "tfhe_boolean_gate_proxy": 1
+        },
+        "params": "c4_projective_toy_clean",
+        "sable_c4": {
+          "c4_entries": 49,
+          "c4_public_clpn_rows": 1813,
+          "c4_terms_bound": 7,
+          "estimated_failure_bound": 0.0,
+          "expanded_sparse_entries_capped": 507,
+          "linear_proxy_component": 624,
+          "mul_proxy_component": 3328,
+          "multiplicative_depth": 1,
+          "native_domain": "prime-field arithmetic F_q; Boolean via polynomial encodings on {0,1}",
+          "sparse_field_operation_proxy": 3952
+        },
+        "warning": "proxy comparison only; not wall-clock superiority over OpenFHE, SEAL, or TFHE-rs"
+      },
+      "sample_decryption": 0
+    },
+    {
+      "compact_seconds_median": 0.0012519970005087089,
+      "decrypt_seconds_median": 0.0001319149996561464,
+      "eval_seconds_median": 0.0009715329997561639,
+      "eval_seconds_min": 0.0009275789998355322,
+      "expanded_profile": {
+        "avg_total_nnz_per_replica": 89.0,
+        "max_row_support": 11,
+        "ncols": 13,
+        "nrows": 13,
+        "replicas": 3,
+        "total_nnz": 267
+      },
+      "operation": "quadratic4",
+      "proxy_comparison": {
+        "existing_method_proxies": {
+          "BFV_BGV": {
+            "ciphertext_additions": 3,
+            "ciphertext_multiplications": 4,
+            "interpretation": "best exact-arithmetic lattice baseline for modular integer/plaintext operations"
+          },
+          "CKKS": {
+            "interpretation": "best for approximate real/complex arithmetic, not exact finite-field outputs",
+            "relevance": "approximate quadratic possible"
+          },
+          "TFHE_FHEW": {
+            "gate_or_bootstrap_proxy": 7,
+            "interpretation": "best fit for Boolean gates/comparisons/lookups; arithmetic integers decompose into many gates"
+          }
+        },
+        "operation": {
+          "additions": 3,
+          "bfv_bgv_additions": 3,
+          "bfv_bgv_multiplications": 4,
+          "ckks_relevance": "approximate quadratic possible",
+          "multiplications": 4,
+          "multiplicative_depth": 1,
+          "name": "quadratic4",
+          "notes": "sum of four pairwise products",
+          "scalar_mults": 0,
+          "tfhe_boolean_gate_proxy": 7
+        },
+        "params": "c4_projective_toy_clean",
+        "sable_c4": {
+          "c4_entries": 49,
+          "c4_public_clpn_rows": 1813,
+          "c4_terms_bound": 7,
+          "estimated_failure_bound": 0.0,
+          "expanded_sparse_entries_capped": 507,
+          "linear_proxy_component": 624,
+          "mul_proxy_component": 13312,
+          "multiplicative_depth": 1,
+          "native_domain": "prime-field arithmetic F_q; Boolean via polynomial encodings on {0,1}",
+          "sparse_field_operation_proxy": 13936
+        },
+        "warning": "proxy comparison only; not wall-clock superiority over OpenFHE, SEAL, or TFHE-rs"
+      },
+      "sample_decryption": 4
+    }
+  ],
+  "support_table": [
+    {
+      "comments": "public constants add no noise",
+      "multiplicative_depth": 0,
+      "native": true,
+      "operation": "constant",
+      "sable_expression": "gamma * I"
+    },
+    {
+      "comments": "linear operation",
+      "multiplicative_depth": 0,
+      "native": true,
+      "operation": "addition",
+      "sable_expression": "C1 + C2"
+    },
+    {
+      "comments": "linear operation",
+      "multiplicative_depth": 0,
+      "native": true,
+      "operation": "subtraction",
+      "sable_expression": "C1 - C2"
+    },
+    {
+      "comments": "linear operation",
+      "multiplicative_depth": 0,
+      "native": true,
+      "operation": "negation",
+      "sable_expression": "-C"
+    },
+    {
+      "comments": "linear operation",
+      "multiplicative_depth": 0,
+      "native": true,
+      "operation": "scalar multiplication",
+      "sable_expression": "alpha * C"
+    },
+    {
+      "comments": "main nonlinear operation; increases sparsity/noise",
+      "multiplicative_depth": 1,
+      "native": true,
+      "operation": "multiplication",
+      "sable_expression": "C1 C2"
+    },
+    {
+      "comments": "bounded by multiplicative depth",
+      "multiplicative_depth": "degree-dependent",
+      "native": true,
+      "operation": "polynomial evaluation",
+      "sable_expression": "Horner or circuit DAG"
+    },
+    {
+      "comments": "valid for plaintext bits",
+      "multiplicative_depth": 0,
+      "native": true,
+      "operation": "Boolean NOT",
+      "sable_expression": "1 - x"
+    },
+    {
+      "comments": "valid for plaintext bits",
+      "multiplicative_depth": 1,
+      "native": true,
+      "operation": "Boolean AND",
+      "sable_expression": "xy"
+    },
+    {
+      "comments": "valid for plaintext bits",
+      "multiplicative_depth": 1,
+      "native": true,
+      "operation": "Boolean OR",
+      "sable_expression": "x + y - xy"
+    },
+    {
+      "comments": "valid for plaintext bits in odd prime fields",
+      "multiplicative_depth": 1,
+      "native": true,
+      "operation": "Boolean XOR",
+      "sable_expression": "x + y - 2xy"
+    },
+    {
+      "comments": "algebraically possible but too expensive for large q",
+      "multiplicative_depth": "ceil(log(q-1))",
+      "native": false,
+      "operation": "equality to constant",
+      "sable_expression": "1 - (x-a)^(q-1)"
+    },
+    {
+      "comments": "only for nonzero plaintexts; expensive",
+      "multiplicative_depth": "ceil(log(q-2))",
+      "native": false,
+      "operation": "field inverse",
+      "sable_expression": "x^(q-2)"
+    },
+    {
+      "comments": "requires a different encoding or TFHE/FHEW-style lookup/bootstrapping",
+      "multiplicative_depth": "not native",
+      "native": false,
+      "operation": "integer comparison/order",
+      "sable_expression": "bit decomposition or lookup"
+    },
+    {
+      "comments": "only field division by nonzero y; not native integer division",
+      "multiplicative_depth": "expensive",
+      "native": false,
+      "operation": "division",
+      "sable_expression": "x * y^(q-2)"
+    }
+  ],
+  "warning": "Pure-Python SABLE timings are research-prototype timings. Existing methods are proxy operation counts unless external OpenFHE/SEAL/TFHE-rs benchmarks are run separately."
+}

@@ -1,0 +1,1754 @@
+{
+  "params": {
+    "name": "c2_design_smallq",
+    "q": 7,
+    "n": 512,
+    "k": 2,
+    "eta": 1.52587890625e-05,
+    "n_c": 512,
+    "m_c": 4096,
+    "eta_c": 6.103515625e-05,
+    "replicas": 31,
+    "c2_block_size": 3
+  },
+  "target_bits": 128.0,
+  "counts": {
+    "q": 7,
+    "N": 513,
+    "block_size": 3,
+    "num_blocks": 171,
+    "c4_projective_entries": 9747,
+    "c2_full_dictionary_entries": 58482,
+    "c4_vs_c2_entry_ratio": 0.16666666666666666,
+    "c4_public_clpn_rows": 39923712,
+    "row_difference_samples": 81743800320,
+    "row_difference_noise": 0.00012206596632794283,
+    "raw_weight3_relations": 545832,
+    "raw_weight3_relation_rows": 2235727872,
+    "rank_capped_relation_dimension": 9234,
+    "rank_capped_relation_rows": 37822464,
+    "weight3_relation_noise": 0.00018309243054329523,
+    "expansion_key_rows": 263169,
+    "block_profiles": [
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      },
+      {
+        "width": 3,
+        "projective_entries": 57,
+        "relation_space_dimension": 54,
+        "projective_lines": 57,
+        "raw_weight3_relations": 3192,
+        "weight3_relation_noise": 0.00018309243054329523,
+        "warning": "min relation weight is 3; relation-derived zero-message samples exist"
+      }
+    ]
+  },
+  "lpn_screens": [
+    {
+      "name": "C6_expansion_key_sparse_LPN_rows",
+      "n": 512,
+      "q": 7,
+      "eta": 1.52587890625e-05,
+      "samples": 263169,
+      "row_weight": 2,
+      "sample_to_dimension_ratio": 514.001953125,
+      "expected_errors": 4.0156402587890625,
+      "expected_clean_samples": 263164.9843597412,
+      "base_surface": {
+        "name": "C6_expansion_key_sparse_LPN_rows",
+        "n": 512,
+        "q": 7,
+        "eta": 1.52587890625e-05,
+        "samples": 263169,
+        "row_weight": 2,
+        "conservative_min_bits": 27.011271140999146,
+        "warnings": [
+          "public/evaluation key exposes at least as many samples as the secret dimension",
+          "very small sparse row weight; use only for tests unless justified by a proof/estimator"
+        ]
+      },
+      "qary_bkw_block_scan": {
+        "bits": 77.38354539627647,
+        "block_size": 26,
+        "levels": 20,
+        "table_bits": 72.99122797349771,
+        "detection_bits": 53.86109427662624,
+        "log2_required_samples": 72.99122797349771,
+        "finite_samples_available": false
+      },
+      "conservative_min_bits": 27.011271140999146,
+      "passes_target_screen": false,
+      "warnings": [
+        "public/evaluation key exposes at least as many samples as the secret dimension",
+        "very small sparse row weight; use only for tests unless justified by a proof/estimator",
+        "q-ary block-BKW screen is sample-limited on this fixed public surface"
+      ]
+    },
+    {
+      "name": "C6_C4_CLPN_row_differences",
+      "n": 512,
+      "q": 7,
+      "eta": 0.00012206596632794283,
+      "samples": 81743800320,
+      "row_weight": null,
+      "sample_to_dimension_ratio": 159655860.0,
+      "expected_errors": 9978135.977379203,
+      "expected_clean_samples": 81733822184.02263,
+      "base_surface": {
+        "name": "C6_C4_CLPN_row_differences",
+        "n": 512,
+        "q": 7,
+        "eta": 0.00012206596632794283,
+        "samples": 81743800320,
+        "row_weight": null,
+        "conservative_min_bits": 27.0901707332135,
+        "warnings": [
+          "public/evaluation key exposes at least as many samples as the secret dimension"
+        ]
+      },
+      "qary_bkw_block_scan": {
+        "bits": 91.19792758522804,
+        "block_size": 31,
+        "levels": 17,
+        "table_bits": 87.02800258378574,
+        "detection_bits": 53.86253259565034,
+        "log2_required_samples": 87.02800258378574,
+        "finite_samples_available": false
+      },
+      "conservative_min_bits": 27.0901707332135,
+      "passes_target_screen": false,
+      "warnings": [
+        "public/evaluation key exposes at least as many samples as the secret dimension",
+        "very large public sample-to-dimension ratio; multi-sample LPN attacks require specialist review",
+        "q-ary block-BKW screen is sample-limited on this fixed public surface"
+      ]
+    },
+    {
+      "name": "C6_C4_weight3_relations_rank_capped",
+      "n": 512,
+      "q": 7,
+      "eta": 0.00018309243054329523,
+      "samples": 37822464,
+      "row_weight": null,
+      "sample_to_dimension_ratio": 73872.0,
+      "expected_errors": 6925.0068628962845,
+      "expected_clean_samples": 37815538.99313711,
+      "base_surface": {
+        "name": "C6_C4_weight3_relations_rank_capped",
+        "n": 512,
+        "q": 7,
+        "eta": 0.00018309243054329523,
+        "samples": 37822464,
+        "row_weight": null,
+        "conservative_min_bits": 27.13525541178229,
+        "warnings": [
+          "public/evaluation key exposes at least as many samples as the secret dimension"
+        ]
+      },
+      "qary_bkw_block_scan": {
+        "bits": 91.19792758522804,
+        "block_size": 31,
+        "levels": 17,
+        "table_bits": 87.02800258378574,
+        "detection_bits": 80.79379889344129,
+        "log2_required_samples": 87.02800258378574,
+        "finite_samples_available": false
+      },
+      "conservative_min_bits": 27.13525541178229,
+      "passes_target_screen": false,
+      "warnings": [
+        "public/evaluation key exposes at least as many samples as the secret dimension",
+        "very large public sample-to-dimension ratio; multi-sample LPN attacks require specialist review",
+        "q-ary block-BKW screen is sample-limited on this fixed public surface"
+      ]
+    },
+    {
+      "name": "C6_C4_weight3_relations_raw_upper_bound",
+      "n": 512,
+      "q": 7,
+      "eta": 0.00018309243054329523,
+      "samples": 2235727872,
+      "row_weight": null,
+      "sample_to_dimension_ratio": 4366656.0,
+      "expected_errors": 409344.85011786927,
+      "expected_clean_samples": 2235318527.1498823,
+      "base_surface": {
+        "name": "C6_C4_weight3_relations_raw_upper_bound",
+        "n": 512,
+        "q": 7,
+        "eta": 0.00018309243054329523,
+        "samples": 2235727872,
+        "row_weight": null,
+        "conservative_min_bits": 27.13525541178229,
+        "warnings": [
+          "public/evaluation key exposes at least as many samples as the secret dimension"
+        ]
+      },
+      "qary_bkw_block_scan": {
+        "bits": 91.19792758522804,
+        "block_size": 31,
+        "levels": 17,
+        "table_bits": 87.02800258378574,
+        "detection_bits": 80.79379889344129,
+        "log2_required_samples": 87.02800258378574,
+        "finite_samples_available": false
+      },
+      "conservative_min_bits": 27.13525541178229,
+      "passes_target_screen": false,
+      "warnings": [
+        "public/evaluation key exposes at least as many samples as the secret dimension",
+        "very large public sample-to-dimension ratio; multi-sample LPN attacks require specialist review",
+        "q-ary block-BKW screen is sample-limited on this fixed public surface"
+      ]
+    }
+  ],
+  "minimum_screen_bits": 27.011271140999146,
+  "verdict": "reject-for-current-security-claim",
+  "blockers": [
+    "C6_expansion_key_sparse_LPN_rows below target: 27.01 bits",
+    "C6_expansion_key_sparse_LPN_rows: public/evaluation key exposes at least as many samples as the secret dimension",
+    "C6_expansion_key_sparse_LPN_rows: q-ary block-BKW screen is sample-limited on this fixed public surface",
+    "C6_C4_CLPN_row_differences below target: 27.09 bits",
+    "C6_C4_CLPN_row_differences: public/evaluation key exposes at least as many samples as the secret dimension",
+    "C6_C4_CLPN_row_differences: very large public sample-to-dimension ratio; multi-sample LPN attacks require specialist review",
+    "C6_C4_CLPN_row_differences: q-ary block-BKW screen is sample-limited on this fixed public surface",
+    "C6_C4_weight3_relations_rank_capped below target: 27.14 bits",
+    "C6_C4_weight3_relations_rank_capped: public/evaluation key exposes at least as many samples as the secret dimension",
+    "C6_C4_weight3_relations_rank_capped: very large public sample-to-dimension ratio; multi-sample LPN attacks require specialist review",
+    "C6_C4_weight3_relations_rank_capped: q-ary block-BKW screen is sample-limited on this fixed public surface",
+    "C6_C4_weight3_relations_raw_upper_bound below target: 27.14 bits",
+    "C6_C4_weight3_relations_raw_upper_bound: public/evaluation key exposes at least as many samples as the secret dimension",
+    "C6_C4_weight3_relations_raw_upper_bound: very large public sample-to-dimension ratio; multi-sample LPN attacks require specialist review",
+    "C6_C4_weight3_relations_raw_upper_bound: q-ary block-BKW screen is sample-limited on this fixed public surface",
+    "C4 projective blocks of width >= 2 expose weight-3 zero-message relation combinations; this must be addressed before security claims."
+  ],
+  "interpretation": "C6 is a diagnostic screening layer, not a certified cryptanalysis result. It corrects the C5 relation-weight heuristic by counting weight-3 projective-line relations in C4. A security-grade design should avoid full projective block dictionaries of width >= 2 or prove that the resulting relation-derived samples do not help known LPN attacks."
+}

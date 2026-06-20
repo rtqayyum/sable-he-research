@@ -1,0 +1,37 @@
+Preset: c2_design_smallq  q=7 n=512 k=2 R=31
+Depth: 1  additions multiplier: 1
+C2 block size: 3 dictionary entries: 58482
+V1 terms=81 C2 terms=81 eta_v1=0.00492979 eta_c2=0.00492979
+C2 compaction failure: 5.46271e-222
+C2 final replicated failure: 1.9269e-07
+Size estimates:
+  input_ciphertext_sparse_entries: 93
+  expansion_key_sparse_entries: 789507
+  v1_compaction_key_field_entries_dense_toy: 1077940224
+  c2_dictionary_clpn_ciphertexts: 58482
+  c2_compaction_key_field_entries_dense_toy: 122885185536
+  fresh_expanded_sparse_entries: 143127
+  final_expanded_sparse_entries_capped: 1288143
+Warnings:
+  - C2 public CLPN sample surface is extremely large; attack analysis must account for it
+
+Attack-screening verdict: reject-parameters  target=128.0 bits
+Overall conservative min proxy: 27.011271140999146
+
+Surface: expansion_key_sparse_lpn
+  n=512 q=7 eta=1.52587890625e-05 samples=263169
+  conservative min bits: 27.011271140999146
+  Warnings:
+    - public/evaluation key exposes at least as many samples as the secret dimension
+    - very small sparse row weight; use only for tests unless justified by a proof/estimator
+
+Surface: c2_block_dictionary_compaction_qary_lpn
+  n=512 q=7 eta=6.103515625e-05 samples=239542272
+  conservative min bits: 27.045085595944972
+  Warnings:
+    - public/evaluation key exposes at least as many samples as the secret dimension
+
+Correctness/security tradeoff:
+  depth=1 additions=1 eta_ceiling=0.0025
+  C2 improves compaction-noise accumulation but increases public CLPN samples.
+C2 estimates are design-screening proxies, not certified q-ary/sparse-LPN parameters
