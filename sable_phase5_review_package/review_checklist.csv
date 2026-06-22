@@ -1,0 +1,11 @@
+category,question
+correctness,Are row-support and q-ary error bounds valid for each supported operation?
+correctness,Do empirical KATs and randomized tests match the formal fixed-point/FedAvg semantics?
+security,Are all public sample counts included in sparse-LPN and q-ary-LPN attack estimates?
+security,Do relation-resistant coordinate compaction keys avoid low-weight public relation families?
+security,Does the proof avoid circular encryption of a secret under itself?
+parameters,Are candidate parameter sets separated from toy/demo presets?
+implementation,"Are random sampling, serialization, and decoding failures specified and testable?"
+implementation,Does the package clearly mark the demo PQC provider as non-secure?
+standardization,Is the claim language limited to pre-standardization/external review?
+standardization,"Are NIST/HE.org references used only for positioning, not certification claims?"

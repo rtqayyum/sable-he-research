@@ -1,0 +1,17 @@
+{
+  "files": [
+    "sable_phase5_review_package/standardization_manifest.json",
+    "sable_phase5_review_package/readiness_report.json",
+    "sable_phase5_review_package/security_assumptions.json",
+    "sable_phase5_review_package/parameter_templates.json",
+    "sable_phase5_review_package/attack_surface_reports.json",
+    "sable_phase5_review_package/review_checklist.json",
+    "sable_phase5_review_package/review_checklist.csv",
+    "sable_phase5_review_package/README.md",
+    "sable_phase5_review_package/CRYPTANALYSIS_DISCLOSURE_TEMPLATE.md"
+  ],
+  "output": "sable_phase5_review_package",
+  "schema": "sable-standardization-review-v1",
+  "status": "written",
+  "version": "0.6.0"
+}

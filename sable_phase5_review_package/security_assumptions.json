@@ -1,0 +1,61 @@
+{
+  "assumptions": [
+    {
+      "name": "sparse q-ary LPN pseudorandomness",
+      "parameters": [
+        "q",
+        "n",
+        "k",
+        "eta",
+        "public_sample_count"
+      ],
+      "review_questions": [
+        "What is the best known classical/quantum distinguishing cost for the chosen sparse distribution?",
+        "Does the public evaluation key create exploitable multi-sample structure?",
+        "Is the low-noise region compatible with correctness and security?"
+      ],
+      "used_for": [
+        "compact input encryption",
+        "GSW-style expansion key rows"
+      ]
+    },
+    {
+      "name": "q-ary LPN / code-decoding semantic security",
+      "parameters": [
+        "q",
+        "n_c",
+        "m_c",
+        "eta_c",
+        "code",
+        "public_sample_count"
+      ],
+      "review_questions": [
+        "Do row-difference surfaces produce easier instances?",
+        "Are repetition-code prototypes replaced by paper-grade q-ary codes for candidate parameters?",
+        "What are the best ISD/BKW/low-noise attacks for each candidate?"
+      ],
+      "used_for": [
+        "relation-resistant coordinate compaction"
+      ]
+    },
+    {
+      "name": "PQC wrapper boundary",
+      "parameters": [
+        "ML-KEM label",
+        "ML-DSA label",
+        "AEAD",
+        "hash"
+      ],
+      "review_questions": [
+        "Is the selected backend a reviewed implementation?",
+        "Is the demo provider disabled in production?",
+        "Is SABLE-HE kept outside certified cryptographic boundaries?"
+      ],
+      "used_for": [
+        "transport/key-management labels and envelope metadata"
+      ]
+    }
+  ],
+  "schema": "sable-standardization-review-v1",
+  "version": "0.6.0"
+}
