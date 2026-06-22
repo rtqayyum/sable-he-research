@@ -1,5 +1,5 @@
 {
-  "kat_digest": "b3d2cacf34884f4bb2c2b4744ad659d7b923a237646e5b5a69f2c215cc0d3acb",
+  "kat_digest": "b5cdd4368bdde33969077bdd7a0a39e1ccc815fa69b418734e3fed92cac86ed6",
   "key_seed": 4040,
   "package": "sable-he-research",
   "phase4_schema": "sable-phase4-hardening-v1.arithmetic-kat",
@@ -23,5 +23,5 @@
     "z": 2,
     "zero": 0
   },
-  "version": "0.5.0"
+  "version": "0.6.0"
 }

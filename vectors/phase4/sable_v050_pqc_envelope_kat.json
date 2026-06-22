@@ -8,7 +8,7 @@
       1.155
     ]
   },
-  "kat_digest": "150431f5438da946184deb3e71f319dca083cddfb238a306729ab3e9630e33c0",
+  "kat_digest": "65dfa2718a767145ad7fe9e4d9363e00ca0afe56497487b324e5b3eaa71164ed",
   "metadata": {
     "application": "federated-learning",
     "client_id": "phase4-client",
@@ -40,5 +40,5 @@
     "kem": "ML-KEM-768",
     "signature": "ML-DSA-65"
   },
-  "version": "0.5.0"
+  "version": "0.6.0"
 }

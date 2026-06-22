@@ -3,27 +3,27 @@
     {
       "path": "sable_v050_arithmetic_kat.json",
       "schema": "sable-known-answer-vector-v1",
-      "sha256": "ed4dbc01356e9b1fda344d5bc46dd04d0687ad94feabff3bdb6c42b9decf9b74"
+      "sha256": "5413dbd252656a49ee93327fb480cbbae16a6787a876650c64080bebd6a8b2cf"
     },
     {
       "path": "sable_v050_fl_kat.json",
       "schema": "sable-phase4-hardening-v1.fl-kat",
-      "sha256": "a92d888055242ed2e384abbc5e3451e381717d35408de25007a5b9dc145ac3b1"
+      "sha256": "a10016331b7ff67e32cb8eee6b98d761052dff69ab8ddafd45b08dad660779f8"
     },
     {
       "path": "sable_v050_pqc_envelope_kat.json",
       "schema": "sable-phase4-hardening-v1.pqc-envelope-kat",
-      "sha256": "cdded2e7ccce09db378a4095471bef88656d829e67f78f0b78d14945d4fe949d"
+      "sha256": "b33aea60784e14d24685738e9c32021c4a8ece1f86016d46cd543f517084cfcd"
     },
     {
       "path": "sable_v050_cryptanalysis_kat.json",
       "schema": "sable-phase4-hardening-v1.cryptanalysis-kat",
-      "sha256": "b556c7d376ed35c1adfd01151c6ff6cf10fd16ce84a6e9e73a2a91da5e742170"
+      "sha256": "99c93e13340c6162549e23fb19e771924aa626e78f291a6d58316044c6b50d4a"
     }
   ],
   "output_dir": "vectors/phase4",
-  "release_name": "Phase 4 hardened reference preparation",
+  "release_name": "Phase 5 standardization and external review preparation",
   "schema": "sable-phase4-hardening-v1.kat-manifest",
   "status": "pass",
-  "version": "0.5.0"
+  "version": "0.6.0"
 }

@@ -13,6 +13,7 @@ from . import fl
 from . import pqc
 from . import cryptanalysis
 from . import phase4
+from . import standardization
 from .baselines import default_workloads, flatten_for_csv, model_comparison
 from .c7_relation_screen import estimate_c7_relations, format_c7_report
 from .estimator import estimate, format_estimate
@@ -533,6 +534,83 @@ def cmd_release_check(args: argparse.Namespace) -> int:
             print(json.dumps(result["version_consistency"]["values"], indent=2))
     return 0 if result.get("status") == "pass" else 2
 
+
+def cmd_standardization_info(args: argparse.Namespace) -> int:
+    payload = standardization.standardization_info()
+    if args.json:
+        print(json.dumps(payload, indent=2, default=_json_default))
+    else:
+        print(standardization.standardization_text_summary())
+        print("Review targets:")
+        for item in payload["review_targets"]:
+            print(f"  - {item}")
+    return 0
+
+
+def cmd_standardization_readiness(args: argparse.Namespace) -> int:
+    payload = standardization.readiness_report()
+    if args.json:
+        print(json.dumps(payload, indent=2, default=_json_default))
+    else:
+        print(f"standardization readiness status={payload['overall_status']} version={payload['version']}")
+        for item in payload["items"]:
+            print(f"  - {item['status'].upper():5s} {item['area']}: {item['evidence']} next={item['next_action']}")
+    return 0
+
+
+def cmd_assumptions_spec(args: argparse.Namespace) -> int:
+    payload = standardization.security_assumptions_spec()
+    if args.json:
+        print(json.dumps(payload, indent=2, default=_json_default))
+    else:
+        print(f"security assumptions spec schema={payload['schema']} version={payload['version']}")
+        for item in payload["assumptions"]:
+            print(f"- {item['name']}: used for {', '.join(item['used_for'])}")
+            for q in item["review_questions"]:
+                print(f"    * {q}")
+    return 0
+
+
+def cmd_parameter_template(args: argparse.Namespace) -> int:
+    payload = standardization.parameter_template(args.preset, target_bits=args.target_bits, depth=args.depth).to_jsonable()
+    if args.output:
+        from pathlib import Path
+        Path(args.output).write_text(json.dumps(payload, indent=2, default=_json_default) + "\n", encoding="utf-8")
+        print(f"wrote {args.output}")
+    elif args.json:
+        print(json.dumps(payload, indent=2, default=_json_default))
+    else:
+        print(f"parameter template name={payload['name']} target={payload['security_target_bits']} bits")
+        print(f"q={payload['q']} n={payload['n']} k={payload['k']} eta={payload['eta']} depth={payload['depth']}")
+        print(payload['intended_use'])
+    return 0
+
+
+def cmd_review_checklist(args: argparse.Namespace) -> int:
+    payload = standardization.review_checklist()
+    if args.json:
+        print(json.dumps(payload, indent=2, default=_json_default))
+    else:
+        for row in payload:
+            print(f"[{row['category']}] {row['question']}")
+    return 0
+
+
+def cmd_review_package(args: argparse.Namespace) -> int:
+    manifest = standardization.write_review_package(
+        args.output,
+        presets=args.preset,
+        depth=args.depth,
+        target_bits=args.target_bits,
+    )
+    if args.json:
+        print(json.dumps(manifest, indent=2, default=_json_default))
+    else:
+        print(f"wrote Phase 5 review package to {args.output}")
+        print(f"files={len(manifest['files'])} status={manifest['status']}")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="sable-he",
@@ -710,6 +788,39 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("path", nargs="?", default=".")
     p.add_argument("--json", action="store_true")
     p.set_defaults(func=cmd_release_check)
+
+
+    p = sub.add_parser("standardization-info", help="show Phase 5 standardization/external-review status")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_standardization_info)
+
+    p = sub.add_parser("standardization-readiness", help="show pre-standardization readiness matrix")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_standardization_readiness)
+
+    p = sub.add_parser("assumptions-spec", help="show machine-readable security-assumption specification")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_assumptions_spec)
+
+    p = sub.add_parser("parameter-template", help="emit a parameter-set template for external review")
+    p.add_argument("--preset", default="c7_standard_toy_noisy", choices=sorted(PRESETS))
+    p.add_argument("--target-bits", type=int, default=128)
+    p.add_argument("--depth", type=int, default=1)
+    p.add_argument("--output", default=None)
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_parameter_template)
+
+    p = sub.add_parser("review-checklist", help="print external cryptographic review checklist")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_review_checklist)
+
+    p = sub.add_parser("review-package", help="write Phase 5 external review package")
+    p.add_argument("--output", default="sable_phase5_review_package")
+    p.add_argument("--preset", action="append", choices=sorted(PRESETS), help="preset to include; repeatable")
+    p.add_argument("--depth", type=int, default=1)
+    p.add_argument("--target-bits", type=int, default=128)
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_review_package)
 
     return parser
 

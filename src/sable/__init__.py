@@ -150,6 +150,17 @@ from .phase4 import (
     release_artifact_check,
 )
 
+
+from . import standardization
+from .standardization import (
+    parameter_template as standardization_parameter_template,
+    readiness_report as standardization_readiness_report,
+    review_checklist as standardization_review_checklist,
+    security_assumptions_spec as standardization_security_assumptions_spec,
+    standardization_info,
+    write_review_package as write_standardization_review_package,
+)
+
 from .pqc import (
     AuthenticationError,
     BackendUnavailable,
@@ -176,6 +187,7 @@ except Exception:  # pragma: no cover
     OperationProfile = object  # type: ignore
 
 __all__ = [
+    "standardization", "standardization_info", "standardization_readiness_report", "standardization_security_assumptions_spec", "standardization_parameter_template", "standardization_review_checklist", "write_standardization_review_package",
     "phase4", "phase4_info", "generate_phase4_kats", "write_phase4_kat_bundle", "verify_phase4_kat_bundle", "public_repo_hygiene", "release_artifact_check",
     "__version__", "__release_name__", "SableParams", "PRESETS", "KeyPair",
     "keygen", "keygen_sable", "compact_sable", "decrypt_sable", "keygen_c2", "keygen_block_c2", "keygen_seeded_block_c2",

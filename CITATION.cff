@@ -1,7 +1,7 @@
 cff-version: 1.2.0
 message: "If you use SABLE-HE Research, please cite the software and the associated manuscript."
 title: "SABLE-HE Research: Post-Quantum Code/LPN-Based Leveled Homomorphic Encryption for Encrypted Federated Aggregation"
-version: "0.5.0"
+version: "0.6.0"
 date-released: "2026-06-22"
 license: "MIT"
 repository-code: "https://github.com/rtqayyum/sable-he-research"

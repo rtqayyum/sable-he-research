@@ -104,3 +104,19 @@ Use [`CITATION.cff`](CITATION.cff) or [`docs/CITATION.md`](docs/CITATION.md).
 ## License
 
 MIT License. See [`LICENSE`](LICENSE).
+
+
+## Phase 5 external review and pre-standardization tooling
+
+SABLE-HE v0.6.0 adds public tooling for external cryptanalysis and pre-standardization discussion:
+
+```bash
+sable-he standardization-info
+sable-he standardization-readiness
+sable-he assumptions-spec
+sable-he parameter-template --json
+sable-he review-checklist
+sable-he review-package --output sable_phase5_review_package
+```
+
+These commands do not certify SABLE-HE. They generate review materials for independent cryptanalysis and community discussion.
