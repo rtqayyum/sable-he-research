@@ -40,6 +40,12 @@ python -m pip install -e .[dev,numpy]
 python -m pytest -q
 ```
 
+For pip:
+
+```bash
+python -m pip install sable-he-research
+```
+
 ## Quick encrypted FedAvg example
 
 ```python
