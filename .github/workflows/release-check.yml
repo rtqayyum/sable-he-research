@@ -1,4 +1,4 @@
-name: Release check
+name: release-check
 
 on:
   pull_request:
@@ -6,21 +6,29 @@ on:
     branches: [main]
 
 jobs:
-  test:
+  release-check:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.12"
       - name: Install
         run: |
           python -m pip install --upgrade pip
-          python -m pip install -e ".[dev,numpy]"
+          python -m pip install -e ".[dev,numpy]" build twine
       - name: Test
         run: python -m pytest -q
+      - name: Release check
+        run: sable-he release-check .
+      - name: Public hygiene
+        run: sable-he repo-hygiene .
+      - name: KAT generation and verification
+        run: |
+          sable-he kat-generate --output vectors
+          sable-he kat-verify vectors/phase4
       - name: Build
         run: |
-          python -m pip install build twine
+          rm -rf dist build *.egg-info src/*.egg-info
           python -m build
           python -m twine check dist/*

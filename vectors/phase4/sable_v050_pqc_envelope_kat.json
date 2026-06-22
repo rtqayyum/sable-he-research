@@ -1,0 +1,44 @@
+{
+  "envelope_schema": "sable-pqc-envelope-v1",
+  "expected_payload": {
+    "client_count": 3,
+    "weights": [
+      0.158,
+      -0.366,
+      1.155
+    ]
+  },
+  "kat_digest": "150431f5438da946184deb3e71f319dca083cddfb238a306729ab3e9630e33c0",
+  "metadata": {
+    "application": "federated-learning",
+    "client_id": "phase4-client",
+    "payload_format": "json-canonical",
+    "round_id": "phase4-kat-round",
+    "sample_count": 200
+  },
+  "opened_payload": {
+    "client_count": 3,
+    "weights": [
+      0.158,
+      -0.366,
+      1.155
+    ]
+  },
+  "package": "sable-he-research",
+  "payload_kind": "sable.fl.model-update",
+  "provider": "demo-nonsecure",
+  "provider_production_capable": false,
+  "recipient_fingerprint": "sha3-256:3837d73269c4ed384bc51274f953eeb19a6c2d925cf2da8ebf2cd65461ebf681",
+  "roundtrip_ok": true,
+  "schema": "sable-phase4-hardening-v1.pqc-envelope-kat",
+  "signer_fingerprint": "sha3-256:baf2123f0f56e952d8872a969f8c22fa4794467ef9faba6e2cffd032e86cb01d",
+  "status": "pass",
+  "suite": {
+    "aead": "AES-256-GCM",
+    "hash": "SHA3-256",
+    "hybrid_mode": "pq-only",
+    "kem": "ML-KEM-768",
+    "signature": "ML-DSA-65"
+  },
+  "version": "0.5.0"
+}

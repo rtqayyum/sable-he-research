@@ -12,6 +12,7 @@ from . import operations as ops
 from . import fl
 from . import pqc
 from . import cryptanalysis
+from . import phase4
 from .baselines import default_workloads, flatten_for_csv, model_comparison
 from .c7_relation_screen import estimate_c7_relations, format_c7_report
 from .estimator import estimate, format_estimate
@@ -378,39 +379,159 @@ def cmd_pqc_demo(args: argparse.Namespace) -> int:
     return 0 if payload["roundtrip_ok"] else 2
 
 
+
 def cmd_cryptanalysis_info(args: argparse.Namespace) -> int:
-    bundle = cryptanalysis.build_review_bundle(
+    report = cryptanalysis.challenge_info()
+    if args.json:
+        print(json.dumps(report, indent=2, default=_json_default))
+    else:
+        print("SABLE-HE independent cryptanalysis package")
+        print(f"schema={report['schema']}")
+        print(f"version={report['version']} release={report['release_name']}")
+        print(report["security_status"])
+        print("Assumptions to review:")
+        for item in report["assumptions_to_review"]:
+            print(f"  - {item}")
+        print("Cryptanalysis targets:")
+        for item in report["cryptanalysis_targets"]:
+            print(f"  - {item}")
+    return 0
+
+
+def cmd_cryptanalysis_report(args: argparse.Namespace) -> int:
+    report = cryptanalysis.attack_surface_report(
         PRESETS[args.preset],
         depth=args.depth,
         additions=args.additions,
         target_bits=args.target_bits,
-        input_ciphertexts=args.input_ciphertexts,
-        seed=args.seed,
+        relation_mode=args.relation_mode,
+        relation_screen_weight=args.relation_screen_weight,
     )
     if args.json:
-        print(json.dumps(bundle.to_jsonable(), indent=2, default=_json_default))
+        print(json.dumps(report, indent=2, default=_json_default))
     else:
-        print(cryptanalysis.format_review_bundle(bundle))
+        print(f"Cryptanalysis surface report for {args.preset}")
+        print(f"version={report['version']} target_bits={report['target_bits']} depth={report['depth']}")
+        summary = report["surface_summary"]
+        print(f"q={summary['q']} n={summary['n']} k={summary['k']} eta={summary['eta']} n_c={summary['n_c']} m_c={summary['m_c']} eta_c={summary['eta_c']}")
+        print(f"expansion rows={summary['expansion_key_rows']} CLPN row-difference samples={summary['clpn_row_difference_samples']}")
+        print(f"verdict={report['verdict']}")
+        if report["blockers_and_notes"]:
+            print("Blockers / notes:")
+            for item in report["blockers_and_notes"][:20]:
+                print(f"  - {item}")
+        print("Use --json for the full machine-readable report.")
+    return 0
+
+
+def cmd_cryptanalysis_vector(args: argparse.Namespace) -> int:
+    vector = cryptanalysis.known_answer_vector(args.preset, key_seed=args.seed)
+    payload = asdict(vector)
+    if args.output:
+        from pathlib import Path
+        Path(args.output).write_text(json.dumps(payload, indent=2, default=_json_default) + "\n", encoding="utf-8")
+        print(f"wrote {args.output}")
+    elif args.json:
+        print(json.dumps(payload, indent=2, default=_json_default))
+    else:
+        print(f"Known-answer vector preset={vector.preset} q={vector.q} status={vector.status}")
+        for key, value in vector.results.items():
+            print(f"  {key}: {value}")
+    return 0 if vector.status == "pass" else 2
+
+
+def cmd_cryptanalysis_template(args: argparse.Namespace) -> int:
+    text = cryptanalysis.red_team_template()
+    if args.output:
+        from pathlib import Path
+        Path(args.output).write_text(text, encoding="utf-8")
+        print(f"wrote {args.output}")
+    else:
+        print(text)
     return 0
 
 
 def cmd_cryptanalysis_bundle(args: argparse.Namespace) -> int:
-    paths = cryptanalysis.write_review_bundle(
-        args.output_dir,
-        preset=args.preset,
-        depth=args.depth,
-        additions=args.additions,
+    presets = args.preset or None
+    manifest = cryptanalysis.write_challenge_bundle(
+        args.output,
+        presets=presets,
+        depths=args.depth,
         target_bits=args.target_bits,
-        input_ciphertexts=args.input_ciphertexts,
-        seed=args.seed,
     )
     if args.json:
-        print(json.dumps(paths, indent=2, default=_json_default))
+        print(json.dumps(manifest, indent=2, default=_json_default))
     else:
-        print("Wrote SABLE-HE cryptanalysis review bundle:")
-        for key, value in paths.items():
-            print(f"  {key}: {value}")
+        print(f"wrote cryptanalysis bundle to {args.output}")
+        print(f"files={len(manifest['files'])}")
     return 0
+
+
+def cmd_hardening_info(args: argparse.Namespace) -> int:
+    payload = phase4.phase4_info()
+    if args.json:
+        print(json.dumps(payload, indent=2, default=_json_default))
+    else:
+        print(f"SABLE-HE Phase 4 hardening release {payload['version']}")
+        print(f"status={payload['status']}")
+        print("Capabilities:")
+        for item in payload["capabilities"]:
+            print(f"  - {item}")
+        print("Non-goals:")
+        for item in payload["non_goals"]:
+            print(f"  - {item}")
+    return 0
+
+
+def cmd_kat_generate(args: argparse.Namespace) -> int:
+    manifest = phase4.write_kat_bundle(args.output)
+    if args.json:
+        print(json.dumps(manifest, indent=2, default=_json_default))
+    else:
+        print(f"wrote Phase 4 KAT bundle to {args.output}")
+        print(f"status={manifest['status']} files={len(manifest['files'])}")
+    return 0 if manifest.get("status") == "pass" else 2
+
+
+def cmd_kat_verify(args: argparse.Namespace) -> int:
+    result = phase4.verify_kat_bundle(args.path)
+    if args.json:
+        print(json.dumps(result, indent=2, default=_json_default))
+    else:
+        print(f"KAT verification status={result['status']} path={args.path}")
+        for error in result.get("errors", []):
+            print(f"  - {error}")
+    return 0 if result.get("status") == "pass" else 2
+
+
+def cmd_repo_hygiene(args: argparse.Namespace) -> int:
+    report = phase4.public_repo_hygiene(args.path)
+    payload = report.to_jsonable()
+    if args.json:
+        print(json.dumps(payload, indent=2, default=_json_default))
+    else:
+        print(f"public repository hygiene status={report.status} scanned_files={report.scanned_files}")
+        for finding in report.findings[:50]:
+            print(f"  - {finding.severity}: {finding.path}: {finding.reason}")
+    return 0 if report.status == "pass" else 2
+
+
+def cmd_release_check(args: argparse.Namespace) -> int:
+    result = phase4.release_artifact_check(args.path)
+    if args.json:
+        print(json.dumps(result, indent=2, default=_json_default))
+    else:
+        print(f"release check status={result['status']} version={result['version']}")
+        if result["missing_workflows"]:
+            print("Missing workflows:")
+            for wf in result["missing_workflows"]:
+                print(f"  - {wf}")
+        for finding in result["hygiene"].get("findings", [])[:50]:
+            print(f"  - hygiene {finding['severity']}: {finding['path']}: {finding['reason']}")
+        if result["version_consistency"].get("status") != "pass":
+            print("Version mismatch:")
+            print(json.dumps(result["version_consistency"]["values"], indent=2))
+    return 0 if result.get("status") == "pass" else 2
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
@@ -527,26 +648,68 @@ def build_parser() -> argparse.ArgumentParser:
     p.set_defaults(func=cmd_pqc_demo)
 
 
-    p = sub.add_parser("cryptanalysis-info", help="summarize Phase 3 independent cryptanalysis review surfaces")
-    p.add_argument("--preset", default="c7_standard_toy_noisy", choices=sorted(PRESETS))
-    p.add_argument("--depth", type=int, default=1)
-    p.add_argument("--additions", type=int, default=1)
-    p.add_argument("--target-bits", type=float, default=128.0)
-    p.add_argument("--input-ciphertexts", type=int, default=1000)
-    p.add_argument("--seed", type=int, default=2026)
+    p = sub.add_parser("cryptanalysis-info", help="show independent cryptanalysis scope")
     p.add_argument("--json", action="store_true")
     p.set_defaults(func=cmd_cryptanalysis_info)
 
-    p = sub.add_parser("cryptanalysis-bundle", help="write JSON/Markdown independent cryptanalysis review bundle")
+    p = sub.add_parser("cryptanalysis-report", help="emit a combined attack-surface report")
     p.add_argument("--preset", default="c7_standard_toy_noisy", choices=sorted(PRESETS))
     p.add_argument("--depth", type=int, default=1)
     p.add_argument("--additions", type=int, default=1)
-    p.add_argument("--target-bits", type=float, default=128.0)
-    p.add_argument("--input-ciphertexts", type=int, default=1000)
-    p.add_argument("--seed", type=int, default=2026)
-    p.add_argument("--output-dir", default="sable_cryptanalysis_bundle")
+    p.add_argument("--target-bits", type=int, default=128)
+    p.add_argument("--relation-mode", default="standard", choices=["standard", "screened-random"])
+    p.add_argument("--relation-screen-weight", type=int, default=3)
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_cryptanalysis_report)
+
+    p = sub.add_parser("cryptanalysis-vector", help="generate deterministic clean known-answer vector")
+    p.add_argument("--preset", default="c7_standard_toy_clean", choices=sorted(PRESETS))
+    p.add_argument("--seed", type=int, default=4040)
+    p.add_argument("--output", default=None)
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_cryptanalysis_vector)
+
+    p = sub.add_parser("cryptanalysis-template", help="print or write external attack-report template")
+    p.add_argument("--output", default=None)
+    p.set_defaults(func=cmd_cryptanalysis_template)
+
+    p = sub.add_parser("cryptanalysis-bundle", help="write reproducible review bundle")
+    p.add_argument("--output", default="sable_cryptanalysis_bundle")
+    p.add_argument("--preset", action="append", choices=sorted(PRESETS), help="preset to include; repeatable")
+    p.add_argument("--depth", action="append", type=int, default=[1], help="depth to include; repeatable")
+    p.add_argument("--target-bits", type=int, default=128)
     p.add_argument("--json", action="store_true")
     p.set_defaults(func=cmd_cryptanalysis_bundle)
+
+
+    p = sub.add_parser("hardening-info", help="show Phase 4 hardening/release-engineering status")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_hardening_info)
+
+    p = sub.add_parser("kat-generate", help="write deterministic Phase 4 known-answer vectors")
+    p.add_argument("--output", default="vectors/phase4")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_kat_generate)
+
+    p = sub.add_parser("kat-verify", help="verify deterministic Phase 4 known-answer vectors")
+    p.add_argument("path", nargs="?", default="vectors/phase4")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_kat_verify)
+
+    p = sub.add_parser("repo-hygiene", help="check that public repo excludes private/generated artifacts")
+    p.add_argument("path", nargs="?", default=".")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_repo_hygiene)
+
+    p = sub.add_parser("release-check", help="run public-release hygiene and version checks")
+    p.add_argument("path", nargs="?", default=".")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_release_check)
+
+    p = sub.add_parser("release-gate", help="alias for release-check")
+    p.add_argument("path", nargs="?", default=".")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_release_check)
 
     return parser
 

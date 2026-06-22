@@ -1,0 +1,29 @@
+{
+  "files": [
+    {
+      "path": "sable_v050_arithmetic_kat.json",
+      "schema": "sable-known-answer-vector-v1",
+      "sha256": "ed4dbc01356e9b1fda344d5bc46dd04d0687ad94feabff3bdb6c42b9decf9b74"
+    },
+    {
+      "path": "sable_v050_fl_kat.json",
+      "schema": "sable-phase4-hardening-v1.fl-kat",
+      "sha256": "a92d888055242ed2e384abbc5e3451e381717d35408de25007a5b9dc145ac3b1"
+    },
+    {
+      "path": "sable_v050_pqc_envelope_kat.json",
+      "schema": "sable-phase4-hardening-v1.pqc-envelope-kat",
+      "sha256": "cdded2e7ccce09db378a4095471bef88656d829e67f78f0b78d14945d4fe949d"
+    },
+    {
+      "path": "sable_v050_cryptanalysis_kat.json",
+      "schema": "sable-phase4-hardening-v1.cryptanalysis-kat",
+      "sha256": "b556c7d376ed35c1adfd01151c6ff6cf10fd16ce84a6e9e73a2a91da5e742170"
+    }
+  ],
+  "output_dir": "vectors/phase4",
+  "release_name": "Phase 4 hardened reference preparation",
+  "schema": "sable-phase4-hardening-v1.kat-manifest",
+  "status": "pass",
+  "version": "0.5.0"
+}

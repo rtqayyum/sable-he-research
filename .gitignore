@@ -1,33 +1,48 @@
-# Python/build artifacts
+# Python
 __pycache__/
 *.py[cod]
 *.egg-info/
-build/
-dist/
 .pytest_cache/
 .mypy_cache/
-.coverage
-htmlcov/
+.ruff_cache/
+.tox/
+.venv/
+venv/
+build/
+dist/
 
-# Private/internal research artifacts
+# Local/editor
+.DS_Store
+.vscode/
+.idea/
+*.swp
+
+# Private/research working artifacts - do not publish
 paper/
-audits/
-experiments/
-benchmarks/
-docs/generated/
+papers/
+latex/
+*_latex/
+*_paper.pdf
+*.pdf
 *.aux
+*.bbl
+*.blg
 *.log
 *.out
 *.toc
-*.pdf
-*.png
-*.jpg
-*.jpeg
-*.svg
-*.ipynb
+*.fls
+*.fdb_latexmk
+*.synctex.gz
 
-# Local envs
-.venv/
-venv/
+# Generated experiment outputs
+experiments/
+benchmarks/output/
+docs/generated/
+*_renders/
+
+# Secrets/tokens
 .env
-.DS_Store
+.env.*
+*.pem
+*.key
+*.secret

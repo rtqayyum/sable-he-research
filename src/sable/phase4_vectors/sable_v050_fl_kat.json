@@ -1,0 +1,42 @@
+{
+  "client_models": [
+    [
+      0.12,
+      -0.34,
+      1.2
+    ],
+    [
+      0.1,
+      -0.3,
+      1.25
+    ],
+    [
+      0.2,
+      -0.4,
+      1.1
+    ]
+  ],
+  "expected": [
+    0.158,
+    -0.366,
+    1.155
+  ],
+  "kat_digest": "7e1f66f08cd85752d24ee030288929d9cea5a79b8b618a2d88b3b2893d119183",
+  "key_seed": 5151,
+  "package": "sable-he-research",
+  "preset": "fl_demo_clean",
+  "result": [
+    0.158,
+    -0.366,
+    1.155
+  ],
+  "sample_counts": [
+    80,
+    20,
+    100
+  ],
+  "scale": 1000,
+  "schema": "sable-phase4-hardening-v1.fl-kat",
+  "status": "pass",
+  "version": "0.5.0"
+}

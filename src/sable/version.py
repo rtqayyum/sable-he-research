@@ -1,4 +1,4 @@
 """Version metadata for the SABLE-HE package."""
 
-__version__ = "0.4.0"
-__release_name__ = "Phase 3 independent cryptanalysis release"
+__version__ = "0.5.0"
+__release_name__ = "Phase 4 hardened reference preparation"

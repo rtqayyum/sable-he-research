@@ -122,13 +122,34 @@ from .fl import (
 
 from . import cryptanalysis
 from .cryptanalysis import (
-    ATTACK_FAMILIES, REVIEW_SCOPE, CryptanalysisReport, CryptanalysisSurface, FileDigest,
-    ReviewBundle, ReviewSurface, build_review_bundle, collect_manifest, collect_public_surfaces,
-    disclosure_template, format_review_bundle, phase3_surface_report, write_phase3_bundle,
-    write_review_bundle,
+    attack_surface_report,
+    challenge_info as cryptanalysis_challenge_info,
+    known_answer_vector as cryptanalysis_known_answer_vector,
+    red_team_template as cryptanalysis_red_team_template,
+    write_challenge_bundle as write_cryptanalysis_bundle,
+)
+
+from . import hardening
+from .hardening import (
+    artifact_manifest,
+    generate_kat_bundle,
+    release_gate,
+    scan_public_repo,
+    verify_kat_bundle,
+    version_consistency,
 )
 
 from . import pqc
+from . import phase4
+from .phase4 import (
+    phase4_info,
+    generate_kats as generate_phase4_kats,
+    write_kat_bundle as write_phase4_kat_bundle,
+    verify_kat_bundle as verify_phase4_kat_bundle,
+    public_repo_hygiene,
+    release_artifact_check,
+)
+
 from .pqc import (
     AuthenticationError,
     BackendUnavailable,
@@ -155,6 +176,7 @@ except Exception:  # pragma: no cover
     OperationProfile = object  # type: ignore
 
 __all__ = [
+    "phase4", "phase4_info", "generate_phase4_kats", "write_phase4_kat_bundle", "verify_phase4_kat_bundle", "public_repo_hygiene", "release_artifact_check",
     "__version__", "__release_name__", "SableParams", "PRESETS", "KeyPair",
     "keygen", "keygen_sable", "compact_sable", "decrypt_sable", "keygen_c2", "keygen_block_c2", "keygen_seeded_block_c2",
     "keygen_basis_c4", "keygen_c4_basis", "keygen_screened_c7", "keygen_c7_screened", "keygen_c7",
@@ -173,7 +195,9 @@ __all__ = [
     "assign_model_weights", "clear_aggregate_arrays", "clear_aggregate_models", "decrypt_aggregation",
     "decrypt_array", "decrypt_model", "decrypt_model_weights", "encrypt_array", "encrypt_model",
     "encrypt_model_weights", "extract_model_weights", "fedavg", "fedavg_encrypted", "fedsgd_encrypted",
-    "fl_capabilities", "flatten_tree", "max_after_decrypt", "max_encrypted", "mean_encrypted",
+    "fl_capabilities",
+    "cryptanalysis", "attack_surface_report", "cryptanalysis_challenge_info",
+    "cryptanalysis_known_answer_vector", "cryptanalysis_red_team_template", "write_cryptanalysis_bundle", "flatten_tree", "max_after_decrypt", "max_encrypted", "mean_encrypted",
     "median_after_decrypt", "median_encrypted", "min_after_decrypt", "min_encrypted", "secure_sum_encrypted",
     "sum_encrypted", "trimmed_mean_after_decrypt", "unflatten_tree", "weighted_average_encrypted",
     "weighted_mean_encrypted", "weighted_sum_encrypted",
@@ -182,8 +206,4 @@ __all__ = [
     "available_backend_names", "get_pqc_provider", "pqc_capability_report",
     "pqc_seal_json", "pqc_open_json", "make_signed_federated_update_envelope",
     "open_federated_update_envelope",
-    "cryptanalysis", "ATTACK_FAMILIES", "REVIEW_SCOPE", "CryptanalysisReport", "CryptanalysisSurface",
-    "FileDigest", "ReviewBundle", "ReviewSurface", "build_review_bundle", "collect_manifest",
-    "collect_public_surfaces", "disclosure_template", "format_review_bundle", "phase3_surface_report",
-    "write_phase3_bundle", "write_review_bundle",
 ]

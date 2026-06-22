@@ -1,12 +1,6 @@
 # Examples
 
-Run after installing the package or from an editable source checkout:
-
-```bash
-python examples/quickstart.py
-python examples/arithmetic_operations.py
-python examples/boolean_gates.py
-python examples/estimator_demo.py
-```
-
-All examples use toy parameters for validation only.
+- `quickstart_arithmetic.py`: encrypted arithmetic.
+- `fedavg_arrays.py`: encrypted FedAvg over Python arrays.
+- `pqc_envelope_demo.py`: PQC envelope demo with the non-secure demo provider.
+- `cryptanalysis_bundle.py`: generate a public review bundle.

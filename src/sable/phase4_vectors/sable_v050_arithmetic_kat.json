@@ -1,0 +1,27 @@
+{
+  "kat_digest": "b3d2cacf34884f4bb2c2b4744ad659d7b923a237646e5b5a69f2c215cc0d3acb",
+  "key_seed": 4040,
+  "package": "sable-he-research",
+  "phase4_schema": "sable-phase4-hardening-v1.arithmetic-kat",
+  "preset": "c7_standard_toy_clean",
+  "q": 7,
+  "results": {
+    "add_x_y": 1,
+    "bool_and_1_0": 0,
+    "bool_xor_1_0": 1,
+    "mul_x_y": 1,
+    "quadratic_xy_plus_z": 3,
+    "square_x": 2,
+    "sub_y_x": 2
+  },
+  "schema": "sable-known-answer-vector-v1",
+  "status": "pass",
+  "values": {
+    "one": 1,
+    "x": 3,
+    "y": 5,
+    "z": 2,
+    "zero": 0
+  },
+  "version": "0.5.0"
+}

@@ -1,0 +1,26 @@
+{
+  "kat_digest": "35367a86ba75b9510fda20a4e5e8f096009c42ed16908e96b7a17da85ff86559",
+  "minimum_finite_screen_bits": null,
+  "package": "sable-he-research",
+  "preset": "toy_noisy",
+  "report_schema": "sable-attack-surface-report-v1",
+  "schema": "sable-phase4-hardening-v1.cryptanalysis-kat",
+  "status": "pass",
+  "surface_summary": {
+    "clpn_row_difference_samples": 81000,
+    "eta": 0.002,
+    "eta_c": 0.001,
+    "expansion_key_rows": 625,
+    "k": 2,
+    "m_c": 81,
+    "n": 24,
+    "n_c": 24,
+    "preset": "toy_noisy",
+    "q": 127,
+    "replicas": 11,
+    "sparse_row_entropy_bits": 22.063084303778005
+  },
+  "target_bits": 128,
+  "verdict": "external-review-required",
+  "version": "0.5.0"
+}

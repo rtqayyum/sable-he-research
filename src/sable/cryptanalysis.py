@@ -1,352 +1,325 @@
-"""Independent cryptanalysis support utilities for SABLE-HE.
+"""Independent cryptanalysis support tools for SABLE-HE.
 
-This module prepares public-review bundles for external cryptanalysts. It does
-not certify security and does not turn the Python package into production
-cryptography.
+This module generates reproducible attack-surface reports, known-answer vectors,
+and review bundles for external cryptanalysis. It does not certify concrete
+security parameters.
 """
 
 from __future__ import annotations
 
 import csv
-import hashlib
 import json
 import math
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterable
 
+from . import operations as ops
+from .attacks import attack_lines, sample_profile, security_report
 from .c7_relation_screen import estimate_c7_relations
 from .estimator import estimate
 from .params import PRESETS, SableParams
-from .qary_lpn_estimator import estimate_qary_lpn_surface
+from .sable import compact_c7, decrypt_c7, encrypt, expand, keygen_c7
 from .version import __release_name__, __version__
 
-ATTACK_FAMILIES = [
-    "sparse q-ary LPN distinguishing and search",
-    "dense q-ary LPN/code decoding",
-    "BKW-family sample-combination attacks",
-    "information-set decoding and Prange/Stern-style attacks",
-    "low-noise clean-subset and linear-solve attacks",
-    "large-sample public-key and evaluation-key attacks",
-    "relation-surface attacks on compaction keys",
-]
-
-REVIEW_SCOPE = [
-    "public expansion-key sparse-LPN rows",
-    "public compaction-key q-ary LPN/code rows",
-    "input ciphertext accumulation in federated-learning deployments",
-    "row-difference samples derived from CLPN compaction ciphertexts",
-    "relation-resistant coordinate-compaction assumptions",
-    "implementation choices such as seeding, serialization, and tensor adapters",
-]
-
-
-def _json_float_or_none(value: float | None) -> float | str | None:
-    if value is None:
-        return None
-    if math.isinf(value):
-        return "inf" if value > 0 else "-inf"
-    if math.isnan(value):
-        return "nan"
-    return value
-
-
-def _parse_screen_bits(value: Any) -> float | None:
-    if value is None:
-        return None
-    if value == "inf":
-        return float("inf")
-    if value == "-inf":
-        return float("-inf")
-    try:
-        return float(value)
-    except Exception:
-        return None
+SCHEMA = "sable-cryptanalysis-bundle-v1"
+DEFAULT_REVIEW_PRESETS = ("c7_standard_toy_clean", "c7_standard_toy_noisy", "candidate_depth1_rough")
 
 
 @dataclass(frozen=True)
-class ReviewSurface:
-    name: str
-    assumption_family: str
-    secret_dimension: int
+class SurfaceSummary:
+    preset: str
     q: int
-    noise_rate: float
-    public_samples: int
-    row_weight: int | None
-    sample_to_dimension_ratio: float
-    expected_errors: float
-    review_priority: str
-    notes: str
-
-    def to_jsonable(self) -> dict[str, Any]:
-        return asdict(self)
-
-
-CryptanalysisSurface = ReviewSurface
+    n: int
+    k: int
+    eta: float
+    n_c: int
+    m_c: int
+    eta_c: float
+    replicas: int
+    expansion_key_rows: int
+    clpn_row_difference_samples: int
+    sparse_row_entropy_bits: float
 
 
 @dataclass(frozen=True)
-class CryptanalysisReport:
+class ChallengeVector:
+    schema: str
     package: str
     version: str
-    release_name: str
     preset: str
-    target_bits: float
+    q: int
+    key_seed: int
+    values: dict[str, int]
+    results: dict[str, int]
     status: str
-    surfaces: list[ReviewSurface]
-    correctness_estimate: dict[str, Any]
-    relation_report: dict[str, Any]
-    qary_lpn_screens: list[dict[str, Any]]
-    minimum_screen_bits: float | None
-    blockers: list[str]
-    mandatory_review_questions: list[str]
-    acceptance_criteria: list[str]
-    non_claims: list[str]
-
-    def to_jsonable(self) -> dict[str, Any]:
-        return {
-            "package": self.package,
-            "version": self.version,
-            "release_name": self.release_name,
-            "preset": self.preset,
-            "target_bits": self.target_bits,
-            "status": self.status,
-            "surfaces": [s.to_jsonable() for s in self.surfaces],
-            "correctness_estimate": self.correctness_estimate,
-            "relation_report": self.relation_report,
-            "qary_lpn_screens": self.qary_lpn_screens,
-            "minimum_screen_bits": _json_float_or_none(self.minimum_screen_bits),
-            "blockers": self.blockers,
-            "mandatory_review_questions": self.mandatory_review_questions,
-            "acceptance_criteria": self.acceptance_criteria,
-            "non_claims": self.non_claims,
-        }
-
-    def to_markdown(self) -> str:
-        lines = [
-            f"# SABLE-HE independent cryptanalysis bundle: `{self.preset}`",
-            "",
-            f"Package version: `{self.version}`",
-            f"Release: `{self.release_name}`",
-            f"Target screen: `{self.target_bits:g}` bits",
-            f"Status: **{self.status}**",
-            "",
-            "## Public surfaces",
-            "",
-            "| Surface | Assumption | n | q | eta | samples | row weight | sample/n | priority |",
-            "|---|---|---:|---:|---:|---:|---:|---:|---|",
-        ]
-        for s in self.surfaces:
-            rw = "-" if s.row_weight is None else str(s.row_weight)
-            lines.append(
-                f"| {s.name} | {s.assumption_family} | {s.secret_dimension} | {s.q} | {s.noise_rate:.6g} | "
-                f"{s.public_samples} | {rw} | {s.sample_to_dimension_ratio:.3g} | {s.review_priority} |"
-            )
-        if self.blockers:
-            lines.extend(["", "## Internal screen blockers", ""])
-            lines.extend(f"- {b}" for b in self.blockers)
-        lines.extend(["", "## Mandatory review questions", ""])
-        lines.extend(f"- {q}" for q in self.mandatory_review_questions)
-        lines.extend(["", "## Non-claims", ""])
-        lines.extend(f"- {c}" for c in self.non_claims)
-        return "\n".join(lines) + "\n"
 
 
-ReviewBundle = CryptanalysisReport
+def _json_default(obj: Any) -> Any:
+    if hasattr(obj, "to_jsonable"):
+        return obj.to_jsonable()
+    if hasattr(obj, "__dataclass_fields__"):
+        return asdict(obj)
+    if isinstance(obj, float):
+        if math.isinf(obj):
+            return "inf" if obj > 0 else "-inf"
+        if math.isnan(obj):
+            return "nan"
+    return str(obj)
 
 
-@dataclass(frozen=True)
-class FileDigest:
-    path: str
-    sha256: str
-    bytes: int
-
-    def to_jsonable(self) -> dict[str, Any]:
-        return asdict(self)
+def _json_dump(path: Path, obj: Any) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(obj, indent=2, sort_keys=True, default=_json_default) + "\n", encoding="utf-8")
 
 
-def _surface_priority(sample_ratio: float, eta: float) -> str:
-    if eta == 0.0:
-        return "toy-only-noiseless"
-    if sample_ratio > 1000 or eta < 2**-16:
-        return "critical"
-    if sample_ratio > 100 or eta < 2**-10:
-        return "high"
-    return "normal"
+def surface_summary(params: SableParams) -> SurfaceSummary:
+    profile = sample_profile(params)
+    return SurfaceSummary(
+        preset=params.name,
+        q=params.q,
+        n=params.n,
+        k=params.k,
+        eta=params.eta,
+        n_c=params.n_c,
+        m_c=params.m_c,
+        eta_c=params.eta_c,
+        replicas=params.replicas,
+        expansion_key_rows=profile.gsw_rows,
+        clpn_row_difference_samples=profile.clpn_difference_rows,
+        sparse_row_entropy_bits=profile.sparse_row_entropy_bits,
+    )
 
 
-def collect_public_surfaces(params: SableParams, *, input_ciphertexts: int = 1000) -> list[ReviewSurface]:
-    n_exp = params.N * params.N
-    n_cmp = params.N * params.m_c
-    n_diff = params.N * (params.m_c * (params.m_c - 1) // 2)
-    eta_diff = ((params.q - 1.0) / params.q) * (1.0 - (1.0 - params.q * params.eta_c / (params.q - 1.0)) ** 2)
-    return [
-        ReviewSurface("expansion_key_sparse_lpn_rows", "sparse q-ary LPN", params.n, params.q, params.eta, n_exp, params.k, n_exp / max(1, params.n), params.eta * n_exp, _surface_priority(n_exp / max(1, params.n), params.eta), "GSW-style expansion key rows under the nonlinear evaluation secret."),
-        ReviewSurface("compaction_key_qary_lpn_rows", "dense q-ary LPN / code decoding", params.n_c, params.q, params.eta_c, n_cmp, None, n_cmp / max(1, params.n_c), params.eta_c * n_cmp, _surface_priority(n_cmp / max(1, params.n_c), params.eta_c), "Coordinate compaction key rows under the CLPN secret."),
-        ReviewSurface("same_entry_compaction_row_differences", "derived q-ary LPN row differences", params.n_c, params.q, eta_diff, n_diff, None, n_diff / max(1, params.n_c), eta_diff * n_diff, _surface_priority(n_diff / max(1, params.n_c), eta_diff), "Within-entry CLPN row differences cancel the encrypted coordinate and expose two-term-noise LPN-like rows."),
-        ReviewSurface("input_ciphertext_sparse_lpn_rows", "sparse q-ary LPN", params.n, params.q, params.eta, input_ciphertexts * params.replicas, params.k, (input_ciphertexts * params.replicas) / max(1, params.n), params.eta * input_ciphertexts * params.replicas, _surface_priority((input_ciphertexts * params.replicas) / max(1, params.n), params.eta), "Application-dependent encrypted input traffic."),
-    ]
+def challenge_info() -> dict[str, Any]:
+    return {
+        "schema": SCHEMA,
+        "package": "sable-he-research",
+        "version": __version__,
+        "release_name": __release_name__,
+        "phase": "independent cryptanalysis package",
+        "security_status": "research implementation; no certified secure parameter set",
+        "primary_claim_for_review": "post-quantum code/LPN-based leveled HE candidate with relation-resistant coordinate compaction",
+        "assumptions_to_review": [
+            "sparse q-ary LPN pseudorandomness for compact input and expansion-key rows",
+            "q-ary LPN/code pseudorandomness for the compaction layer",
+            "sample-count safety for public evaluation keys and compaction keys",
+            "relation-surface resistance of coordinate compaction",
+        ],
+        "public_surfaces": [
+            "sparse-LPN input ciphertexts",
+            "GSW-style sparse-LPN expansion-key matrices",
+            "code/LPN compaction-key ciphertexts",
+            "CLPN row-difference samples",
+        ],
+        "cryptanalysis_targets": [
+            "clean-subset low-noise attacks",
+            "information-set decoding / Prange-style attacks",
+            "BKW-style q-ary LPN attacks",
+            "large-sample distinguishers",
+            "sparse-row structural distinguishers",
+            "relation attacks on compaction keys",
+            "implementation bugs in arithmetic, encoding, serialization, and randomness",
+        ],
+        "not_in_scope_for_certification": [
+            "FIPS 140-3 module validation",
+            "algorithm validation for SABLE-HE itself",
+            "side-channel certification",
+            "deployment-grade parameter certification",
+        ],
+    }
 
 
-enumerate_public_surfaces = collect_public_surfaces
+def attack_surface_report(
+    params: SableParams,
+    *,
+    depth: int = 1,
+    additions: int = 1,
+    target_bits: int = 128,
+    relation_mode: str = "standard",
+    relation_screen_weight: int = 3,
+) -> dict[str, Any]:
+    arithmetic = estimate(params, depth=depth, additions=additions, target_bits=target_bits)
+    relation = estimate_c7_relations(
+        params,
+        mode=relation_mode,
+        relation_screen_weight=relation_screen_weight,
+        target_bits=float(target_bits),
+    )
+    lines = [asdict(line) for line in attack_lines(params, target_bits=target_bits)]
+    sec = security_report(params, target_bits=target_bits)
+    blockers = list(arithmetic.get("warnings", [])) + list(relation.blockers)
+    if not sec.get("passes_screen", False):
+        blockers.append("built-in first-pass attack screen is below target")
+    return {
+        "schema": "sable-attack-surface-report-v1",
+        "package": "sable-he-research",
+        "version": __version__,
+        "preset": params.name,
+        "target_bits": target_bits,
+        "depth": depth,
+        "additions": additions,
+        "surface_summary": asdict(surface_summary(params)),
+        "correctness_and_size_estimate": arithmetic,
+        "security_screen": sec,
+        "attack_lines": lines,
+        "relation_screen": relation.to_jsonable(),
+        "blockers_and_notes": blockers,
+        "verdict": "external-review-required" if blockers else "passes-internal-screens-only",
+        "disclaimer": "Internal screening artifact only; not a security certificate.",
+    }
 
 
-def build_review_bundle(params: SableParams, *, depth: int = 1, additions: int = 1, target_bits: float = 128.0, input_ciphertexts: int = 1000, relation_screen_weight: int = 3, seed: int = 2026) -> CryptanalysisReport:
-    surfaces = collect_public_surfaces(params, input_ciphertexts=input_ciphertexts)
-    correctness = estimate(params, depth=depth, additions=additions, target_bits=target_bits)
-    relation = estimate_c7_relations(params, mode="coordinate", relation_screen_weight=relation_screen_weight, target_bits=target_bits, seed=seed).to_jsonable()
-    screens: list[dict[str, Any]] = []
-    blockers: list[str] = []
-    finite_bits: list[float] = []
-    for surface in surfaces:
-        screen = estimate_qary_lpn_surface(name=surface.name, n=surface.secret_dimension, q=surface.q, eta=surface.noise_rate, samples=max(1, surface.public_samples), row_weight=surface.row_weight, target_bits=target_bits)
-        screens.append(screen)
-        bits = _parse_screen_bits(screen.get("conservative_min_bits"))
-        if bits is not None and math.isfinite(bits):
-            finite_bits.append(bits)
-            if bits < target_bits:
-                blockers.append(f"{surface.name} below target screen: {bits:.2f} bits")
-        for warning in screen.get("warnings", []):
-            text = str(warning)
-            if any(key in text.lower() for key in ["zero", "below", "low", "large public", "sample"]):
-                blockers.append(f"{surface.name}: {text}")
-    rel_bits = _parse_screen_bits(relation.get("minimum_screen_bits"))
-    if rel_bits is not None and math.isfinite(rel_bits):
-        finite_bits.append(rel_bits)
-        if rel_bits < target_bits:
-            blockers.append(f"relation screen below target: {rel_bits:.2f} bits")
-    if relation.get("verdict") not in {"passes-c7-relation-screen", "coordinate-mode-no-block-relations"}:
-        blockers.append(f"relation screen verdict: {relation.get('verdict')}")
-    questions = [
-        "Are sparse q-ary LPN parameters adequate for the expansion-key sample volume?",
-        "Are q-ary LPN/code parameters adequate for the compaction-key sample volume and row-difference surface?",
-        "Do BKW-family, ISD-family, clean-subset, or low-noise attacks beat the target category?",
-        "Does the proof account for all public samples in the t -> s -> r encrypted-secret chain?",
-        "Do implementation choices such as seeding, serialization, tensor adapters, or fixed-point encoding change the distribution?",
-    ]
-    acceptance = [
-        "At least two independent cryptanalysis reports find no attack below the target category on frozen parameter sets.",
-        "A public issue tracker records all attacks, parameter failures, and responses.",
-        "Frozen test vectors and parameter files reproduce all correctness and attack-screen results.",
-        "The package maintains clear separation between standardized PQC wrapper services and experimental HE services.",
-        "A hardened implementation plan exists before any sensitive-data deployment.",
-    ]
-    non_claims = [
-        "This bundle does not certify SABLE-HE parameters as secure.",
-        "This bundle is not a FIPS, CAVP, CMVP, ISO, or NIST algorithm validation.",
-        "The Python implementation is not a constant-time production cryptographic module.",
-    ]
-    return CryptanalysisReport("sable-he-research", __version__, __release_name__, params.name, target_bits, "ready-for-independent-cryptanalysis", surfaces, correctness, relation, screens, min(finite_bits) if finite_bits else None, blockers, questions, acceptance, non_claims)
+def known_answer_vector(preset: str = "c7_standard_toy_clean", *, key_seed: int = 4040) -> ChallengeVector:
+    params = PRESETS[preset]
+    if params.eta != 0.0 or params.eta_c != 0.0:
+        raise ValueError("known-answer vectors use a zero-noise preset for deterministic reproducibility")
+    kp = keygen_c7(params, seed=key_seed, mode="coordinate")
+
+    def enc(value: int, offset: int):
+        return expand(kp, encrypt(kp, value % params.q, seed=key_seed + offset))
+
+    x = 3 % params.q
+    y = 5 % params.q
+    z = 2 % params.q
+    ct_x = enc(x, 11)
+    ct_y = enc(y, 22)
+    ct_z = enc(z, 33)
+    ct_one = enc(1, 44)
+    ct_zero = enc(0, 55)
+    results = {
+        "add_x_y": decrypt_c7(kp, compact_c7(kp, ops.add(ct_x, ct_y))),
+        "sub_y_x": decrypt_c7(kp, compact_c7(kp, ops.sub(ct_y, ct_x))),
+        "mul_x_y": decrypt_c7(kp, compact_c7(kp, ops.mul(ct_x, ct_y))),
+        "square_x": decrypt_c7(kp, compact_c7(kp, ops.square(ct_x))),
+        "quadratic_xy_plus_z": decrypt_c7(kp, compact_c7(kp, ops.add(ops.mul(ct_x, ct_y), ct_z))),
+        "bool_xor_1_0": decrypt_c7(kp, compact_c7(kp, ops.gate_xor(ct_one, ct_zero))),
+        "bool_and_1_0": decrypt_c7(kp, compact_c7(kp, ops.gate_and(ct_one, ct_zero))),
+    }
+    expected = {
+        "add_x_y": (x + y) % params.q,
+        "sub_y_x": (y - x) % params.q,
+        "mul_x_y": (x * y) % params.q,
+        "square_x": (x * x) % params.q,
+        "quadratic_xy_plus_z": (x * y + z) % params.q,
+        "bool_xor_1_0": 1,
+        "bool_and_1_0": 0,
+    }
+    return ChallengeVector(
+        schema="sable-known-answer-vector-v1",
+        package="sable-he-research",
+        version=__version__,
+        preset=preset,
+        q=params.q,
+        key_seed=key_seed,
+        values={"x": x, "y": y, "z": z, "one": 1, "zero": 0},
+        results=results,
+        status="pass" if results == expected else "fail",
+    )
 
 
-def format_review_bundle(bundle: CryptanalysisReport) -> str:
-    lines = [f"SABLE-HE Phase 3 cryptanalysis bundle {bundle.version} ({bundle.release_name})", f"preset={bundle.preset} target={bundle.target_bits:g} status={bundle.status}", f"minimum finite screen bits={bundle.minimum_screen_bits if bundle.minimum_screen_bits is not None else 'n/a'}", "Public surfaces:"]
-    for s in bundle.surfaces:
-        rw = "dense" if s.row_weight is None else f"row_weight={s.row_weight}"
-        lines.append(f"  - {s.name}: assumption={s.assumption_family}, n={s.secret_dimension}, q={s.q}, eta={s.noise_rate:g}, samples={s.public_samples}, {rw}, priority={s.review_priority}")
-    if bundle.blockers:
-        lines.append("Blockers / review notes:")
-        lines.extend(f"  - {b}" for b in bundle.blockers[:40])
-    lines.append("Next step: send JSON/Markdown bundle, code tag, and paper to independent reviewers.")
-    return "\n".join(lines)
-
-
-generate_report = build_review_bundle
-format_report = format_review_bundle
-phase3_surface_report = lambda params, target_bits=128.0: build_review_bundle(params, target_bits=target_bits).to_jsonable()
-
-
-def collect_manifest(root: str | Path = ".") -> list[FileDigest]:
-    root = Path(root).resolve()
-    skip = {".git", "__pycache__", "build", "dist", ".pytest_cache", "paper", "audits"}
-    suffixes = {".py", ".md", ".toml", ".txt", ".yml", ".yaml", ".json"}
-    out: list[FileDigest] = []
-    for path in sorted(root.rglob("*")):
-        if not path.is_file() or any(part in skip for part in path.parts):
-            continue
-        if path.suffix.lower() in suffixes or path.name in {"VERSION", "LICENSE", "Makefile"}:
-            data = path.read_bytes()
-            out.append(FileDigest(str(path.relative_to(root)), hashlib.sha256(data).hexdigest(), len(data)))
-    return out
-
-
-def disclosure_template() -> str:
-    return """# SABLE-HE cryptanalysis disclosure template
+def red_team_template() -> str:
+    return """# SABLE-HE cryptanalysis report
 
 ## Summary
-Briefly describe the distinguisher, key-recovery attack, correctness failure, side channel, or protocol weakness.
+- Reporter:
+- Date:
+- Package version:
+- Commit/tag reviewed:
+- Parameter preset(s):
+- Attack family:
+- Result severity: informational / low / medium / high / critical
 
-## Affected component
-- [ ] Sparse-LPN input encryption
-- [ ] GSW-style expansion/evaluation
-- [ ] Code/LPN compaction
-- [ ] Federated-learning aggregation API
-- [ ] PQC wrapper/envelope
-- [ ] Serialization or CLI
+## Claim being tested
+State the exact security, correctness, implementation, or parameter claim being tested.
 
-## Parameters and sample surface
-List q, n, k, eta, n_c, m_c, eta_c, replicas, sample counts, and workload assumptions.
+## Reproduction environment
+```text
+OS:
+Python:
+sable-he-research:
+Command(s):
+```
 
-## Attack method
-Describe the algorithm, complexity model, memory, required samples, and whether it is classical or quantum.
+## Attack model
+Describe the adversary, public material, sample counts, memory model, oracle access, and whether the estimate is classical, quantum, or both.
 
-## Reproduction
-Provide code, commands, seeds, challenge vectors, and expected outputs.
+## Method
+Describe the attack or distinguisher. Include formulas, pseudocode, scripts, or notebooks where possible.
+
+## Results
+Include work factor, memory, success probability, sample requirements, affected presets, and any transcripts or outputs.
 
 ## Impact
-Explain what is recovered or distinguished and whether the attack breaks privacy, correctness, authentication, or implementation safety.
+Explain whether the result breaks confidentiality, correctness, relation resistance, parameter claims, or implementation behavior.
 
 ## Suggested mitigation
-Optional: parameter changes, design changes, proof correction, implementation hardening, or documentation updates.
+Recommend parameter changes, proof changes, implementation changes, or claim wording changes.
 """
 
 
-def _write_public_surfaces_csv(path: Path, surfaces: list[ReviewSurface]) -> None:
-    with path.open("w", newline="", encoding="utf-8") as fh:
-        writer = csv.DictWriter(fh, fieldnames=list(surfaces[0].to_jsonable()))
-        writer.writeheader()
-        for surface in surfaces:
-            writer.writerow(surface.to_jsonable())
-
-
-def write_review_bundle(output_dir: str | Path, *, preset: str = "c7_standard_toy_noisy", depth: int = 1, additions: int = 1, target_bits: float = 128.0, input_ciphertexts: int = 1000, seed: int = 2026) -> dict[str, str]:
-    if preset not in PRESETS:
-        raise KeyError(f"unknown preset: {preset}")
+def write_challenge_bundle(
+    output_dir: str | Path,
+    *,
+    presets: Iterable[str] | None = None,
+    depths: Iterable[int] = (1,),
+    target_bits: int = 128,
+) -> dict[str, Any]:
     out = Path(output_dir)
     out.mkdir(parents=True, exist_ok=True)
-    bundle = build_review_bundle(PRESETS[preset], depth=depth, additions=additions, target_bits=target_bits, input_ciphertexts=input_ciphertexts, seed=seed)
-    report_json = out / f"sable_cryptanalysis_bundle_{preset}.json"
-    report_md = out / f"sable_cryptanalysis_bundle_{preset}.md"
-    params_json = out / "parameters.json"
-    surfaces_csv = out / "public_surfaces.csv"
-    questions_md = out / "QUESTIONS.md"
-    reproduce = out / "REPRODUCE.sh"
-    disclosure = out / "CRYPTANALYSIS_DISCLOSURE_TEMPLATE.md"
-    report_json.write_text(json.dumps(bundle.to_jsonable(), indent=2, default=str) + "\n")
-    report_md.write_text(bundle.to_markdown())
-    params_json.write_text(json.dumps(asdict(PRESETS[preset]), indent=2) + "\n")
-    _write_public_surfaces_csv(surfaces_csv, bundle.surfaces)
-    questions_md.write_text("# Reviewer questions\n\n" + "\n".join(f"- {q}" for q in bundle.mandatory_review_questions) + "\n")
-    disclosure.write_text(disclosure_template())
-    reproduce.write_text(f"#!/usr/bin/env bash\nset -euo pipefail\nsable-he cryptanalysis-info --preset {preset} --target-bits {target_bits:g} --json > reproduced_report.json\n")
-    reproduce.chmod(0o755)
-    (out / "README.md").write_text(f"# SABLE-HE Phase 3 Independent Cryptanalysis Bundle\n\nPreset: `{preset}`\n\nThis bundle is for external review. It does not certify security.\n")
-    return {"directory": str(out), "json": str(report_json), "markdown": str(report_md), "parameters": str(params_json), "surfaces": str(surfaces_csv), "questions": str(questions_md), "disclosure_template": str(disclosure)}
+    presets = list(presets or DEFAULT_REVIEW_PRESETS)
+    reports_dir = out / "reports"
+    reports_dir.mkdir(exist_ok=True)
+    vectors_dir = out / "vectors"
+    vectors_dir.mkdir(exist_ok=True)
+    templates_dir = out / "templates"
+    templates_dir.mkdir(exist_ok=True)
+    _json_dump(out / "challenge_info.json", challenge_info())
+    (templates_dir / "cryptanalysis_report_template.md").write_text(red_team_template(), encoding="utf-8")
+    _json_dump(vectors_dir / "sable_known_answer_vector.json", known_answer_vector())
+    written_reports: list[str] = []
+    for preset in presets:
+        if preset not in PRESETS:
+            continue
+        for depth in depths:
+            report = attack_surface_report(PRESETS[preset], depth=int(depth), target_bits=target_bits)
+            path = reports_dir / f"{preset}_depth{depth}_attack_surface.json"
+            _json_dump(path, report)
+            written_reports.append(str(path.relative_to(out)))
+    with (out / "public_surface_summary.csv").open("w", newline="", encoding="utf-8") as fh:
+        fieldnames = list(asdict(surface_summary(PRESETS[presets[0]])).keys()) if presets and presets[0] in PRESETS else []
+        writer = csv.DictWriter(fh, fieldnames=fieldnames)
+        writer.writeheader()
+        for preset in presets:
+            if preset in PRESETS:
+                writer.writerow(asdict(surface_summary(PRESETS[preset])))
+    readme = f"""# SABLE-HE cryptanalysis bundle
+
+Package version: `{__version__}`  
+Release: `{__release_name__}`
+
+This bundle is designed for independent cryptanalysis and reproduction. It is not a security certificate.
+"""
+    (out / "README.md").write_text(readme, encoding="utf-8")
+    manifest = {
+        "schema": SCHEMA,
+        "version": __version__,
+        "files": [
+            "README.md",
+            "challenge_info.json",
+            "public_surface_summary.csv",
+            "vectors/sable_known_answer_vector.json",
+            "templates/cryptanalysis_report_template.md",
+            *written_reports,
+        ],
+    }
+    _json_dump(out / "manifest.json", manifest)
+    return manifest
 
 
-def write_phase3_bundle(root: str | Path, params: SableParams, *, target_bits: float = 128.0, seed: int = 2026, challenge_samples: int = 64) -> dict[str, str]:
-    del challenge_samples
-    return write_review_bundle(root, preset=params.name, target_bits=target_bits, seed=seed)
-
-
-def render_surface_markdown(report: CryptanalysisReport | dict[str, Any]) -> str:
-    if isinstance(report, CryptanalysisReport):
-        return report.to_markdown()
-    return json.dumps(report, indent=2, default=str) + "\n"
-
-
-__all__ = [
-    "ATTACK_FAMILIES", "REVIEW_SCOPE", "ReviewSurface", "CryptanalysisSurface", "CryptanalysisReport", "ReviewBundle", "FileDigest",
-    "collect_public_surfaces", "enumerate_public_surfaces", "collect_manifest", "build_review_bundle", "write_review_bundle", "write_phase3_bundle",
-    "generate_report", "format_report", "format_review_bundle", "phase3_surface_report", "render_surface_markdown", "disclosure_template",
-]
+ReviewSurface = SurfaceSummary
+ReviewBundle = dict
+build_review_bundle = attack_surface_report
+enumerate_public_surfaces = lambda params, **_: [surface_summary(params)]
+format_review_bundle = lambda bundle: json.dumps(bundle, indent=2, default=_json_default)
+write_review_bundle = lambda output_dir, **kwargs: write_challenge_bundle(output_dir, **kwargs)

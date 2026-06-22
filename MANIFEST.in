@@ -4,12 +4,23 @@ include LICENSE
 include VERSION
 include CITATION.cff
 include RELEASE_NOTES*.md
+include pyproject.toml
+include MANIFEST.in
 recursive-include docs *.md *.txt *.json *.csv
 recursive-include examples *.py *.md
-recursive-include vectors *.json
+recursive-include vectors *.json *.md
+recursive-include tools *.py *.md
+recursive-include .github *.yml *.yaml *.md
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
+recursive-exclude * .DS_Store
+recursive-exclude * *.pdf
+recursive-exclude * *.aux
+recursive-exclude * *.log
+recursive-exclude * *.out
+recursive-exclude * *.toc
 recursive-exclude paper *
+recursive-exclude papers *
 recursive-exclude audits *
 recursive-exclude experiments *
 recursive-exclude benchmarks *

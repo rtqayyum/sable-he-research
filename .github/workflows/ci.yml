@@ -13,10 +13,20 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install package
-        run: python -m pip install -e . pytest
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev,numpy]"
       - name: Run tests
-        run: pytest -q
-      - name: Run C8 readiness gate
-        run: python tools/c8_readiness_gate.py --json --write docs/generated/c8_gate_status.json
-      - name: Generate toy KAT vectors
-        run: PYTHONPATH=src python tools/generate_kat_vectors.py --out vectors/sable_c7_toy_clean_kat.json
+        run: python -m pytest -q
+      - name: Phase 4 release check
+        run: python tools/check_release_artifacts.py . --json
+      - name: Generate and verify KATs
+        run: |
+          python tools/generate_phase4_kats.py --out vectors
+          python tools/verify_phase4_kats.py vectors
+      - name: Build and inspect package
+        run: |
+          python -m pip install build twine
+          rm -rf dist build *.egg-info src/*.egg-info
+          python -m build
+          python -m twine check dist/*

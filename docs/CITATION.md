@@ -1,14 +1,12 @@
 # Citation
 
-If you use SABLE-HE Research, cite the GitHub/PyPI release and the accompanying manuscript.
+Please cite the GitHub repository and PyPI package version used in experiments.
 
 ```bibtex
-@software{sable_he_research_2026,
-  title        = {SABLE-HE Research: Post-Quantum Code/LPN-Based Leveled Homomorphic Encryption for Encrypted Federated Aggregation},
-  author       = {Qayyum, Tariq},
-  year         = {2026},
-  version      = {0.2.1},
-  url          = {https://github.com/rtqayyum/sable-he-research},
-  note         = {Public research implementation}
+@software{sable_he_research,
+  title = {SABLE-HE Research: Post-Quantum Code/LPN-Based Homomorphic Encryption Toolkit},
+  version = {0.4.1},
+  year = {2026},
+  url = {https://github.com/rtqayyum/sable-he-research}
 }
 ```
