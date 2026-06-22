@@ -1,4 +1,0 @@
-preset=c2_toy_clean q=7 N=13 block_size=2
-dictionary_entries=294
-case=mul got=3 expected=3 pass=True
-case=xy_plus_z got=4 expected=4 pass=True

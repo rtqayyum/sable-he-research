@@ -11,6 +11,7 @@ from typing import Any
 from . import operations as ops
 from . import fl
 from . import pqc
+from . import cryptanalysis
 from .baselines import default_workloads, flatten_for_csv, model_comparison
 from .c7_relation_screen import estimate_c7_relations, format_c7_report
 from .estimator import estimate, format_estimate
@@ -376,6 +377,41 @@ def cmd_pqc_demo(args: argparse.Namespace) -> int:
             print("warning: demo provider is non-secure and for tests/examples only")
     return 0 if payload["roundtrip_ok"] else 2
 
+
+def cmd_cryptanalysis_info(args: argparse.Namespace) -> int:
+    bundle = cryptanalysis.build_review_bundle(
+        PRESETS[args.preset],
+        depth=args.depth,
+        additions=args.additions,
+        target_bits=args.target_bits,
+        input_ciphertexts=args.input_ciphertexts,
+        seed=args.seed,
+    )
+    if args.json:
+        print(json.dumps(bundle.to_jsonable(), indent=2, default=_json_default))
+    else:
+        print(cryptanalysis.format_review_bundle(bundle))
+    return 0
+
+
+def cmd_cryptanalysis_bundle(args: argparse.Namespace) -> int:
+    paths = cryptanalysis.write_review_bundle(
+        args.output_dir,
+        preset=args.preset,
+        depth=args.depth,
+        additions=args.additions,
+        target_bits=args.target_bits,
+        input_ciphertexts=args.input_ciphertexts,
+        seed=args.seed,
+    )
+    if args.json:
+        print(json.dumps(paths, indent=2, default=_json_default))
+    else:
+        print("Wrote SABLE-HE cryptanalysis review bundle:")
+        for key, value in paths.items():
+            print(f"  {key}: {value}")
+    return 0
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="sable-he",
@@ -489,6 +525,28 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--client-id", default="client-demo")
     p.add_argument("--json", action="store_true")
     p.set_defaults(func=cmd_pqc_demo)
+
+
+    p = sub.add_parser("cryptanalysis-info", help="summarize Phase 3 independent cryptanalysis review surfaces")
+    p.add_argument("--preset", default="c7_standard_toy_noisy", choices=sorted(PRESETS))
+    p.add_argument("--depth", type=int, default=1)
+    p.add_argument("--additions", type=int, default=1)
+    p.add_argument("--target-bits", type=float, default=128.0)
+    p.add_argument("--input-ciphertexts", type=int, default=1000)
+    p.add_argument("--seed", type=int, default=2026)
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_cryptanalysis_info)
+
+    p = sub.add_parser("cryptanalysis-bundle", help="write JSON/Markdown independent cryptanalysis review bundle")
+    p.add_argument("--preset", default="c7_standard_toy_noisy", choices=sorted(PRESETS))
+    p.add_argument("--depth", type=int, default=1)
+    p.add_argument("--additions", type=int, default=1)
+    p.add_argument("--target-bits", type=float, default=128.0)
+    p.add_argument("--input-ciphertexts", type=int, default=1000)
+    p.add_argument("--seed", type=int, default=2026)
+    p.add_argument("--output-dir", default="sable_cryptanalysis_bundle")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_cryptanalysis_bundle)
 
     return parser
 

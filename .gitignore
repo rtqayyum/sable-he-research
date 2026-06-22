@@ -1,8 +1,33 @@
+# Python/build artifacts
 __pycache__/
-*.pyc
-.pytest_cache/
-.venv/
-dist/
-build/
+*.py[cod]
 *.egg-info/
-validation_outputs/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Private/internal research artifacts
+paper/
+audits/
+experiments/
+benchmarks/
+docs/generated/
+*.aux
+*.log
+*.out
+*.toc
+*.pdf
+*.png
+*.jpg
+*.jpeg
+*.svg
+*.ipynb
+
+# Local envs
+.venv/
+venv/
+.env
+.DS_Store

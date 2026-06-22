@@ -2,10 +2,15 @@ include README.md
 include SECURITY.md
 include LICENSE
 include VERSION
+include CITATION.cff
 include RELEASE_NOTES*.md
 recursive-include docs *.md *.txt *.json *.csv
 recursive-include examples *.py *.md
 recursive-include vectors *.json
-recursive-include paper *.tex *.bib *.md *.pdf *.sty
 recursive-exclude * __pycache__
 recursive-exclude * *.py[co]
+recursive-exclude paper *
+recursive-exclude audits *
+recursive-exclude experiments *
+recursive-exclude benchmarks *
+recursive-exclude docs/generated *

@@ -1,6 +1,0 @@
-GREEN  research_artifact: construction, paper, prototype, tests, and negative-result trail are present
-GREEN  internal_validation: toy correctness, arithmetic, estimators, and relation screens are automated
-GREEN  audit_package: ready to send to independent cryptanalysts with limitations disclosed
-RED    production_cryptography: requires independent cryptanalysis, hardened implementation, side-channel review, audit, and stable parameters
-RED    certified_secure_parameters: requires externally reviewed parameter security and attack-cost estimates
-AMBER  standardization_ready: submission materials exist in draft form, but parameters and external cryptanalysis are not frozen

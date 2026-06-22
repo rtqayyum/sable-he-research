@@ -1,7 +1,0 @@
-preset,surface,q,n,samples,eta,ratio,min_bits,passes,qary_bkw_bits,qary_bkw_block,qary_bkw_finite
-c2_toy_noisy,expansion,7,16,289,0.0005,18.0625,8.78463484555752,False,8.78463484555752,2,True
-c2_toy_noisy,seeded_dictionary_compaction,7,24,37830,0.0005,1576.25,10.596609998809749,False,10.596609998809749,2,True
-c2_design_smallq,expansion,7,512,263169,1.52587890625e-05,514.002,27.011271140999146,False,77.38354539627647,26,False
-c2_design_smallq,seeded_dictionary_compaction,7,512,239542272,6.103515625e-05,467856,27.045085595944972,False,85.66122025311411,29,False
-c2_candidate_depth1,expansion,65537,512,263169,0.000244140625,514.002,27.180358897474058,False,436.3225224623941,27,False
-c2_candidate_depth1,seeded_dictionary_compaction,65537,512,137707388928,0.01,2.6896e+08,34.42377968389893,False,595.9077050992288,37,False

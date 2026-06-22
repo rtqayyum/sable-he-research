@@ -1,4 +1,0 @@
-tests_collected=99
-wheel_install_smoke_test=passed
-cli_demo=passed
-api_demo=passed

@@ -120,6 +120,14 @@ from .fl import (
     weighted_sum_encrypted,
 )
 
+from . import cryptanalysis
+from .cryptanalysis import (
+    ATTACK_FAMILIES, REVIEW_SCOPE, CryptanalysisReport, CryptanalysisSurface, FileDigest,
+    ReviewBundle, ReviewSurface, build_review_bundle, collect_manifest, collect_public_surfaces,
+    disclosure_template, format_review_bundle, phase3_surface_report, write_phase3_bundle,
+    write_review_bundle,
+)
+
 from . import pqc
 from .pqc import (
     AuthenticationError,
@@ -174,4 +182,8 @@ __all__ = [
     "available_backend_names", "get_pqc_provider", "pqc_capability_report",
     "pqc_seal_json", "pqc_open_json", "make_signed_federated_update_envelope",
     "open_federated_update_envelope",
+    "cryptanalysis", "ATTACK_FAMILIES", "REVIEW_SCOPE", "CryptanalysisReport", "CryptanalysisSurface",
+    "FileDigest", "ReviewBundle", "ReviewSurface", "build_review_bundle", "collect_manifest",
+    "collect_public_surfaces", "disclosure_template", "format_review_bundle", "phase3_surface_report",
+    "write_phase3_bundle", "write_review_bundle",
 ]
