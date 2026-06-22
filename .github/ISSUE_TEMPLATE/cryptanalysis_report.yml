@@ -1,0 +1,36 @@
+name: Cryptanalysis or parameter report
+description: Report a cryptanalytic observation, proof concern, or parameter-estimation issue
+title: "[Cryptanalysis]: "
+labels: [cryptanalysis, security]
+body:
+  - type: markdown
+    attributes:
+      value: "For sensitive exploit-level reports, use private vulnerability reporting instead of a public issue."
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version or commit
+  - type: input
+    id: parameters
+    attributes:
+      label: Parameter set
+  - type: textarea
+    id: attack_model
+    attributes:
+      label: Attack model
+  - type: textarea
+    id: details
+    attributes:
+      label: Technical details
+    validations:
+      required: true
+  - type: textarea
+    id: references
+    attributes:
+      label: References

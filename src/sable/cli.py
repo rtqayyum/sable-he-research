@@ -10,7 +10,7 @@ from typing import Any
 
 from . import operations as ops
 from . import fl
-from . import fl
+from . import pqc
 from .baselines import default_workloads, flatten_for_csv, model_comparison
 from .c7_relation_screen import estimate_c7_relations, format_c7_report
 from .estimator import estimate, format_estimate
@@ -192,23 +192,32 @@ def cmd_compare(args: argparse.Namespace) -> int:
 
 
 def cmd_self_test(args: argparse.Namespace) -> int:
+    """Run a quiet deterministic operation suite without printing per-operation payloads."""
+    params = PRESETS[args.preset]
+    operations_to_check = [
+        "add", "sub", "neg", "scalar3", "mul", "square", "pow3",
+        "not", "and", "or", "xor", "nand", "nor", "xnor", "implies",
+    ]
     failures: list[str] = []
-    for i, operation in enumerate(["add", "sub", "mul", "square", "scalar3", "and", "or", "xor", "not".replace("not", "implies")]):
-        ns = argparse.Namespace(
-            preset=args.preset,
-            operation=operation,
-            x=1 if operation in {"and", "or", "xor", "implies"} else 3,
-            y=0 if operation in {"and", "or", "xor", "implies"} else 5,
-            seed=args.seed + 17 * i,
-            json=True,
-        )
-        rc = cmd_run(ns)
-        if rc != 0:
-            failures.append(operation)
+    for i, operation in enumerate(operations_to_check):
+        x = 1 if operation in {"not", "and", "or", "xor", "nand", "nor", "xnor", "implies"} else 3
+        y = 0 if operation in {"not", "and", "or", "xor", "nand", "nor", "xnor", "implies"} else 5
+        seed = args.seed + 17 * i
+        kp = keygen_c7(params, seed=seed, mode="coordinate")
+        x_ct = _encrypt_expand(kp, x % params.q, seed + 101)
+        y_ct = _encrypt_expand(kp, y % params.q, seed + 202)
+        result_ct = _apply_operation(operation, x_ct, y_ct)
+        observed = decrypt_c7(kp, compact_c7(kp, result_ct))
+        expected = _expected(operation, x, y, params.q)
+        if observed != expected:
+            failures.append(f"{operation}: expected={expected} observed={observed}")
     if failures:
-        print("Self-test failed: " + ", ".join(failures))
+        print("Self-test failed:")
+        for failure in failures:
+            print(f"  - {failure}")
         return 1
     print(f"Self-test passed for preset {args.preset}")
+    print("checked operations: " + ", ".join(operations_to_check))
     print("status: validation demo; no certified parameter set")
     return 0
 
@@ -304,6 +313,68 @@ def cmd_screen_c7(args: argparse.Namespace) -> int:
         print(format_c7_report(report))
     return 0
 
+
+
+def cmd_pqc_info(args: argparse.Namespace) -> int:
+    report = pqc.capability_report()
+    if args.json:
+        print(json.dumps(report, indent=2, default=_json_default))
+    else:
+        print("SABLE-HE Phase 2 PQC wrapper")
+        print(f"schema={report['schema']}")
+        suite = report['default_suite']
+        print(f"default KEM={suite['kem']} signature={suite['signature']} aead={suite['aead']} hash={suite['hash']}")
+        print("available backends: " + ", ".join(report['available_backends']))
+        print(report['production_note'])
+    return 0
+
+
+def cmd_pqc_demo(args: argparse.Namespace) -> int:
+    provider = pqc.get_provider(args.backend, allow_insecure_demo=(args.backend in {"demo", "demo-nonsecure", "test"}))
+    recipient = provider.kem_keypair(args.kem)
+    signer = provider.signature_keypair(args.signature)
+    suite = pqc.PQCSuite(kem=args.kem, signature=args.signature)
+    update = {"weights": [0.158, -0.366, 1.155], "note": "demo FedAvg update"}
+    env = pqc.make_signed_federated_update_envelope(
+        update,
+        sample_count=200,
+        round_id=args.round_id,
+        client_id=args.client_id,
+        recipient_kem_public_key=recipient.public_key,
+        sender_signature_secret_key=signer.secret_key,
+        sender_signature_public_key=signer.public_key,
+        provider=provider,
+        suite=suite,
+    )
+    opened, metadata = pqc.open_federated_update_envelope(
+        env,
+        recipient_kem_secret_key=recipient.secret_key,
+        provider=provider,
+        trusted_sender_signature_public_key=signer.public_key,
+    )
+    payload = {
+        "provider": getattr(provider, "provider_name", args.backend),
+        "provider_production_capable": getattr(provider, "production_capable", False),
+        "suite": suite.__dict__,
+        "envelope_schema": env.schema,
+        "recipient_kem_public_key_fingerprint": env.recipient_kem_public_key_fingerprint,
+        "sender_signature_public_key_fingerprint": pqc.fingerprint(signer.public_key),
+        "payload_kind": env.payload_kind,
+        "opened_payload": opened,
+        "metadata": metadata,
+        "roundtrip_ok": opened == update,
+    }
+    if args.json:
+        print(json.dumps(payload, indent=2, default=_json_default))
+    else:
+        print("SABLE-HE PQC envelope demo")
+        print(f"provider={payload['provider']} production_capable={payload['provider_production_capable']}")
+        print(f"KEM={args.kem} signature={args.signature}")
+        print(f"payload_kind={env.payload_kind} roundtrip_ok={payload['roundtrip_ok']}")
+        print(f"recipient={env.recipient_kem_public_key_fingerprint}")
+        if not payload['provider_production_capable']:
+            print("warning: demo provider is non-secure and for tests/examples only")
+    return 0 if payload["roundtrip_ok"] else 2
 
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
@@ -405,6 +476,19 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("readiness", help="print readiness gates and limitations")
     p.add_argument("--json", action="store_true")
     p.set_defaults(func=cmd_readiness)
+
+    p = sub.add_parser("pqc-info", help="show standardized PQC wrapper capabilities and configured backends")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_pqc_info)
+
+    p = sub.add_parser("pqc-demo", help="seal and verify a small FL update envelope using a selected PQC backend")
+    p.add_argument("--backend", default="demo", choices=["demo", "demo-nonsecure", "oqs", "liboqs", "liboqs-python"])
+    p.add_argument("--kem", default="ML-KEM-768")
+    p.add_argument("--signature", default="ML-DSA-65")
+    p.add_argument("--round-id", default="round-0001")
+    p.add_argument("--client-id", default="client-demo")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_pqc_demo)
 
     return parser
 

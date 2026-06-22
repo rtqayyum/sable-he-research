@@ -22,7 +22,7 @@ from typing import Any, Iterator, Mapping, Sequence
 
 from . import operations as ops
 from .params import SableParams
-from .sable import KeyPair, compact_c7, decrypt_c7, encrypt, expand, keygen_c7
+from .sable import KeyPair, compact_sable, decrypt_sable, encrypt, expand, keygen_sable
 
 try:  # Optional dependency; the package works without NumPy for Python lists.
     import numpy as _np  # type: ignore
@@ -390,7 +390,7 @@ class EncryptedFLAggregator:
 
     @classmethod
     def from_params(cls, params: SableParams, *, key_seed: int = 123, scale: int = 1000, seed: int = 1000) -> "EncryptedFLAggregator":
-        kp = keygen_c7(params, seed=key_seed, mode="coordinate")
+        kp = keygen_sable(params, seed=key_seed, mode="coordinate")
         return cls(kp, scale=scale, seed=seed)
 
     def encrypt_model(self, model_or_weights: Any, *, seed: int | None = None) -> EncryptedTensor:
@@ -408,7 +408,7 @@ class EncryptedFLAggregator:
         div = encrypted_model.divisor if divisor is None else divisor
         decoded: list[float] = []
         for ct in encrypted_model.values:
-            field_value = decrypt_c7(self.keypair, compact_c7(self.keypair, ct))
+            field_value = decrypt_sable(self.keypair, compact_sable(self.keypair, ct))
             decoded.append(encrypted_model.encoder.decode(field_value, divisor=div))
         return unflatten_tree(decoded, encrypted_model.spec)
 

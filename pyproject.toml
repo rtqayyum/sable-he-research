@@ -4,14 +4,14 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sable-he-research"
-version = "0.2.0"
-description = "Federated-learning aggregation and research toolkit for SABLE-HE, a code/LPN-based leveled homomorphic-encryption candidate."
+version = "0.3.1"
+description = "Public research implementation of SABLE-HE, a post-quantum code/LPN-based leveled homomorphic-encryption toolkit for encrypted federated aggregation."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
 authors = [{name = "SABLE-HE research draft contributors"}]
 maintainers = [{name = "SABLE-HE research draft contributors"}]
-keywords = ["homomorphic encryption", "post-quantum cryptography", "LPN", "code-based cryptography", "research prototype", "federated learning", "secure aggregation", "FedAvg"]
+keywords = ["homomorphic encryption", "post-quantum cryptography", "LPN", "code-based cryptography", "research implementation", "federated learning", "secure aggregation", "FedAvg"]
 classifiers = [
   "Development Status :: 4 - Beta",
   "Intended Audience :: Science/Research",
@@ -35,6 +35,8 @@ keras = ["keras>=3.0"]
 torch = ["torch>=2.0"]
 all = ["numpy>=1.24", "tensorflow>=2.15", "keras>=3.0", "torch>=2.0"]
 docs = []
+pqc = ["cryptography>=42"]
+pqc-oqs = ["cryptography>=42", "liboqs-python>=0.12.0"]
 
 [project.scripts]
 sable-he = "sable.cli:main"

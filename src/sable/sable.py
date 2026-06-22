@@ -199,6 +199,16 @@ def keygen_basis_c7(*args: Any, **kwargs: Any) -> KeyPair:
     return keygen_relation_resistant_c7(*args, **kwargs)
 
 
+def keygen_sable(*args: Any, **kwargs: Any) -> KeyPair:
+    """Generate keys for the final public SABLE-HE relation-resistant compactor.
+
+    This stable alias avoids exposing internal development labels in user code.
+    It currently delegates to the conservative relation-resistant coordinate
+    compaction mode.
+    """
+    return keygen_relation_resistant_c7(*args, **kwargs)
+
+
 def encrypt(kp: KeyPair, mu: int, seed: int | None = None) -> list[SparseVector]:
     rng = _rng(seed)
     return [regev.encrypt(mu % kp.params.q, kp.t, kp.params, rng) for _ in range(kp.params.replicas)]
@@ -278,6 +288,11 @@ def compact_c7_screened(kp: KeyPair, expanded_ciphertext: list[SparseMatrix]) ->
     return compact_relation_resistant_c7(kp, expanded_ciphertext)
 
 
+def compact_sable(kp: KeyPair, expanded_ciphertext: list[SparseMatrix]) -> list[clpn.CLPNCiphertext]:
+    """Compact an expanded ciphertext using the final public SABLE-HE compactor."""
+    return compact_relation_resistant_c7(kp, expanded_ciphertext)
+
+
 def compact_basis_c7(kp: KeyPair, expanded_ciphertext: list[SparseMatrix]) -> list[clpn.CLPNCiphertext]:
     return compact_relation_resistant_c7(kp, expanded_ciphertext)
 
@@ -345,6 +360,11 @@ def decrypt_c7_screened(kp: KeyPair, compact_ciphertext: list[clpn.CLPNCiphertex
 
 
 def decrypt_c7(kp: KeyPair, compact_ciphertext: list[clpn.CLPNCiphertext]) -> int:
+    return decrypt_relation_resistant_c7(kp, compact_ciphertext)
+
+
+def decrypt_sable(kp: KeyPair, compact_ciphertext: list[clpn.CLPNCiphertext]) -> int:
+    """Decrypt a compacted ciphertext from the final public SABLE-HE compactor."""
     return decrypt_relation_resistant_c7(kp, compact_ciphertext)
 
 

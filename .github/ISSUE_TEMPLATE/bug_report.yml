@@ -1,0 +1,33 @@
+name: Bug report
+description: Report a reproducible software bug
+title: "[Bug]: "
+labels: [bug]
+body:
+  - type: textarea
+    id: summary
+    attributes:
+      label: Summary
+      description: What happened?
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Version
+      placeholder: sable-he-research 0.2.1
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Reproduction steps
+      render: bash
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      description: OS, Python version, optional dependencies

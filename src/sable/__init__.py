@@ -1,6 +1,6 @@
-"""SABLE-HE public research-preview package.
+"""SABLE-HE public research package.
 
-Includes homomorphic arithmetic helpers, relation-resistant C7 compaction APIs,
+Includes homomorphic arithmetic helpers, stable SABLE-HE compaction APIs,
 and federated-learning aggregation utilities. The package does not ship
 externally certified security parameters.
 """
@@ -33,6 +33,9 @@ from .sable import (
     eval_mul,
     expand,
     keygen,
+    keygen_sable,
+    compact_sable,
+    decrypt_sable,
     keygen_c2,
     keygen_block_c2,
     keygen_seeded_block_c2,
@@ -117,6 +120,26 @@ from .fl import (
     weighted_sum_encrypted,
 )
 
+from . import pqc
+from .pqc import (
+    AuthenticationError,
+    BackendUnavailable,
+    DemoPQCProvider,
+    InsecureDemoProviderError,
+    OQSPQCProvider,
+    PQCEnvelope,
+    PQCError,
+    PQCKeyPair,
+    PQCSuite,
+    available_backend_names,
+    capability_report as pqc_capability_report,
+    get_provider as get_pqc_provider,
+    make_signed_federated_update_envelope,
+    open_federated_update_envelope,
+    open_json as pqc_open_json,
+    seal_json as pqc_seal_json,
+)
+
 try:  # pragma: no cover - defensive compatibility shim
     from .arithmetic import OPERATION_PROFILES, OperationProfile
 except Exception:  # pragma: no cover
@@ -125,7 +148,7 @@ except Exception:  # pragma: no cover
 
 __all__ = [
     "__version__", "__release_name__", "SableParams", "PRESETS", "KeyPair",
-    "keygen", "keygen_c2", "keygen_block_c2", "keygen_seeded_block_c2",
+    "keygen", "keygen_sable", "compact_sable", "decrypt_sable", "keygen_c2", "keygen_block_c2", "keygen_seeded_block_c2",
     "keygen_basis_c4", "keygen_c4_basis", "keygen_screened_c7", "keygen_c7_screened", "keygen_c7",
     "encrypt", "expand", "eval_add", "eval_mul", "compact", "compact_c2", "compact_block_c2",
     "compact_seeded_block_c2", "compact_basis_c4", "compact_c4_basis", "compact_screened_c7",
@@ -146,4 +169,9 @@ __all__ = [
     "median_after_decrypt", "median_encrypted", "min_after_decrypt", "min_encrypted", "secure_sum_encrypted",
     "sum_encrypted", "trimmed_mean_after_decrypt", "unflatten_tree", "weighted_average_encrypted",
     "weighted_mean_encrypted", "weighted_sum_encrypted",
+    "pqc", "PQCError", "BackendUnavailable", "AuthenticationError", "InsecureDemoProviderError",
+    "PQCSuite", "PQCKeyPair", "PQCEnvelope", "DemoPQCProvider", "OQSPQCProvider",
+    "available_backend_names", "get_pqc_provider", "pqc_capability_report",
+    "pqc_seal_json", "pqc_open_json", "make_signed_federated_update_envelope",
+    "open_federated_update_envelope",
 ]

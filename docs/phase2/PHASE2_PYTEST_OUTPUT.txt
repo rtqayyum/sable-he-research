@@ -1,0 +1,46 @@
+============================= test session starts ==============================
+platform linux -- Python 3.13.5, pytest-9.0.2, pluggy-1.6.0
+rootdir: /mnt/data/phase2_work/sable_he_pip_package_fl
+configfile: pyproject.toml
+testpaths: tests
+plugins: anyio-4.13.0, cov-7.0.0, metadata-3.1.1, ddtrace-4.4.0, json-report-1.5.0, Faker-40.1.2, asyncio-1.3.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 108 items
+
+tests/test_additive_basis_c4.py ..                                       [  1%]
+tests/test_arithmetic_operations.py ....                                 [  5%]
+tests/test_arithmetic_ops_c5.py .......                                  [ 12%]
+tests/test_attack_estimator.py ....                                      [ 15%]
+tests/test_attacks.py ....                                               [ 19%]
+tests/test_baseline.py .                                                 [ 20%]
+tests/test_block_dictionary_c2.py ..                                     [ 22%]
+tests/test_c2_attack_surface.py ..                                       [ 24%]
+tests/test_c2_end_to_end.py ...                                          [ 26%]
+tests/test_c4_compactor.py ...                                           [ 29%]
+tests/test_c4_estimator.py ..                                            [ 31%]
+tests/test_c5_attack_estimator.py ....                                   [ 35%]
+tests/test_c5_c4_surface.py ..                                           [ 37%]
+tests/test_c5_surface.py .                                               [ 37%]
+tests/test_c6_relation_estimator.py .....                                [ 42%]
+tests/test_c7_relation_resistant.py .......                              [ 49%]
+tests/test_cli_package.py ....                                           [ 52%]
+tests/test_clpn.py .                                                     [ 53%]
+tests/test_clpn_c2.py ..                                                 [ 55%]
+tests/test_clpn_seeded.py ....                                           [ 59%]
+tests/test_codes_c2.py ...                                               [ 62%]
+tests/test_crt_c2.py ..                                                  [ 63%]
+tests/test_end_to_end.py ....                                            [ 67%]
+tests/test_estimator_c2.py ...                                           [ 70%]
+tests/test_estimator_seeded.py ...                                       [ 73%]
+tests/test_field.py ...                                                  [ 75%]
+tests/test_fl_aggregation.py .....                                       [ 80%]
+tests/test_gsw.py .                                                      [ 81%]
+tests/test_operation_profiles.py ...                                     [ 84%]
+tests/test_operations_arithmetic_c5.py ...                               [ 87%]
+tests/test_pqc_wrapper.py ....                                           [ 90%]
+tests/test_regev.py .                                                    [ 91%]
+tests/test_sable_c2.py ...                                               [ 94%]
+tests/test_security_estimator.py ..                                      [ 96%]
+tests/test_seeded_block_dictionary_c2.py ....                            [100%]
+
+============================= 108 passed in 2.24s ==============================

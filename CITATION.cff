@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use SABLE-HE Research, please cite the software and the associated manuscript."
+title: "SABLE-HE Research: Post-Quantum Code/LPN-Based Leveled Homomorphic Encryption for Encrypted Federated Aggregation"
+version: "0.3.1"
+date-released: "2026-06-22"
+license: "MIT"
+repository-code: "https://github.com/rtqayyum/sable-he-research"
+authors:
+  - family-names: "Qayyum"
+    given-names: "Rana Tahir"
+keywords:
+  - homomorphic encryption
+  - post-quantum cryptography
+  - code-based cryptography
+  - learning parity with noise
+  - federated learning
+  - secure aggregation
