@@ -1,4 +1,4 @@
-# SABLE-HE
+# SABLE-HE (Post Quantum Homomorphic Encryption)
 
 SABLE-HE is a Python research-preview package for code/LPN-based homomorphic arithmetic and federated-learning aggregation experiments.
 
