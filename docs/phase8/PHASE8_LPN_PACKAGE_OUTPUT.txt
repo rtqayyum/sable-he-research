@@ -1,0 +1,2 @@
+wrote Phase 8 LPN/ISD/BKW estimator package to /mnt/data/phase8_cli_lpn_pkg
+files=5 candidates=1

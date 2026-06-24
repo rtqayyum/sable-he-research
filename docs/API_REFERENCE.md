@@ -17,3 +17,8 @@ Core arithmetic helpers:
 - `ops.gate_and`, `ops.gate_or`, `ops.gate_xor`, `ops.gate_not`
 
 Research status: APIs are stable for experimentation, but parameter sets are not certified.
+
+
+## `sable.proofs`
+
+Formal proof-strengthening utilities for security games, proof obligations, hybrid steps, sample ledgers, and proof package generation.

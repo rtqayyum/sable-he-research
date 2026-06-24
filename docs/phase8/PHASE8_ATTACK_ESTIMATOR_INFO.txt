@@ -1,0 +1,14 @@
+SABLE-HE Phase 8 estimator framework 0.9.0 (Phase 8 LPN/ISD/BKW estimator framework)
+status=strengthened-internal-estimator; not expert-validated cryptanalysis
+Models:
+  - no-clean-subset / low-noise screen
+  - Prange information-set-decoding proxy
+  - Stern-Dumer style ISD improvement proxy
+  - q-ary block-BKW scan
+  - generic exhaustive-secret lower bound
+  - large-sample surface and row-entropy diagnostics
+Non-goals:
+  - certifying parameter sets
+  - replacing specialist LPN/ISD/BKW analysis
+  - claiming asymptotically tight attack complexity
+  - modeling every implementation-level algebraic relation

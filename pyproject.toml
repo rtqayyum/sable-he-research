@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sable-he-research"
-version = "0.6.0"
-description = "Clean public research implementation of SABLE-HE with PQC envelope, cryptanalysis bundles, hardened KATs, and Phase 5 standardization/external-review tooling."
+version = "0.11.0"
+description = "Clean public research implementation of SABLE-HE with PQC wrappers, proof/parameter/attack-estimator tooling, and Phase 9 benchmark-comparison support."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"

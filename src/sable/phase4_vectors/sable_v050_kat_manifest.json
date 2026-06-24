@@ -3,27 +3,27 @@
     {
       "path": "sable_v050_arithmetic_kat.json",
       "schema": "sable-known-answer-vector-v1",
-      "sha256": "5413dbd252656a49ee93327fb480cbbae16a6787a876650c64080bebd6a8b2cf"
+      "sha256": "e9c0826f645e3e690b896f319630fd8bc8623e0f58f62877addab4b5fe03b7e2"
     },
     {
       "path": "sable_v050_fl_kat.json",
       "schema": "sable-phase4-hardening-v1.fl-kat",
-      "sha256": "a10016331b7ff67e32cb8eee6b98d761052dff69ab8ddafd45b08dad660779f8"
+      "sha256": "cd7f26adbc1b78ab7cd6b9671cda1ed734ae67cb4b7345d74fb47df829f8b72b"
     },
     {
       "path": "sable_v050_pqc_envelope_kat.json",
       "schema": "sable-phase4-hardening-v1.pqc-envelope-kat",
-      "sha256": "b33aea60784e14d24685738e9c32021c4a8ece1f86016d46cd543f517084cfcd"
+      "sha256": "a5800a2da16785746d0152a82b9dfb815efd718f8f96df9d89b636b7b68fe00a"
     },
     {
       "path": "sable_v050_cryptanalysis_kat.json",
       "schema": "sable-phase4-hardening-v1.cryptanalysis-kat",
-      "sha256": "99c93e13340c6162549e23fb19e771924aa626e78f291a6d58316044c6b50d4a"
+      "sha256": "2a1aa7c6c1babe3a57dc18133131d96cefbf973a05065cda5d45d6059b51b1bf"
     }
   ],
   "output_dir": "vectors/phase4",
-  "release_name": "Phase 5 standardization and external review preparation",
+  "release_name": "Phase 10 compaction theory framework",
   "schema": "sable-phase4-hardening-v1.kat-manifest",
   "status": "pass",
-  "version": "0.6.0"
+  "version": "0.11.0"
 }

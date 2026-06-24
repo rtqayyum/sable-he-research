@@ -14,6 +14,13 @@ from . import pqc
 from . import cryptanalysis
 from . import phase4
 from . import standardization
+from . import proofs
+from . import parameter_sets
+from . import advanced_attacks
+from . import lpn_estimators
+from . import attack_estimators_phase8
+from . import benchmarking
+from . import compaction_theory
 from .baselines import default_workloads, flatten_for_csv, model_comparison
 from .c7_relation_screen import estimate_c7_relations, format_c7_report
 from .estimator import estimate, format_estimate
@@ -611,6 +618,478 @@ def cmd_review_package(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_proof_info(args: argparse.Namespace) -> int:
+    payload = proofs.proof_info()
+    if args.json:
+        print(json.dumps(payload, indent=2, default=_json_default))
+    else:
+        print(f"SABLE-HE formal proof package {payload['version']} ({payload['release_name']})")
+        print(f"status={payload['phase']}; not independent cryptanalysis or certification")
+        print("Scope:")
+        for item in payload["scope"]:
+            print(f"  - {item}")
+        print("Non-goals:")
+        for item in payload["not_claimed"]:
+            print(f"  - {item}")
+    return 0
+
+
+def cmd_security_game(args: argparse.Namespace) -> int:
+    payload = proofs.security_game_spec()
+    if args.json:
+        print(json.dumps(payload, indent=2, default=_json_default))
+    else:
+        print(f"security game: {payload['game']}")
+        print(f"claim: {payload['security_claim']}")
+        print("excluded claims:")
+        for item in payload["excluded"]:
+            print(f"  - {item}")
+    return 0
+
+
+def cmd_proof_obligations(args: argparse.Namespace) -> int:
+    payload = [asdict(x) for x in proofs.proof_obligations()]
+    if args.json:
+        print(json.dumps(payload, indent=2, default=_json_default))
+    else:
+        for idx, item in enumerate(payload, start=1):
+            print(f"T{idx}/{item['identifier']} [{item['category']}]: {item['statement']}")
+            print(f"  strategy: {item['proof_strategy']}")
+            print(f"  risk: {item['reviewer_risk']}")
+    return 0
+
+
+def cmd_proof_ledger(args: argparse.Namespace) -> int:
+    params = PRESETS[args.preset]
+    ledger = proofs.sample_ledger(
+        params,
+        depth=args.depth,
+        additions=args.additions,
+        fl_clients=args.fl_clients,
+        model_length=args.model_length,
+    ).to_jsonable()
+    if args.json:
+        print(json.dumps(ledger, indent=2, default=_json_default))
+    else:
+        print(f"proof sample ledger preset={ledger['preset']} q={ledger['q']} n={ledger['n']} depth={ledger['depth']}")
+        for key in ["expansion_key_rows", "compaction_key_rows", "same_entry_row_differences", "input_ciphertext_rows"]:
+            print(f"  {key}: {ledger[key]}")
+        print(f"  estimated_final_failure_bound: {ledger['estimated_final_failure_bound']}")
+        print("status: accounting ledger only; not a certified security estimate")
+    return 0
+
+
+def cmd_proof_package(args: argparse.Namespace) -> int:
+    result = proofs.write_proof_package(
+        args.output,
+        preset=args.preset,
+        depth=args.depth,
+        additions=args.additions,
+        target_bits=args.target_bits,
+        fl_clients=args.fl_clients,
+        model_length=args.model_length,
+    )
+    if args.json:
+        print(json.dumps(result, indent=2, default=_json_default))
+    else:
+        print("Wrote SABLE-HE formal proof-strengthening package:")
+        print(f"  directory: {result['output']}")
+        for name in result["files"]:
+            print(f"  - {name}")
+    return 0
+
+
+
+def cmd_parameter_framework_info(args: argparse.Namespace) -> int:
+    payload = parameter_sets.parameter_framework_info()
+    if args.json:
+        print(json.dumps(payload, indent=2, default=_json_default))
+    else:
+        print(f"SABLE-HE parameter framework {payload['version']} ({payload['release_name']})")
+        print(f"status={payload['status']}")
+        print("Scope:")
+        for item in payload["scope"]:
+            print(f"  - {item}")
+        print("Candidates:")
+        for name in payload["candidates"]:
+            print(f"  - {name}")
+    return 0
+
+
+def cmd_parameter_candidates(args: argparse.Namespace) -> int:
+    rows = parameter_sets.candidate_summary_rows(args.candidate)
+    if args.json:
+        print(json.dumps(rows, indent=2, default=_json_default))
+    else:
+        print(parameter_sets.format_summary_table(rows))
+    return 0
+
+
+def cmd_parameter_report(args: argparse.Namespace) -> int:
+    report = parameter_sets.evaluate_candidate(args.candidate)
+    if args.output:
+        from pathlib import Path
+        Path(args.output).write_text(json.dumps(report, indent=2, default=_json_default) + "\n", encoding="utf-8")
+        print(f"wrote {args.output}")
+    elif args.json:
+        print(json.dumps(report, indent=2, default=_json_default))
+    else:
+        print(parameter_sets.format_candidate_report(report))
+    return 0
+
+
+def cmd_parameter_package_phase7(args: argparse.Namespace) -> int:
+    manifest = parameter_sets.write_parameter_package(args.output, names=args.candidate)
+    if args.json:
+        print(json.dumps(manifest, indent=2, default=_json_default))
+    else:
+        print(f"wrote Phase 7 parameter package to {args.output}")
+        print(f"files={len(manifest['files'])} candidates={len(manifest['candidates'])}")
+    return 0
+
+
+
+
+def cmd_attack_estimator_info(args: argparse.Namespace) -> int:
+    payload = attack_estimators_phase8.attack_estimator_info()
+    if args.json:
+        print(json.dumps(payload, indent=2, default=_json_default))
+    else:
+        print(attack_estimators_phase8.attack_estimator_summary_text())
+    return 0
+
+
+def cmd_attack_surfaces(args: argparse.Namespace) -> int:
+    surfaces = attack_estimators_phase8.surfaces_for_candidate(
+        args.candidate, fl_clients=args.fl_clients, model_length=args.model_length
+    )
+    payload = [s.to_jsonable() for s in surfaces]
+    if args.json:
+        print(json.dumps(payload, indent=2, default=_json_default))
+    else:
+        for s in surfaces:
+            print(
+                f"{s.name}: assumption={s.assumption_family} q={s.q} n={s.dimension} "
+                f"samples={s.samples} eta_eff={s.effective_eta:.6g} sample/dim={s.sample_to_dimension:.4g}"
+            )
+    return 0
+
+
+def cmd_attack_estimate(args: argparse.Namespace) -> int:
+    report = attack_estimators_phase8.estimate_candidate(
+        args.candidate,
+        fl_clients=args.fl_clients,
+        model_length=args.model_length,
+        target_bits=args.target_bits,
+    )
+    if args.output:
+        from pathlib import Path
+        Path(args.output).write_text(json.dumps(report.to_jsonable(), indent=2, default=str))
+    if args.json:
+        print(json.dumps(report.to_jsonable(), indent=2, default=str))
+    else:
+        print(attack_estimators_phase8.format_candidate_report(report))
+    return 0
+
+
+def cmd_attack_grid(args: argparse.Namespace) -> int:
+    rows = attack_estimators_phase8.summary_rows(args.candidate, target_bits=args.target_bits)
+    if args.json:
+        print(json.dumps(rows, indent=2, default=_json_default))
+    else:
+        print(attack_estimators_phase8.format_summary_rows(rows))
+    return 0
+
+
+def cmd_attack_package_phase8(args: argparse.Namespace) -> int:
+    manifest = attack_estimators_phase8.write_attack_package(
+        args.output,
+        names=args.candidate,
+        fl_clients=args.fl_clients,
+        model_length=args.model_length,
+        target_bits=args.target_bits,
+    )
+    if args.json:
+        print(json.dumps(manifest, indent=2, default=_json_default))
+    else:
+        print(f"wrote Phase 8 attack-estimator package to {args.output}")
+        print("files:")
+        for file_name in manifest["files"]:
+            print(f"  - {file_name}")
+    return 0
+
+def cmd_lpn_estimator_info(args: argparse.Namespace) -> int:
+    payload = lpn_estimators.estimator_info()
+    if args.json:
+        print(json.dumps(payload, indent=2, default=_json_default))
+    else:
+        print(f"SABLE-HE LPN/ISD/BKW estimator framework {payload['version']} ({payload['release_name']})")
+        print(f"status={payload['status']}")
+        print("Attack-family screens:")
+        for item in payload["families"]:
+            print(f"  - {item}")
+        print("Non-goals:")
+        for item in payload["non_goals"]:
+            print(f"  - {item}")
+    return 0
+
+
+def cmd_lpn_attack_report(args: argparse.Namespace) -> int:
+    report = lpn_estimators.estimate_candidate(
+        args.candidate,
+        target_bits=args.target_bits,
+        fl_clients=args.fl_clients,
+        model_length=args.model_length,
+    )
+    if args.output:
+        from pathlib import Path
+        Path(args.output).write_text(json.dumps(lpn_estimators.to_jsonable(report), indent=2) + "\n", encoding="utf-8")
+        print(f"wrote {args.output}")
+    elif args.json:
+        print(json.dumps(lpn_estimators.to_jsonable(report), indent=2, default=_json_default))
+    else:
+        print(lpn_estimators.format_candidate_report(report))
+    return 0
+
+
+def cmd_lpn_surface_report(args: argparse.Namespace) -> int:
+    surface = lpn_estimators.AttackSurface(
+        name=args.name,
+        assumption=args.assumption,
+        n=args.n,
+        q=args.q,
+        eta=args.eta,
+        samples=args.samples,
+        row_weight=args.row_weight,
+        priority=args.priority,
+    )
+    estimate = lpn_estimators.estimate_surface(surface, lpn_estimators.EstimatorConfig(target_bits=args.target_bits))
+    if args.json:
+        print(json.dumps(lpn_estimators.to_jsonable(estimate), indent=2, default=_json_default))
+    else:
+        print(lpn_estimators.format_surface(estimate))
+    return 0
+
+
+def cmd_lpn_estimator_package(args: argparse.Namespace) -> int:
+    manifest = lpn_estimators.write_estimator_package(args.output, candidates=args.candidate, target_bits=args.target_bits)
+    if args.json:
+        print(json.dumps(manifest, indent=2, default=_json_default))
+    else:
+        print(f"wrote Phase 8 LPN/ISD/BKW estimator package to {args.output}")
+        print(f"files={len(manifest['files'])} candidates={len(manifest['candidates'])}")
+    return 0
+
+
+def cmd_benchmark_info(args: argparse.Namespace) -> int:
+    payload = benchmarking.benchmark_info()
+    if args.json:
+        print(json.dumps(payload, indent=2, default=_json_default))
+    else:
+        print(f"SABLE-HE benchmark framework {payload['version']} ({payload['phase']})")
+        print(f"status={payload['status']}")
+        print("Measured in package:")
+        for item in payload["measured_in_package"]:
+            print(f"  - {item}")
+        print("External baselines:")
+        for item in payload["external_baselines"]:
+            print(f"  - {item['name']}: {', '.join(item['schemes'])}")
+        print("Non-goals:")
+        for item in payload["non_goals"]:
+            print(f"  - {item}")
+    return 0
+
+
+def cmd_benchmark_workloads(args: argparse.Namespace) -> int:
+    rows = [asdict(w) for w in benchmarking.workloads()]
+    if args.json:
+        print(json.dumps(rows, indent=2, default=_json_default))
+    else:
+        for row in rows:
+            print(
+                f"{row['name']:<18} family={row['family']:<22} depth={row['multiplicative_depth']} "
+                f"mul={row['multiplications']} add={row['additions']} gates={row['boolean_gates']}"
+            )
+            print(f"  {row['description']}")
+    return 0
+
+
+def cmd_benchmark_sable(args: argparse.Namespace) -> int:
+    selected = args.workload or None
+    suite = benchmarking.run_sable_suite(
+        preset=args.preset,
+        repetitions=args.repetitions,
+        seed=args.seed,
+        selected_workloads=selected,
+    )
+    payload = benchmarking.result_to_plain(suite)
+    if args.output:
+        from pathlib import Path
+        benchmarking.write_json(Path(args.output), suite)
+        print(f"wrote {args.output}")
+    if args.json:
+        print(json.dumps(payload, indent=2, default=_json_default))
+    else:
+        print(f"SABLE benchmark suite version={suite.version} preset={suite.preset} repetitions={args.repetitions}")
+        for result in suite.results:
+            eval_stats = result.timings_ms["encrypt_expand_eval_or_fl_aggregate"]
+            dec_stats = result.timings_ms["compact_decrypt_or_fl_decrypt"]
+            print(
+                f"{result.workload:<18} ok={result.ok} "
+                f"eval_mean_ms={eval_stats.mean_ms:.3f} decrypt_mean_ms={dec_stats.mean_ms:.3f}"
+            )
+        print("External FHE rows are not included unless separately measured and imported.")
+    return 0 if all(r.ok for r in suite.results) else 2
+
+
+def cmd_benchmark_package(args: argparse.Namespace) -> int:
+    paths = benchmarking.write_benchmark_package(
+        args.output,
+        preset=args.preset,
+        repetitions=args.repetitions,
+        seed=args.seed,
+        selected_workloads=args.workload or None,
+    )
+    if args.json:
+        print(json.dumps(paths, indent=2, default=_json_default))
+    else:
+        print(f"wrote Phase 9 benchmark package to {args.output}")
+        for key, path in paths.items():
+            print(f"  {key}: {path}")
+    return 0
+
+
+def cmd_benchmark_baseline_template(args: argparse.Namespace) -> int:
+    from pathlib import Path
+    benchmarking.write_external_result_template(Path(args.output))
+    print(f"wrote external baseline template to {args.output}")
+    return 0
+
+
+def cmd_benchmark_protocol(args: argparse.Namespace) -> int:
+    text = benchmarking.baseline_protocol_markdown()
+    if args.output:
+        from pathlib import Path
+        Path(args.output).write_text(text, encoding="utf-8")
+        print(f"wrote {args.output}")
+    else:
+        print(text, end="")
+    return 0
+
+
+def cmd_benchmark_compare(args: argparse.Namespace) -> int:
+    suite = benchmarking.run_sable_suite(
+        preset=args.preset,
+        repetitions=args.repetitions,
+        seed=args.seed,
+        selected_workloads=args.workload or None,
+    )
+    external = benchmarking.load_external_results(args.external) if args.external else []
+    summary = benchmarking.comparison_summary(suite, external)
+    if args.output:
+        from pathlib import Path
+        benchmarking.write_json(Path(args.output), summary)
+        print(f"wrote {args.output}")
+    if args.json:
+        print(json.dumps(summary, indent=2, default=_json_default))
+    else:
+        print(f"SABLE rows: {len(summary['sable_rows'])}")
+        print(f"External rows: {len(summary['external_rows'])}")
+        print(summary["missing_external_notice"])
+    return 0
+
+
+
+def cmd_compaction_info(args: argparse.Namespace) -> int:
+    payload = compaction_theory.compaction_theory_info()
+    if args.json:
+        print(json.dumps(payload, indent=2, default=_json_default))
+    else:
+        print(f"SABLE-HE compaction-theory framework {payload['version']} ({payload['release_name']})")
+        print(f"status={payload['status']}")
+        print(f"main contribution: {payload['main_contribution']}")
+        print("Core objects:")
+        for item in payload["core_objects"]:
+            print(f"  - {item}")
+        print("Non-goals:")
+        for item in payload["non_goals"]:
+            print(f"  - {item}")
+    return 0
+
+
+def cmd_compaction_analyze(args: argparse.Namespace) -> int:
+    report = compaction_theory.analyze_compaction_family(
+        args.family,
+        q=args.q,
+        n=args.n,
+        block_width=args.block_width,
+        active_blocks=args.active_blocks,
+        m_c=args.m_c,
+        eta_c=args.eta_c,
+        max_relation_weight=args.max_relation_weight,
+        entries=args.entries,
+        seed=args.seed,
+    )
+    payload = report.to_jsonable()
+    if args.json:
+        print(json.dumps(payload, indent=2, default=_json_default))
+    else:
+        print(f"family={report.family} q={report.q} block_width={report.block_width} blocks={report.blocks}")
+        print(f"entries/block={report.entries_per_block} total_entries={report.total_public_entries}")
+        print(f"public_clpn_rows={report.total_public_clpn_rows} worst_case_noise_terms={report.worst_case_noise_terms}")
+        print(f"effective_compaction_error={report.effective_compaction_error:.6g}")
+        print(f"relation_screen={report.sparse_kernel_screen.status} min_weight={report.sparse_kernel_screen.minimum_relation_weight}")
+        print(f"suggested_role={report.suggested_role}")
+        for note in report.notes:
+            print(f"  - {note}")
+    return 0
+
+
+def cmd_compaction_compare(args: argparse.Namespace) -> int:
+    rows = compaction_theory.comparison_table(q=args.q, n=args.n, block_width=args.block_width, m_c=args.m_c)
+    if args.json:
+        print(json.dumps(rows, indent=2, default=_json_default))
+    else:
+        print("family                        entries/block  CLPN rows    noise terms  role")
+        print("-" * 92)
+        for row in rows:
+            print(
+                f"{row['family']:<29} {row['entries_per_block']:<14} {row['total_public_clpn_rows']:<12} "
+                f"{row['worst_case_noise_terms']:<12} {row['suggested_role']}"
+            )
+    return 0
+
+
+def cmd_compaction_theorems(args: argparse.Namespace) -> int:
+    payload = compaction_theory.theorem_statements()
+    if args.json:
+        print(json.dumps(payload, indent=2, default=_json_default))
+    else:
+        for idx, item in enumerate(payload, start=1):
+            print(f"T{idx}: {item['name']}")
+            print(f"  statement: {item['statement']}")
+            print(f"  proof idea: {item['proof_idea']}")
+    return 0
+
+
+def cmd_compaction_package(args: argparse.Namespace) -> int:
+    manifest = compaction_theory.write_compaction_package(
+        args.output,
+        q=args.q,
+        n=args.n,
+        block_width=args.block_width,
+        m_c=args.m_c,
+        eta_c=args.eta_c,
+        max_relation_weight=args.max_relation_weight,
+    )
+    if args.json:
+        print(json.dumps(manifest, indent=2, default=_json_default))
+    else:
+        print(f"wrote Phase 10 compaction-theory package to {manifest['output']}")
+        print(f"files={len(manifest['files'])} status={manifest['status']}")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="sable-he",
@@ -821,6 +1300,227 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--target-bits", type=int, default=128)
     p.add_argument("--json", action="store_true")
     p.set_defaults(func=cmd_review_package)
+
+    p = sub.add_parser("proof-info", help="show formal proof-strengthening scope")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_proof_info)
+
+    p = sub.add_parser("security-game", help="show the formal IND-CPA security game specification")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_security_game)
+
+    p = sub.add_parser("proof-obligations", help="list theorem/proof obligations for the manuscript")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_proof_obligations)
+
+    p = sub.add_parser("proof-ledger", help="show proof/sample-count ledger for a preset and deployment size")
+    p.add_argument("--preset", default="c7_standard_toy_noisy", choices=sorted(PRESETS))
+    p.add_argument("--depth", type=int, default=1)
+    p.add_argument("--additions", type=int, default=1)
+    p.add_argument("--fl-clients", type=int, default=100)
+    p.add_argument("--model-length", type=int, default=100)
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_proof_ledger)
+
+    p = sub.add_parser("proof-package", help="write reproducible formal proof-strengthening package")
+    p.add_argument("--output", default="sable_proof_package")
+    p.add_argument("--preset", default="c7_standard_toy_noisy", choices=sorted(PRESETS))
+    p.add_argument("--depth", type=int, default=1)
+    p.add_argument("--additions", type=int, default=1)
+    p.add_argument("--target-bits", type=int, default=128)
+    p.add_argument("--fl-clients", type=int, default=100)
+    p.add_argument("--model-length", type=int, default=100)
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_proof_package)
+
+
+    p = sub.add_parser("parameter-framework-info", help="show Phase 7 candidate parameter-set framework status")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_parameter_framework_info)
+
+    p = sub.add_parser("parameter-sets-info", help="alias for parameter-framework-info")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_parameter_framework_info)
+
+    p = sub.add_parser("parameter-candidates", help="list concrete candidate parameter templates")
+    p.add_argument("--candidate", action="append", choices=parameter_sets.candidate_names())
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_parameter_candidates)
+
+    p = sub.add_parser("candidate-parameters", help="alias for parameter-candidates")
+    p.add_argument("--candidate", action="append", choices=parameter_sets.candidate_names())
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_parameter_candidates)
+
+    p = sub.add_parser("parameter-report", help="show one candidate parameter report")
+    p.add_argument("--candidate", default="sable_cat1_depth1_review", choices=parameter_sets.candidate_names())
+    p.add_argument("--output", default=None)
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_parameter_report)
+
+    p = sub.add_parser("parameter-package", help="write Phase 7 parameter package for reviewers")
+    p.add_argument("--output", default="sable_phase7_parameter_package")
+    p.add_argument("--candidate", action="append", choices=parameter_sets.candidate_names())
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_parameter_package_phase7)
+
+
+    p = sub.add_parser("attack-estimator-info", help="show Phase 8 strengthened LPN/ISD/BKW estimator status")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_attack_estimator_info)
+
+    p = sub.add_parser("attack-surfaces", help="list public attack surfaces for a candidate")
+    p.add_argument("--candidate", default="sable_cat1_depth1_review", choices=attack_estimators_phase8.candidate_names())
+    p.add_argument("--fl-clients", type=int, default=1000)
+    p.add_argument("--model-length", type=int, default=1000)
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_attack_surfaces)
+
+    p = sub.add_parser("attack-estimate", help="run Phase 8 attack-estimator screens for one candidate")
+    p.add_argument("--candidate", default="sable_cat1_depth1_review", choices=attack_estimators_phase8.candidate_names())
+    p.add_argument("--fl-clients", type=int, default=1000)
+    p.add_argument("--model-length", type=int, default=1000)
+    p.add_argument("--target-bits", type=int, default=None)
+    p.add_argument("--output", default=None)
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_attack_estimate)
+
+    p = sub.add_parser("attack-grid", help="summarize Phase 8 attack screens for all or selected candidates")
+    p.add_argument("--candidate", action="append", choices=attack_estimators_phase8.candidate_names())
+    p.add_argument("--target-bits", type=int, default=None)
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_attack_grid)
+
+    p = sub.add_parser("attack-package", help="write Phase 8 strengthened attack-estimator package")
+    p.add_argument("--output", default="sable_phase8_attack_package")
+    p.add_argument("--candidate", action="append", choices=attack_estimators_phase8.candidate_names())
+    p.add_argument("--fl-clients", type=int, default=1000)
+    p.add_argument("--model-length", type=int, default=1000)
+    p.add_argument("--target-bits", type=int, default=None)
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_attack_package_phase8)
+
+
+
+    p = sub.add_parser("lpn-estimator-info", help="show Phase 8 LPN/ISD/BKW estimator scope")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_lpn_estimator_info)
+
+    p = sub.add_parser("lpn-attack-report", help="run strengthened LPN/ISD/BKW screens for one candidate")
+    p.add_argument("--candidate", default="sable_cat1_depth1_review", choices=parameter_sets.candidate_names())
+    p.add_argument("--target-bits", type=int, default=128)
+    p.add_argument("--fl-clients", type=int, default=100)
+    p.add_argument("--model-length", type=int, default=100)
+    p.add_argument("--output", default=None)
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_lpn_attack_report)
+
+    p = sub.add_parser("lpn-surface-report", help="run strengthened screens for a custom noisy-linear surface")
+    p.add_argument("--name", default="custom_surface")
+    p.add_argument("--assumption", default="q-ary LPN")
+    p.add_argument("--n", type=int, required=True)
+    p.add_argument("--q", type=int, required=True)
+    p.add_argument("--eta", type=float, required=True)
+    p.add_argument("--samples", type=int, required=True)
+    p.add_argument("--row-weight", type=int, default=None)
+    p.add_argument("--priority", default="normal")
+    p.add_argument("--target-bits", type=int, default=128)
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_lpn_surface_report)
+
+    p = sub.add_parser("lpn-estimator-package", help="write Phase 8 estimator package for reviewers")
+    p.add_argument("--output", default="sable_phase8_lpn_estimator_package")
+    p.add_argument("--candidate", action="append", choices=parameter_sets.candidate_names())
+    p.add_argument("--target-bits", type=int, default=128)
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_lpn_estimator_package)
+
+
+    p = sub.add_parser("benchmark-info", help="show Phase 9 benchmark-comparison framework scope")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_benchmark_info)
+
+    p = sub.add_parser("benchmark-workloads", help="list Phase 9 benchmark workloads")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_benchmark_workloads)
+
+    p = sub.add_parser("benchmark-sable", help="measure SABLE-HE Python reference on Phase 9 workloads")
+    p.add_argument("--preset", default="fl_demo_clean", choices=sorted(PRESETS))
+    p.add_argument("--repetitions", type=int, default=3)
+    p.add_argument("--seed", type=int, default=12345)
+    p.add_argument("--workload", action="append", help="workload name; may be repeated")
+    p.add_argument("--output", default=None)
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_benchmark_sable)
+
+    p = sub.add_parser("benchmark-package", help="write Phase 9 benchmark package for reviewers")
+    p.add_argument("--output", default="sable_phase9_benchmark_package")
+    p.add_argument("--preset", default="fl_demo_clean", choices=sorted(PRESETS))
+    p.add_argument("--repetitions", type=int, default=3)
+    p.add_argument("--seed", type=int, default=12345)
+    p.add_argument("--workload", action="append", help="workload name; may be repeated")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_benchmark_package)
+
+    p = sub.add_parser("benchmark-baseline-template", help="write external FHE baseline result template")
+    p.add_argument("--output", default="external_baseline_results_template.json")
+    p.set_defaults(func=cmd_benchmark_baseline_template)
+
+    p = sub.add_parser("benchmark-protocol", help="print or write external baseline benchmark protocol")
+    p.add_argument("--output", default=None)
+    p.set_defaults(func=cmd_benchmark_protocol)
+
+    p = sub.add_parser("benchmark-compare", help="combine measured SABLE rows with supplied external result files")
+    p.add_argument("--preset", default="fl_demo_clean", choices=sorted(PRESETS))
+    p.add_argument("--repetitions", type=int, default=3)
+    p.add_argument("--seed", type=int, default=12345)
+    p.add_argument("--workload", action="append", help="workload name; may be repeated")
+    p.add_argument("--external", action="append", default=[], help="external JSON/CSV result file; may be repeated")
+    p.add_argument("--output", default=None)
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_benchmark_compare)
+
+
+    p = sub.add_parser("compaction-info", help="show Phase 10 compaction-theory framework scope")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_compaction_info)
+
+    p = sub.add_parser("compaction-analyze", help="analyze one public mask-family compactor")
+    p.add_argument("--family", default="coordinate", choices=["coordinate", "projective", "full", "screened-random", "random"])
+    p.add_argument("--q", type=int, default=31)
+    p.add_argument("--n", type=int, default=512)
+    p.add_argument("--block-width", type=int, default=2)
+    p.add_argument("--active-blocks", type=int, default=None)
+    p.add_argument("--m-c", type=int, default=192)
+    p.add_argument("--eta-c", type=float, default=2 ** -12)
+    p.add_argument("--max-relation-weight", type=int, default=4)
+    p.add_argument("--entries", type=int, default=None)
+    p.add_argument("--seed", type=int, default=1234)
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_compaction_analyze)
+
+    p = sub.add_parser("compaction-compare", help="compare coordinate, projective, and full block compaction surfaces")
+    p.add_argument("--q", type=int, default=31)
+    p.add_argument("--n", type=int, default=512)
+    p.add_argument("--block-width", type=int, default=2)
+    p.add_argument("--m-c", type=int, default=192)
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_compaction_compare)
+
+    p = sub.add_parser("compaction-theorems", help="list Phase 10 compaction theorem statements")
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_compaction_theorems)
+
+    p = sub.add_parser("compaction-package", help="write Phase 10 compaction-theory review package")
+    p.add_argument("--output", default="sable_phase10_compaction_package")
+    p.add_argument("--q", type=int, default=31)
+    p.add_argument("--n", type=int, default=512)
+    p.add_argument("--block-width", type=int, default=2)
+    p.add_argument("--m-c", type=int, default=192)
+    p.add_argument("--eta-c", type=float, default=2 ** -12)
+    p.add_argument("--max-relation-weight", type=int, default=4)
+    p.add_argument("--json", action="store_true")
+    p.set_defaults(func=cmd_compaction_package)
 
     return parser
 

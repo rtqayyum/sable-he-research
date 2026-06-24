@@ -1,0 +1,8 @@
+candidate,target,min_classical,min_quantum_proxy,verdict
+sable_cat1_depth1_review,128,16.00,16.00,requires-specialist-review-or-redesign
+sable_cat3_depth1_review,192,16.00,16.00,requires-specialist-review-or-redesign
+sable_cat5_depth1_review,256,16.00,16.00,requires-specialist-review-or-redesign
+sable_cat1_depth2_stress,128,16.00,16.00,requires-specialist-review-or-redesign
+sable_cat1_depth1_q31prime,128,16.00,16.00,requires-specialist-review-or-redesign
+sable_cat3_depth1_q31prime,192,16.00,16.00,requires-specialist-review-or-redesign
+sable_cat5_depth1_q31prime,256,16.00,16.00,requires-specialist-review-or-redesign

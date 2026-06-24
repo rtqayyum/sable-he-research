@@ -108,7 +108,7 @@ MIT License. See [`LICENSE`](LICENSE).
 
 ## Phase 5 external review and pre-standardization tooling
 
-SABLE-HE v0.6.0 adds public tooling for external cryptanalysis and pre-standardization discussion:
+SABLE-HE v0.6.0 added public tooling for external cryptanalysis and pre-standardization discussion:
 
 ```bash
 sable-he standardization-info
@@ -120,3 +120,103 @@ sable-he review-package --output sable_phase5_review_package
 ```
 
 These commands do not certify SABLE-HE. They generate review materials for independent cryptanalysis and community discussion.
+
+
+## Formal proof package
+
+Version 0.8.0 adds reviewer-facing proof tooling:
+
+```bash
+sable-he proof-info
+sable-he security-game
+sable-he proof-obligations
+sable-he proof-ledger --preset c7_standard_toy_noisy
+sable-he proof-package --output sable_proof_package
+```
+
+These commands generate a proof-obligation ledger, hybrid-argument map, sample-count accounting, and reviewer questions. They support manuscript preparation and external cryptographic review; they do not certify SABLE-HE parameters.
+
+
+## Phase 6 formal proof package
+
+SABLE-HE v0.8.0 adds formal proof-strengthening commands:
+
+```bash
+sable-he proof-info
+sable-he security-game
+sable-he proof-obligations
+sable-he proof-ledger --preset c7_standard_toy_noisy
+sable-he proof-package --output sable_proof_package
+```
+
+These commands generate proof-audit artifacts for external review. They do not certify concrete parameters and do not replace independent cryptanalysis.
+
+## Phase 7 candidate parameter framework
+
+Version 0.8.0 adds internal working tools for category-I/III/V-style candidate parameter discussions:
+
+```bash
+sable-he parameter-framework-info
+sable-he candidate-parameters
+sable-he parameter-screen
+sable-he parameter-package --output sable_phase7_parameter_package
+```
+
+These candidates are for external cryptanalysis and manuscript strengthening only.  They are not certified secure parameter sets and should not be used as deployment parameters.
+
+
+## Phase 8 internal estimator strengthening
+
+SABLE-HE v0.10.0 adds a stronger internal LPN/ISD/BKW estimator layer for candidate parameter review:
+
+```bash
+sable-he lpn-estimator-info
+sable-he lpn-estimate --candidate sable_cat1_depth1_review
+sable-he lpn-estimator-package --output sable_phase8_lpn_estimator_package
+```
+
+The estimator reports clean-subset, Prange, Lee-Brickell, Stern/Dumer-style proxy, q-ary BKW, sparse-row entropy and conservative quantum-stress columns.  These outputs are reproducible internal screens only; external expert cryptanalysis is still required before any security or deployment claim.
+
+## Phase 8 strengthened attack-estimator framework
+
+Version 0.10.0 adds internal working tools for LPN/ISD/BKW screening:
+
+```bash
+sable-he attack-estimator-info
+sable-he attack-surfaces --candidate sable_cat1_depth1_review
+sable-he attack-grid
+sable-he attack-estimate --candidate sable_cat1_depth1_review
+sable-he attack-package --output sable_phase8_attack_package
+```
+
+These tools are for manuscript strengthening and external-review preparation. They are not expert-certified attack estimates and they do not certify concrete SABLE-HE parameter sets.
+
+## Phase 8 internal attack-estimator tooling
+
+Version 0.10.0 adds a stronger internal LPN/ISD/BKW screening layer for
+candidate parameter rows:
+
+```bash
+sable-he attack-estimator-info
+sable-he attack-estimate --candidate sable_cat1_depth1_review
+sable-he attack-package --output sable_phase8_attack_package
+```
+
+These commands are for paper strengthening and external cryptanalysis packages.
+They do not certify SABLE-HE parameters.
+
+## Phase 9 benchmark comparison framework
+
+Version 0.10.0 adds an internal benchmark-comparison framework for top-venue evaluation work. It measures the SABLE-HE Python reference implementation on canonical low-depth workloads and writes external-baseline templates for OpenFHE, Microsoft SEAL, TFHE-rs, Concrete, and Lattigo.
+
+Useful commands:
+
+```bash
+sable-he benchmark-info
+sable-he benchmark-workloads
+sable-he benchmark-sable --repetitions 3
+sable-he benchmark-package --output phase9_benchmark_package
+sable-he benchmark-baseline-template --output external_baseline_results_template.json
+```
+
+The framework does not invent external wall-clock values. External FHE libraries must be benchmarked independently on the same machine before manuscript comparison tables are finalized.

@@ -1,0 +1,45 @@
+SABLE-HE Phase 8 LPN/ISD/BKW report 0.9.0 (Phase 8 LPN/ISD/BKW estimator framework)
+candidate=sable_cat1_depth1_review target=128 verdict=requires-external-review
+global_min_classical=160.00 bits
+global_min_quantum_sqrt=149.94 bits
+Surfaces:
+expansion_key_sparse_lpn_rows: assumption=sparse q-ary LPN n=65536 q=65537 eta=0.003 samples=4295098369 priority=critical
+  verdict=requires-external-review min_classical=160.00 bits
+  min_quantum_sqrt=149.94 bits
+  - clean-subset: 328.87 bits quantum~164.44 [finite]
+  - prange-isd: 328.87 bits quantum~164.44 [finite]
+  - stern-dumer-isd-screen: 299.87 bits quantum~149.94 [heuristic-screen]
+  - qary-block-bkw: 62804.48 bits quantum~31402.24 [sample-aware-proxy]
+  - low-noise-screen: 160.00 bits [not-triggered]
+    blocker: public sample count is at least the secret dimension
+    blocker: large public sample-to-dimension ratio; specialist multi-sample review required
+compaction_key_qary_lpn_rows: assumption=dense q-ary LPN / code decoding n=65536 q=65537 eta=0.003 samples=16843009 priority=critical
+  verdict=requires-external-review min_classical=160.00 bits
+  min_quantum_sqrt=150.21 bits
+  - clean-subset: 328.87 bits quantum~164.44 [finite]
+  - prange-isd: 329.43 bits quantum~164.71 [finite]
+  - stern-dumer-isd-screen: 300.43 bits quantum~150.21 [heuristic-screen]
+  - qary-block-bkw: 62812.47 bits quantum~31406.24 [sample-aware-proxy]
+  - low-noise-screen: 160.00 bits [not-triggered]
+    blocker: public sample count is at least the secret dimension
+same_entry_compaction_row_differences: assumption=derived q-ary LPN row differences n=65536 q=65537 eta=0.005991 samples=2155905152 priority=critical
+  verdict=requires-external-review min_classical=160.00 bits
+  min_quantum_sqrt=291.98 bits
+  - clean-subset: 612.94 bits quantum~306.47 [finite]
+  - prange-isd: 612.95 bits quantum~306.48 [finite]
+  - stern-dumer-isd-screen: 583.95 bits quantum~291.98 [heuristic-screen]
+  - qary-block-bkw: 66645.39 bits quantum~33322.69 [sample-aware-proxy]
+  - low-noise-screen: 160.00 bits [not-triggered]
+    blocker: public sample count is at least the secret dimension
+    blocker: large public sample-to-dimension ratio; specialist multi-sample review required
+fl_input_ciphertext_sparse_lpn_rows: assumption=sparse q-ary LPN deployment surface n=65536 q=65537 eta=0.003 samples=10000 priority=high
+  verdict=passes-internal-screens-only min_classical=160.00 bits
+  min_quantum_sqrt=31411.59 bits
+  - clean-subset: inf bits [sample-limited]
+  - prange-isd: inf bits [sample-limited]
+  - stern-dumer-isd-screen: inf bits quantum~inf [heuristic-screen]
+  - qary-block-bkw: 62823.19 bits quantum~31411.59 [sample-aware-proxy]
+  - low-noise-screen: 160.00 bits [not-triggered]
+Notes:
+  - Phase 8 reports screening estimates only; outputs are not certified security estimates.
+  - All candidate rows require independent sparse-LPN, q-ary-LPN, ISD, and BKW review.

@@ -151,6 +151,17 @@ from .phase4 import (
 )
 
 
+from . import proofs
+from .proofs import (
+    proof_info,
+    security_game_spec,
+    proof_obligations,
+    hybrid_steps,
+    sample_ledger as proof_sample_ledger,
+    proof_package_manifest,
+    write_proof_package,
+)
+
 from . import standardization
 from .standardization import (
     parameter_template as standardization_parameter_template,
@@ -160,6 +171,10 @@ from .standardization import (
     standardization_info,
     write_review_package as write_standardization_review_package,
 )
+
+
+
+
 
 from .pqc import (
     AuthenticationError,
@@ -187,6 +202,7 @@ except Exception:  # pragma: no cover
     OperationProfile = object  # type: ignore
 
 __all__ = [
+    "proofs", "proof_info", "security_game_spec", "proof_obligations", "hybrid_steps", "proof_sample_ledger", "proof_package_manifest", "write_proof_package",
     "standardization", "standardization_info", "standardization_readiness_report", "standardization_security_assumptions_spec", "standardization_parameter_template", "standardization_review_checklist", "write_standardization_review_package",
     "phase4", "phase4_info", "generate_phase4_kats", "write_phase4_kat_bundle", "verify_phase4_kat_bundle", "public_repo_hygiene", "release_artifact_check",
     "__version__", "__release_name__", "SableParams", "PRESETS", "KeyPair",
@@ -219,3 +235,52 @@ __all__ = [
     "pqc_seal_json", "pqc_open_json", "make_signed_federated_update_envelope",
     "open_federated_update_envelope",
 ]
+
+# Phase 7 candidate parameter-set framework
+from . import parameter_sets
+from . import attack_estimators_phase8
+from .attack_estimators_phase8 import (
+    attack_estimator_info,
+    estimate_candidate as estimate_attack_candidate,
+    write_attack_package as write_phase8_attack_package,
+)
+__all__.extend([
+    "parameter_sets", "attack_estimators_phase8", "attack_estimator_info",
+    "estimate_attack_candidate", "write_phase8_attack_package",
+])
+
+# Phase 8 estimator module is available as sable.lpn_estimators.
+
+from . import lpn_estimator
+
+from . import advanced_attacks
+
+# Phase 9 benchmark-comparison framework
+from . import benchmarking
+from .benchmarking import (
+    benchmark_info,
+    workloads as benchmark_workloads,
+    baseline_specs as benchmark_baseline_specs,
+    run_sable_suite as run_sable_benchmark_suite,
+    write_benchmark_package as write_phase9_benchmark_package,
+)
+__all__.extend([
+    "benchmarking", "benchmark_info", "benchmark_workloads", "benchmark_baseline_specs",
+    "run_sable_benchmark_suite", "write_phase9_benchmark_package",
+])
+
+# Phase 10 relation-resistant compaction theory framework
+from . import compaction_theory
+from .compaction_theory import (
+    compaction_theory_info,
+    analyze_compaction_family,
+    comparison_table as compaction_comparison_table,
+    theorem_statements as compaction_theorem_statements,
+    review_checklist as compaction_review_checklist,
+    write_compaction_package as write_phase10_compaction_package,
+)
+__all__.extend([
+    "compaction_theory", "compaction_theory_info", "analyze_compaction_family",
+    "compaction_comparison_table", "compaction_theorem_statements",
+    "compaction_review_checklist", "write_phase10_compaction_package",
+])

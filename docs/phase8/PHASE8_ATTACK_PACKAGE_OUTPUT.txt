@@ -1,0 +1,6 @@
+wrote Phase 8 attack-estimator package to /mnt/data/phase8_cli_attack_pkg
+files:
+  - summary.csv
+  - sable_cat1_depth1_review_attack_report.json
+  - sable_cat1_depth1_review_attack_report.md
+  - REVIEWER_NOTES.md

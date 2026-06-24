@@ -1,5 +1,5 @@
 {
-  "kat_digest": "292a822251875a2943338aa40c0c782e36329718483a37944d93c0abc1c58cb3",
+  "kat_digest": "cbc89994e01271b29723b2c519abcacc44708755145eac4af6d30ff8a2cd86e0",
   "minimum_finite_screen_bits": null,
   "package": "sable-he-research",
   "preset": "toy_noisy",
@@ -22,5 +22,5 @@
   },
   "target_bits": 128,
   "verdict": "external-review-required",
-  "version": "0.6.0"
+  "version": "0.11.0"
 }
