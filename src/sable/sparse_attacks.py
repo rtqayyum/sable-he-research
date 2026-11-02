@@ -176,26 +176,27 @@ def plurality_failure_bound(R: int, p_correct: float, q: int) -> float:
     """Upper bound on the failure of plurality decoding over F_q.
 
     Each of R independent votes equals the correct value with probability
-    p_correct and is otherwise uniform over the q-1 wrong values.  Decoding
-    fails only if the correct count is at most t or some wrong value reaches
-    t+1, for t = floor(p_correct * R / 2).
+    p_correct and is otherwise uniform over the q-1 wrong values.  For any
+    threshold t, decoding can fail only if the correct count is at most t or
+    some wrong value reaches t+1.  The bound is minimized over t.
     """
     if p_correct <= 0:
         return 1.0
     if p_correct >= 1:
         return 0.0
-    mu = p_correct * R
-    t = int(mu // 2)
-    if t < 1:
-        return 1.0
-    a = t / R  # P[C <= t] <= exp(-R * KL(a || p)) for a < p
     p = p_correct
-    kl = (a * math.log(a / p) if a > 0 else 0.0) + (1 - a) * math.log((1 - a) / (1 - p))
-    lower = math.exp(-R * kl)
-    p_wrong = (1 - p_correct) / (q - 1)
-    log_wrong = math.log(q - 1) + _log_binom_tail_upper(R, p_wrong, t + 1)
-    wrong = math.exp(log_wrong) if log_wrong > -700 else 0.0
-    return min(1.0, lower + wrong)
+    p_wrong = (1 - p) / (q - 1)
+    best = 1.0
+    for t in range(1, max(1, int(p * R)) + 1):
+        a = t / R
+        if a >= p:
+            break
+        kl = a * math.log(a / p) + (1 - a) * math.log((1 - a) / (1 - p))
+        lower = math.exp(-R * kl)  # P[C <= t]
+        log_wrong = math.log(q - 1) + _log_binom_tail_upper(R, p_wrong, t + 1)
+        wrong = math.exp(log_wrong) if log_wrong > -700 else 0.0
+        best = min(best, lower + wrong)
+    return min(1.0, best)
 
 
 # ---------------------------------------------------------------------------

@@ -30,15 +30,16 @@ def _fl_cfg(dataset: str, model: str, partition: str, K: int, seed: int, method:
         cfg["crypto"] = "sampled"
         cfg["backend_opts"] = {"key_bits": 3072, "coord_limit": 256, "client_limit": 3}
     if method == "sable":
+        # replicas chosen from the plurality bound: R=25 keeps failures < 1e-9 up to K=100, R=51 up to K=250
         cfg["backend_opts"] = {"param_set": "fl_k5_n65536_r25" if K <= 100 else "fl_k5_n65536_r51"}
     return cfg
 
 
 def _fl_mem(model: str, K: int, method: str) -> float:
-    base = 1.5
-    if method in ("sable", "ckks", "bfv") and model == "mlp":
+    base = 2.0
+    if method in ("sable", "ckks", "bfv", "lwe") and model == "mlp":
         base += 1.5
-    return base + (0.5 if K >= 100 else 0.0)
+    return base + (0.5 if K >= 100 else 0.0) + (0.5 if K >= 200 else 0.0)
 
 
 # --------------------------------------------------------------------------- smoke
@@ -73,7 +74,7 @@ def crypto_tasks() -> list[dict[str, Any]]:
     from evaluation.crypto.reference import feasible_presets
 
     t = [_task("params", "params_tables", {})]
-    for eta, R, K in product([0.0015, 0.003, 0.006], [5, 9, 15, 25, 51], [10, 50, 100, 250, 500, 1000]):
+    for eta, R, K in product([0.0015, 0.003, 0.006], [5, 9, 15, 25, 51, 101], [10, 50, 100, 250, 500, 1000, 2000]):
         t.append(_task("corr_agg", "correctness_agg", dict(n=65536, k=5, eta=eta, R=R, K=K, d=10000, trials=2, seed=1), mem_gb=3))
     for n, k, eta, op in product([4096, 16384], [3, 4, 5, 6], [0.0007, 0.0014, 0.0028], ["add", "mul", "dot4"]):
         t.append(_task("corr_she", "correctness_she", dict(n=n, k=k, eta=eta, op=op, trials=40, seed=2), mem_gb=3 if n > 4096 else 1.5))
@@ -96,10 +97,14 @@ def crypto_tasks() -> list[dict[str, Any]]:
                        mem_gb=round(mem, 1), timeout_s=12 * 3600))
     for n, ratio, eta, seed in product([4096, 16384, 65536, 131072, 262144], [1, 2, 4, 10, 20], [0.001, 0.003, 0.01, 0.03], [0, 1, 2]):
         t.append(_task("attack2", "attack_two_sparse", dict(n=n, ratio=ratio, eta=eta, seed=seed), mem_gb=1 + n * ratio * 1.2e-6))
+    for ratio, eta, seed in product([10, 20], [0.003, 0.01], [0, 1, 2]):
+        n = 524288
+        t.append(_task("attack2", "attack_two_sparse", dict(n=n, ratio=ratio, eta=eta, seed=seed), mem_gb=1 + n * ratio * 1.2e-6,
+                       timeout_s=12 * 3600))
     for n, eta, seed in product([128, 256, 512, 1024, 2048], [0.0, 2**-16, 2**-12, 2**-10, 2**-9, 2**-8, 2**-7], range(10)):
         t.append(_task("attack_kp", "attack_known_plaintext", dict(n=n, eta=eta, seed=seed), mem_gb=1 + (n / 1024) ** 2 * 0.4))
-    for seed in range(3):
-        t.append(_task("attack_kp", "attack_known_plaintext", dict(n=4096, eta=2**-12, seed=seed), mem_gb=4, timeout_s=8 * 3600))
+    for eta, seed in product([0.0, 2**-16, 2**-14, 2**-12, 2**-11], range(4)):
+        t.append(_task("attack_kp", "attack_known_plaintext", dict(n=4096, eta=eta, seed=seed), mem_gb=4, timeout_s=8 * 3600))
     for preset, seed in product(feasible_presets(), range(3)):
         t.append(_task("ref_presets", "reference_crosscheck", dict(preset=preset, seed=seed)))
     return t
@@ -109,10 +114,10 @@ def fl_tasks(rounds: int = 100) -> list[dict[str, Any]]:
     t = []
     # accuracy study: plaintext vs SABLE vs CKKS with real crypto every round
     for ds, model, part, K, seed, m in product(["mnist", "fmnist"], ["lr", "mlp", "cnn"], ["iid", "dir0.5", "dir0.1"],
-                                              [10, 50, 100], [0, 1, 2], ["plain", "sable", "ckks"]):
+                                              [10, 50, 100, 200], [0, 1, 2, 3, 4], ["plain", "sable", "ckks"]):
         t.append(_task("fl_acc", "fl_run", _fl_cfg(ds, model, part, K, seed, m, rounds, "full"), mem_gb=_fl_mem(model, K, m), timeout_s=48 * 3600))
     # cost study: every method, crypto measured on the first rounds
-    for model, K, m in product(["lr", "mlp", "cnn"], [10, 50, 100], FL_METHODS_ALL):
+    for model, K, m in product(["lr", "mlp", "cnn"], [10, 50, 100, 200], FL_METHODS_ALL):
         t.append(_task("fl_cost", "fl_run", _fl_cfg("mnist", model, "iid", K, 0, m, rounds, "sampled"), mem_gb=_fl_mem(model, K, m), timeout_s=48 * 3600))
     return t
 
@@ -132,7 +137,7 @@ def pilot_tasks() -> list[dict[str, Any]]:
         sel = [x for x in (pool or crypto) if pred(x)][:n]
         pick.extend(sel)
     take(lambda x: x["family"] == "params")
-    take(lambda x: x["family"] == "corr_agg" and x["cfg"]["K"] == 1000 and x["cfg"]["R"] == 51 and x["cfg"]["eta"] == 0.003)
+    take(lambda x: x["family"] == "corr_agg" and x["cfg"]["K"] == 2000 and x["cfg"]["R"] == 101 and x["cfg"]["eta"] == 0.003)
     take(lambda x: x["family"] == "corr_agg" and x["cfg"]["K"] == 100 and x["cfg"]["R"] == 25 and x["cfg"]["eta"] == 0.003)
     take(lambda x: x["family"] == "corr_she" and x["cfg"]["n"] == 16384 and x["cfg"]["k"] == 6 and x["cfg"]["op"] == "dot4" and x["cfg"]["eta"] == 0.0014)
     take(lambda x: x["family"] == "bench_she" and x["cfg"]["n"] == 65536 and x["cfg"]["k"] == 5)
@@ -141,12 +146,13 @@ def pilot_tasks() -> list[dict[str, Any]]:
     take(lambda x: x["family"] == "attack2" and x["cfg"]["n"] == 65536 and x["cfg"]["ratio"] == 20 and x["cfg"]["eta"] == 0.003 and x["cfg"]["seed"] == 0)
     take(lambda x: x["family"] == "attack2" and x["cfg"]["n"] == 262144 and x["cfg"]["ratio"] == 20 and x["cfg"]["eta"] == 0.003 and x["cfg"]["seed"] == 0)
     take(lambda x: x["family"] == "attack_kp" and x["cfg"]["n"] == 2048 and x["cfg"]["eta"] == 2**-12, 2)
-    take(lambda x: x["family"] == "attack_kp" and x["cfg"]["n"] == 4096)
+    take(lambda x: x["family"] == "attack_kp" and x["cfg"]["n"] == 4096 and x["cfg"]["eta"] == 2**-12)
+    take(lambda x: x["family"] == "attack2" and x["cfg"]["n"] == 524288 and x["cfg"]["ratio"] == 20)
     take(lambda x: x["family"] == "ref_presets" and x["cfg"]["seed"] == 0, 20)
     # FL: one run per model size for the three accuracy methods, MNIST, K=100 (the slowest), 10 rounds
     take(lambda x: x["family"] == "fl_acc" and x["cfg"]["dataset"] == "mnist" and x["cfg"]["partition"] == "iid"
-         and x["cfg"]["clients"] == 100 and x["cfg"]["seed"] == 0, 9, fl)
-    take(lambda x: x["family"] == "fl_cost" and x["cfg"]["model"] == "mlp" and x["cfg"]["clients"] == 100, 7, fl)
+         and x["cfg"]["clients"] == 200 and x["cfg"]["seed"] == 0, 9, fl)
+    take(lambda x: x["family"] == "fl_cost" and x["cfg"]["model"] == "mlp" and x["cfg"]["clients"] == 200, 7, fl)
     return pick
 
 

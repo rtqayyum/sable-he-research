@@ -80,7 +80,10 @@ def main():
                 if not rel or rel.startswith("/") or ".." in rel.split("/"):
                     continue
                 m.name = rel
-                tf.extract(m, tmp)
+                if hasattr(tarfile, "data_filter"):
+                    tf.extract(m, tmp, filter="data")
+                else:
+                    tf.extract(m, tmp)
         with open(os.path.join(tmp, "COMMIT"), "w") as fh:
             fh.write(sha + "\n")
         os.rename(tmp, target)

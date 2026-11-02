@@ -124,19 +124,23 @@ class SableBackend(Backend):
 
         q = self.p.q
         round_seed = stable_seed(self.seed, "sable-round", r)
-        enc_t, uploads = [], []
-        for c, (x, w) in enumerate(zip(deltas, weights)):
+        enc_t: list[float] = []
+        t_agg = 0.0
+        B = None
+        expected = np.zeros(self.d, dtype=np.int64)
+        for c, (x, w) in enumerate(zip(deltas, weights)):  # server adds uploads as they arrive
             m = fixed_point(x, float(w)) % q
+            expected = (expected + m) % q
             t0 = time.perf_counter()
-            uploads.append(encrypt(self.p, self.keys[c], m, round_seed, stable_seed(self.seed, "noise", r, c)))
+            b = encrypt(self.p, self.keys[c], m, round_seed, stable_seed(self.seed, "noise", r, c))
             enc_t.append(time.perf_counter() - t0)
-        t0 = time.perf_counter()
-        B = aggregate(uploads, q)
-        t_agg = time.perf_counter() - t0
+            t0 = time.perf_counter()
+            B = b if B is None else aggregate([B, b], q)
+            t_agg += time.perf_counter() - t0
+            del b
         t0 = time.perf_counter()
         out = decrypt_sum(self.p, self.T, B, round_seed)
         t_dec = time.perf_counter() - t0
-        expected = sum(fixed_point(x, float(w)) for x, w in zip(deltas, weights)) % q
         fails = int(np.sum(out["value"] != expected))
         agg = to_signed(out["value"], q).astype(np.float64) / SCALE
         return agg, _metrics(upload_bytes_client=self.p.upload_bytes(self.d), client_encrypt_s=float(np.mean(enc_t)),
@@ -187,22 +191,21 @@ class LweKaheBackend(Backend):
         round_seed = stable_seed(self.seed, "lwe-round", r)
         delta = 1 << (32 - self.P_BITS)
         P = 1 << self.P_BITS
-        enc_t, uploads = [], []
-        for c, (x, w) in enumerate(zip(deltas, weights)):
+        enc_t: list[float] = []
+        B = np.zeros(self.d, dtype=np.int64)
+        t_agg = 0.0
+        for c, (x, w) in enumerate(zip(deltas, weights)):  # server adds uploads as they arrive
             m = fixed_point(x, float(w)) % P
             t0 = time.perf_counter()
             e = np.rint(np.random.default_rng(stable_seed(self.seed, "lwe-e", r, c)).normal(0, 3.2, self.d)).astype(np.int64)
             b = (self._As(round_seed, self.keys[c]).astype(np.int64) + e + m * delta) % (1 << 32)
-            uploads.append(b.astype(np.uint64))
             enc_t.append(time.perf_counter() - t0)
-        t0 = time.perf_counter()
-        B = np.zeros(self.d, dtype=np.uint64)
-        for u in uploads:
-            B = (B + u) % np.uint64(1 << 32)
-        t_agg = time.perf_counter() - t0
+            t0 = time.perf_counter()
+            B = (B + b) % (1 << 32)
+            t_agg += time.perf_counter() - t0
         t0 = time.perf_counter()
         AT = self._As(round_seed, self.T)
-        phase = (B.astype(np.int64) - AT.astype(np.int64)) % (1 << 32)
+        phase = (B - AT.astype(np.int64)) % (1 << 32)
         mval = np.rint(phase / delta).astype(np.int64) % P
         signed = np.where(mval >= P // 2, mval - P, mval)
         t_dec = time.perf_counter() - t0
@@ -236,25 +239,24 @@ class SecAggPlusBackend(Backend):
 
     def run_round(self, r, deltas, weights):
         M = 1 << 32
-        uploads, enc_t = [], []
+        enc_t: list[float] = []
         nbrs: dict[int, list[tuple[int, int]]] = {c: [] for c in range(self.K)}
         for i, j in self.edges:
             nbrs[i].append((i, j))
             nbrs[j].append((i, j))
-        for c, (x, w) in enumerate(zip(deltas, weights)):
+        S = np.zeros(self.d, dtype=np.int64)
+        t_agg = 0.0
+        for c, (x, w) in enumerate(zip(deltas, weights)):  # server adds uploads as they arrive
             t0 = time.perf_counter()
             y = fixed_point(x, float(w)) % M
             for i, j in nbrs[c]:
                 mask = np.random.default_rng(stable_seed(self.seed, "pair", r, i, j)).integers(0, M, self.d, dtype=np.int64)
                 y = (y + mask) % M if c == i else (y - mask) % M
-            uploads.append(y)
             enc_t.append(time.perf_counter() - t0)
-        t0 = time.perf_counter()
-        S = np.zeros(self.d, dtype=np.int64)
-        for u in uploads:
-            S = (S + u) % M
+            t0 = time.perf_counter()
+            S = (S + y) % M
+            t_agg += time.perf_counter() - t0
         signed = np.where(S >= M // 2, S - M, S)
-        t_agg = time.perf_counter() - t0
         expected = sum(fixed_point(x, float(w)) for x, w in zip(deltas, weights))
         fails = int(np.sum(signed != expected))
         deg = np.mean([len(nbrs[c]) for c in range(self.K)])
@@ -341,8 +343,10 @@ class TensealBackend(Backend):
         import tenseal as ts
 
         chunks = [(a, min(self.d, a + self.slots)) for a in range(0, self.d, self.slots)]
-        enc_t, sizes, all_cts = [], [], []
-        for x, w in zip(deltas, weights):
+        enc_t, sizes = [], []
+        acc = None
+        t_agg = 0.0
+        for c, (x, w) in enumerate(zip(deltas, weights)):  # server adds uploads as they arrive
             t0 = time.perf_counter()
             if self.scheme == "ckks":
                 v = np.clip(np.asarray(x, dtype=np.float64), -CLIP, CLIP) * float(w)
@@ -351,13 +355,12 @@ class TensealBackend(Backend):
                 v = fixed_point(x, float(w))
                 cts = [ts.bfv_vector(self.ctx, v[a:b].tolist()) for a, b in chunks]
             enc_t.append(time.perf_counter() - t0)
-            sizes.append(sum(len(c.serialize()) for c in cts))
-            all_cts.append(cts)
-        t0 = time.perf_counter()
-        acc = all_cts[0]
-        for cts in all_cts[1:]:
-            acc = [a + b for a, b in zip(acc, cts)]
-        t_agg = time.perf_counter() - t0
+            if c < 3:  # serialized size is identical for every client; measure a few
+                sizes.append(sum(len(ct.serialize()) for ct in cts))
+            t0 = time.perf_counter()
+            acc = cts if acc is None else [a + b for a, b in zip(acc, cts)]
+            t_agg += time.perf_counter() - t0
+            del cts
         t0 = time.perf_counter()
         out = np.concatenate([np.asarray(c.decrypt(), dtype=np.float64) for c in acc])[: self.d]
         t_dec = time.perf_counter() - t0
