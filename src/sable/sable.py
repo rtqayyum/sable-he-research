@@ -20,7 +20,7 @@ from .clpn_c3_seeded import SeededC2BlockDictionaryKey, build_seeded_dictionary,
 from .clpn_c4_basis import C4BasisKey, build_basis_key as build_c4_basis_key, decrypt_c4, eval_lin as eval_lin_c4
 from .clpn_seeded import SeededCLPNCiphertext, decrypt as decrypt_seeded_one
 from .field import sample_dense_vector
-from .params import SableParams
+from .params import SableParams, warn_if_insecure
 from .sparse import SparseMatrix, SparseVector
 
 
@@ -44,6 +44,7 @@ def _rng(seed: int | None) -> random.Random:
 
 
 def _base_key_material(params: SableParams, rng: random.Random):
+    warn_if_insecure(params)
     q = params.q
     t = sample_dense_vector(params.n, q, rng)
     s = sample_dense_vector(params.n, q, rng)

@@ -3,27 +3,27 @@
     {
       "path": "sable_v050_arithmetic_kat.json",
       "schema": "sable-known-answer-vector-v1",
-      "sha256": "e9c0826f645e3e690b896f319630fd8bc8623e0f58f62877addab4b5fe03b7e2"
+      "sha256": "1e4eabaa3bf28c718124d14831d9f37e7c7a8dcfe5d71048fdc3264cdff8de16"
     },
     {
       "path": "sable_v050_fl_kat.json",
       "schema": "sable-phase4-hardening-v1.fl-kat",
-      "sha256": "cd7f26adbc1b78ab7cd6b9671cda1ed734ae67cb4b7345d74fb47df829f8b72b"
+      "sha256": "edc8b3c7be5e8652a03f4e0be62fd4896bdbc54fb82a128852759d00d93c75bb"
     },
     {
       "path": "sable_v050_pqc_envelope_kat.json",
       "schema": "sable-phase4-hardening-v1.pqc-envelope-kat",
-      "sha256": "a5800a2da16785746d0152a82b9dfb815efd718f8f96df9d89b636b7b68fe00a"
+      "sha256": "16e48e5225bdc8b2dbecb8d3ef35d84a74058d254ce61576f6a2d99501e383b6"
     },
     {
       "path": "sable_v050_cryptanalysis_kat.json",
       "schema": "sable-phase4-hardening-v1.cryptanalysis-kat",
-      "sha256": "2a1aa7c6c1babe3a57dc18133131d96cefbf973a05065cda5d45d6059b51b1bf"
+      "sha256": "a5cebc220162f749e2f750291b8f79bad83995104956a91da7c99a11fa66af62"
     }
   ],
-  "output_dir": "vectors/phase4",
-  "release_name": "Phase 10 compaction theory framework",
+  "output_dir": "vectors",
+  "release_name": "Sparse-LPN cryptanalysis, fast kernels and HPC experiments",
   "schema": "sable-phase4-hardening-v1.kat-manifest",
   "status": "pass",
-  "version": "0.11.0"
+  "version": "0.12.0"
 }

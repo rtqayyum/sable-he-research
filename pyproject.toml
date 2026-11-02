@@ -4,8 +4,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "sable-he-research"
-version = "0.11.0"
-description = "Clean public research implementation of SABLE-HE with PQC wrappers, proof/parameter/attack-estimator tooling, and Phase 9 benchmark-comparison support."
+version = "0.12.0"
+description = "Research implementation of SABLE-HE (LPN-only somewhat-homomorphic encryption) with sparse-LPN cryptanalysis tools, fast kernels and an FL/HPC experiment harness."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"
@@ -29,6 +29,7 @@ dependencies = []
 [project.optional-dependencies]
 dev = ["pytest>=7", "build>=1.2", "twine>=5"]
 numpy = ["numpy>=1.24"]
+fast = ["numpy>=1.24", "scipy>=1.10"]
 fl = ["numpy>=1.24"]
 tensorflow = ["tensorflow>=2.15"]
 keras = ["keras>=3.0"]

@@ -6,4 +6,4 @@ from sable.parameter_sets import get_candidate
 
 spec = get_candidate("sable_cat1_depth1_q31prime")
 report = lpn_estimator.attack_report(spec.to_params(), target_bits=spec.target_bits)
-print(lpn_estimator.format_report(report))
+print(lpn_estimator.format_attack_report(report))

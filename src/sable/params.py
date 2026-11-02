@@ -2,9 +2,14 @@
 
 from __future__ import annotations
 
+import warnings
 from dataclasses import dataclass
 
 from .field import is_prime
+
+
+class InsecureParametersWarning(UserWarning):
+    """Raised when a parameter set is known to be insecure (toy/demo presets)."""
 
 
 @dataclass(frozen=True)
@@ -313,3 +318,33 @@ PRESETS["fl_demo_clean"] = SableParams(
 
 # Backward-compatible alias for the v0.2 FL documentation/tests.
 PRESETS["fl_demo"] = PRESETS["fl_demo_clean"]
+
+
+# ---------------------------------------------------------------------------
+# Security status of presets
+# ---------------------------------------------------------------------------
+#
+# Every preset in PRESETS is a toy or demo parameter set.  Noise-free presets
+# (eta = 0) are plain linear systems, presets with k <= 2 are broken by
+# propagation, and presets with eta*(n+1) below a few dozen are broken by one
+# Gaussian elimination on the public expansion-key matrix that encrypts 1.
+# See sable.sparse_attacks and docs/SECURITY_STATUS.md.  Reviewed candidate
+# rows live in sable.parameter_sets; the FL case study uses sable.fast_regev.
+
+
+def insecurity_reasons(params: SableParams, *, target_bits: int = 128) -> list[str]:
+    """Return reasons why params are insecure (empty list if no screen fires)."""
+    from .sparse_attacks import screen_params
+
+    screen = screen_params(params, target_bits=target_bits)
+    return [b for b in screen.blockers if not b.startswith("thin")]
+
+
+def warn_if_insecure(params: SableParams) -> None:
+    reasons = insecurity_reasons(params)
+    if reasons:
+        warnings.warn(
+            f"SABLE-HE parameter set {params.name!r} is insecure (toy/demo only): " + "; ".join(reasons[:2]),
+            InsecureParametersWarning,
+            stacklevel=3,
+        )

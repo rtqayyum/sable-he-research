@@ -16,6 +16,7 @@ from pathlib import Path
 from typing import Any, Iterable
 
 from .field import majority_failure_bound, qary_piling_up, repetition_failure_bound
+from .sparse_attacks import plurality_failure_bound, sparse_layer_screen
 from .params import SableParams
 from .version import __release_name__, __version__
 
@@ -199,6 +200,48 @@ CANDIDATES: tuple[CandidateParameterSet, ...] = (
         status="stress-template-not-implementation-profile",
         notes=("included to expose depth/correctness/security tension", "requires refresh/packing/compaction improvement"),
     ),
+    # v0.12 rows.  The k<=2 rows above are kept only as a record: they are
+    # rejected by the sparse-specific screens in sable.sparse_attacks.
+    CandidateParameterSet(
+        name="sable_k5_cat1_depth1",
+        target_bits=128,
+        category_label="128-bit review target, k=5 sparse regime",
+        q=65537, n=131072, k=5, eta=0.0014,
+        n_c=131072, m_c=1024, eta_c=0.0014,
+        replicas=151, depth=1, additions=1,
+        intended_use="degree-2 arithmetic and small encrypted dot products; review template",
+        notes=("k=5 keeps the (n+1)^2 expansion-key samples just below n^(k/2)", "requires seeded expansion and compaction keys"),
+    ),
+    CandidateParameterSet(
+        name="sable_k6_cat1_depth1",
+        target_bits=128,
+        category_label="128-bit review target, k=6 sparse regime",
+        q=65537, n=131072, k=6, eta=0.0014,
+        n_c=131072, m_c=2048, eta_c=0.0014,
+        replicas=301, depth=1, additions=1,
+        intended_use="degree-2 arithmetic with a wider sparse-LPN sample margin; review template",
+        notes=("k=6 gives margin k/2 - log_n(m) of about 1", "larger row support; more replicas"),
+    ),
+    CandidateParameterSet(
+        name="sable_k5_cat3_depth1",
+        target_bits=192,
+        category_label="192-bit review target, k=5 sparse regime",
+        q=65537, n=196608, k=5, eta=0.0014,
+        n_c=196608, m_c=1024, eta_c=0.0014,
+        replicas=151, depth=1, additions=1,
+        intended_use="degree-2 arithmetic; review template",
+        notes=("k=5 sparse regime", "requires seeded expansion and compaction keys"),
+    ),
+    CandidateParameterSet(
+        name="sable_k6_cat5_depth1",
+        target_bits=256,
+        category_label="256-bit review target, k=6 sparse regime",
+        q=65537, n=262144, k=6, eta=0.0014,
+        n_c=262144, m_c=2048, eta_c=0.0014,
+        replicas=301, depth=1, additions=1,
+        intended_use="degree-2 arithmetic; review template",
+        notes=("k=6 sparse regime", "requires seeded expansion and compaction keys"),
+    ),
 )
 
 CandidateSpec = CandidateParameterSet
@@ -328,13 +371,24 @@ def screen_candidate(candidate: CandidateParameterSet | str) -> ParameterScreen:
     clpn_prange = clpn_clean
     gsw_bkw = _bkw_placeholder_bits(candidate.n, candidate.q, candidate.eta)
     clpn_bkw = _bkw_placeholder_bits(candidate.n_c, candidate.q, rowdiff_eta)
-    finite = [x for x in [gsw_clean, clpn_clean, gsw_prange, clpn_prange, gsw_bkw, clpn_bkw] if math.isfinite(x)]
+    sparse = sparse_layer_screen(candidate.n, candidate.k, candidate.eta, candidate.q, expansion_rows, target_bits=candidate.target_bits)
+    finite = [x for x in [gsw_clean, clpn_clean, gsw_prange, clpn_prange, gsw_bkw, clpn_bkw, sparse.min_bits] if math.isfinite(x)]
     min_bits = min(finite) if finite else float("inf")
 
-    blockers: list[str] = []
+    # q-ary plurality decoding: wrong values are spread over q-1 symbols, so the
+    # binary-style majority bound above is far too pessimistic for large q.
+    if candidate.q >= 257:
+        compaction_fail = plurality_failure_bound(candidate.m_c, 1.0 - compaction_eta, candidate.q)
+        per_replica = min(1.0, 1.0 - (1.0 - sparse_error) * (1.0 - compaction_fail))
+        final_fail = plurality_failure_bound(candidate.replicas, 1.0 - per_replica, candidate.q)
+        correctness_model = "q-ary plurality (KL/Chernoff bound)"
+    else:
+        correctness_model = "binary-style majority (conservative)"
+
+    blockers: list[str] = list(sparse.blockers)
     if min_bits < candidate.target_bits:
         blockers.append("internal first-pass attack screen below target")
-    if per_replica >= 0.5:
+    if per_replica >= 0.5 and candidate.q < 257:
         blockers.append("per-replica correctness failure bound is at least 1/2")
     if final_fail > 2.0 ** -40:
         blockers.append("final replicated correctness bound is above 2^-40")
@@ -381,8 +435,10 @@ def screen_candidate(candidate: CandidateParameterSet | str) -> ParameterScreen:
             "clpn_prange_first_order_bits": clpn_prange,
             "gsw_bkw_placeholder_bits": gsw_bkw,
             "clpn_bkw_placeholder_bits": clpn_bkw,
+            "sparse_specific": sparse.to_jsonable(),
+            "correctness_model": correctness_model,
             "minimum_finite_screen_bits": min_bits,
-            "screening_model": "first-pass clean-subset/Prange/BKW-placeholder only; external specialist estimators required",
+            "screening_model": "clean-subset/Prange/BKW-placeholder plus sparse-specific screens (sable.sparse_attacks); external specialist review still required",
         },
         min_finite_screen_bits=min_bits,
         status=status,

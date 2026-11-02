@@ -21,7 +21,7 @@
     -0.366,
     1.155
   ],
-  "kat_digest": "db261c4833fad4701de494a825fe22df898c3c607cc64f0806cc7f20d3a9dfc9",
+  "kat_digest": "64b50212216fe1aa083dd6d08e0394fdca8c9650fee05b4de99b80f8e43489ad",
   "key_seed": 5151,
   "package": "sable-he-research",
   "preset": "fl_demo_clean",
@@ -38,5 +38,5 @@
   "scale": 1000,
   "schema": "sable-phase4-hardening-v1.fl-kat",
   "status": "pass",
-  "version": "0.11.0"
+  "version": "0.12.0"
 }
