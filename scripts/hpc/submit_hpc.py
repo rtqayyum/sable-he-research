@@ -9,6 +9,7 @@ passed on the same commit), and only one sable job may be queued at a time.
   python3 ~/sable-he/code/current/scripts/hpc/submit_hpc.py --project ~/sable-he --next           # dry run
   python3 ~/sable-he/code/current/scripts/hpc/submit_hpc.py --project ~/sable-he --next --submit  # submit
   python3 ~/sable-he/code/current/scripts/hpc/submit_hpc.py --project ~/sable-he --status         # overview
+  python3 ~/sable-he/code/current/scripts/hpc/submit_hpc.py --project ~/sable-he --chain --submit # queue all remaining stages
 
 Standard library only; runs on Python 3.6+.
 """
@@ -32,6 +33,12 @@ SPEC = {
     "report": {"partition": "shortq", "cpus": 5, "mem": "16G", "time": "01:00:00"},
 }
 DEFAULT_EMAIL = "tariq.qayyum@uaeu.ac.ae"
+# time limits used by --chain, which submits before the pilot projection exists
+CHAIN_TIME = {"crypto": "1-12:00:00", "fl": "4-00:00:00"}
+# --chain dependencies: every later stage needs the pilot to exit 0 (= scientifically PASSED);
+# fl and report also wait for the stage before them to end, whatever its result, so jobs run one at a time
+CHAIN_DEPS = {"smoke": [], "pilot": [("afterok", "smoke")], "crypto": [("afterok", "pilot")],
+              "fl": [("afterok", "pilot"), ("afterany", "crypto")], "report": [("afterok", "pilot"), ("afterany", "fl")]}
 
 
 def read_json(path):
@@ -129,6 +136,8 @@ def main():
     ap.add_argument("--time")
     ap.add_argument("--email", default=DEFAULT_EMAIL)
     ap.add_argument("--force", action="store_true", help="ignore prerequisite and queue checks")
+    ap.add_argument("--chain", action="store_true",
+                    help="queue every remaining stage (smoke..report) at once, linked by Slurm dependencies")
     args = ap.parse_args()
 
     project = os.path.abspath(os.path.expanduser(args.project))
@@ -136,7 +145,7 @@ def main():
     commit = code_commit(code)
     statuses = {s: stage_status(project, s, commit, code) for s in ORDER}
 
-    if args.status or not (args.stage or args.next):
+    if args.status or not (args.stage or args.next or args.chain):
         print("project:", project)
         print("code commit:", commit)
         for s in ORDER:
@@ -144,8 +153,11 @@ def main():
             print("  %-7s %-10s %s" % (s, st.get("scientific_status", "-"), st.get("job_id", "")))
         jobs = queued_jobs()
         print("queued sable jobs:", jobs or "none")
-        if not (args.stage or args.next):
+        if not (args.stage or args.next or args.chain):
             return 0
+
+    if args.chain:
+        return submit_chain(project, code, commit, statuses, args)
 
     stage = args.stage
     if args.next:
@@ -184,19 +196,72 @@ def main():
     if not args.submit:
         print("(dry run; add --submit to queue it)")
         return 0
-    out = subprocess.check_output(["sbatch", path]).decode().strip()
+    job_id = sbatch(project, path, stage, commit, part, cpus, mem, wall, [])
+    print("\nmonitor:")
+    print("  squeue -j %s" % job_id)
+    print("  tail -F %s/logs/sable-%s_%s.out" % (project, stage, job_id))
+    print("  cat %s/outputs/%s/%s/PROGRESS.json" % (project, stage, commit[:12]))
+    print("  sacct -j %s --format=JobID,JobName,State,ExitCode,Elapsed,AllocCPUS,MaxRSS,Reason" % job_id)
+    return 0
+
+
+def sbatch(project, path, stage, commit, part, cpus, mem, wall, deps):
+    cmd = ["sbatch"]
+    if deps:
+        cmd += ["--dependency=" + ",".join("%s:%s" % d for d in deps), "--kill-on-invalid-dep=yes"]
+    out = subprocess.check_output(cmd + [path]).decode().strip()
     print(out)
     job_id = out.split()[-1]
     with open(os.path.join(project, "LAST_JOB_ID"), "w") as fh:
         fh.write(job_id + "\n")
     with open(os.path.join(project, "configs", "jobs.jsonl"), "a") as fh:
         fh.write(json.dumps({"time": time.strftime("%Y-%m-%d %H:%M:%S"), "job_id": job_id, "stage": stage, "commit": commit,
-                             "partition": part, "cpus": cpus, "mem": mem, "time_limit": wall}) + "\n")
-    print("\nmonitor:")
-    print("  squeue -j %s" % job_id)
-    print("  tail -F %s/logs/sable-%s_%s.out" % (project, stage, job_id))
-    print("  cat %s/outputs/%s/%s/PROGRESS.json" % (project, stage, commit[:12]))
-    print("  sacct -j %s --format=JobID,JobName,State,ExitCode,Elapsed,AllocCPUS,MaxRSS,Reason" % job_id)
+                             "partition": part, "cpus": cpus, "mem": mem, "time_limit": wall,
+                             "dependency": ",".join("%s:%s" % d for d in deps)}) + "\n")
+    return job_id
+
+
+def submit_chain(project, code, commit, statuses, args):
+    if (statuses["setup"] or {}).get("scientific_status") != "PASSED":
+        print("REFUSED: setup has not PASSED; submit it first with --next --submit")
+        return 2
+    jobs = queued_jobs()
+    if jobs and not args.force:
+        print("REFUSED: a sable job is already queued or running:", jobs)
+        return 3
+    todo = [s for s in ORDER[1:] if (statuses[s] or {}).get("scientific_status") != "PASSED"]
+    if not todo:
+        print("all stages PASSED for commit", commit[:12])
+        return 0
+    sb_dir = os.path.join(project, "configs", "sbatch")
+    os.makedirs(sb_dir, exist_ok=True)
+    ids = {}
+    print("chain for commit %s: %s" % (commit[:12], " -> ".join(todo)))
+    for stage in todo:
+        spec = dict(SPEC[stage])
+        part = spec["partition"] if not args.partition or spec["cpus"] < 40 else args.partition
+        cpus = spec["cpus"]
+        mem = args.mem if (args.mem and spec["mem"] == "auto") else (auto_mem(project) if spec["mem"] == "auto" else spec["mem"])
+        if spec["time"] == "auto":
+            wall = auto_time(project, stage, commit) if (statuses["pilot"] or {}).get("scientific_status") == "PASSED" else CHAIN_TIME[stage]
+        else:
+            wall = spec["time"]
+        deps = [(kind, ids[s]) for kind, s in CHAIN_DEPS[stage] if s in ids]
+        path = os.path.join(sb_dir, "%s_%s_%s.sbatch" % (stage, commit[:12], time.strftime("%Y%m%d-%H%M%S")))
+        with open(path, "w") as fh:
+            fh.write(sbatch_text(project, code, commit, stage, part, cpus, mem, wall, args.email))
+        print("  %-7s partition=%s cpus=%s mem=%s time=%s after=%s" % (stage, part, cpus, mem, wall,
+                                                                        ",".join("%s:%s" % d for d in deps) or "-"))
+        if args.submit:
+            ids[stage] = sbatch(project, path, stage, commit, part, cpus, mem, wall, deps)
+        else:
+            ids[stage] = "<%s>" % stage
+    if not args.submit:
+        print("(dry run; add --submit to queue the chain)")
+        return 0
+    print("\nIf a gating stage fails, Slurm cancels the stages that depend on it (--kill-on-invalid-dep).")
+    print("monitor:  squeue -u $USER   |   python3 %s/code/current/scripts/hpc/submit_hpc.py --project %s --status" % (project, project))
+    print("progress: cat %s/outputs/<stage>/%s/PROGRESS.json" % (project, commit[:12]))
     return 0
 
 

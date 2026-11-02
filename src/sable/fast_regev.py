@@ -83,6 +83,26 @@ class RegevAggParams:
         return asdict(self)
 
 
+def choose_replicas(n: int, k: int, q: int, eta: float, clients: int, target_failure: float = 1e-12, max_replicas: int = 4001) -> int:
+    """Smallest odd replica count R whose plurality bound for a K-client sum is <= target_failure.
+
+    The noise of K summed uploads makes one replica correct with probability
+    (1-eta)^K, so R must grow with the number of clients.
+    """
+    R = 3
+    while R <= max_replicas:
+        if RegevAggParams("tmp", n=n, k=k, q=q, eta=eta, replicas=R).failure_bound(clients) <= target_failure:
+            return R
+        R += 2
+    raise ValueError(f"no replica count up to {max_replicas} reaches {target_failure:g} for K={clients}, eta={eta}")
+
+
+def params_for_clients(n: int, eta: float, clients: int, *, k: int = 5, q: int = 2147483647,
+                       target_failure: float = 1e-12) -> RegevAggParams:
+    R = choose_replicas(n, k, q, eta, clients, target_failure)
+    return RegevAggParams(f"fl_k{k}_n{n}_eta{eta:g}_K{clients}_R{R}", n=n, k=k, q=q, eta=eta, replicas=R)
+
+
 # Default parameter rows for the FL case study (review targets, not certified).
 FL_PARAMS: dict[str, RegevAggParams] = {
     "fl_k5_n65536_r25": RegevAggParams("fl_k5_n65536_r25", n=65536, k=5, q=2147483647, eta=0.003, replicas=25),
@@ -231,9 +251,11 @@ __all__ = [
     "FixedPoint",
     "RegevAggParams",
     "aggregate",
+    "choose_replicas",
     "decrypt_sum",
     "encrypt",
     "keygen",
+    "params_for_clients",
     "plurality",
     "public_sparse_vectors",
     "to_signed",

@@ -43,6 +43,7 @@ def run_fl(cfg: dict[str, Any]) -> dict[str, Any]:
     total_failures = 0
     t_run = time.perf_counter()
     for r in range(rounds):
+        t_round = time.perf_counter()
         deltas, losses, train_t = [], [], []
         for c in range(K):
             fmodels.set_vector(model, w_global)
@@ -67,6 +68,7 @@ def run_fl(cfg: dict[str, Any]) -> dict[str, Any]:
             fmodels.set_vector(model, w_global)
             acc, loss = fmodels.evaluate(model, Xte, Yte)
             row.update(test_acc=acc, test_loss=loss)
+        row["round_wall_s"] = time.perf_counter() - t_round
         history.append(row)
 
     final = history[-1]

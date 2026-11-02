@@ -15,6 +15,8 @@ from itertools import product
 from typing import Any, Callable
 
 FL_METHODS_ALL = ["plain", "sable", "lwe", "secagg", "ckks", "bfv", "paillier"]
+FL_COST_METHODS = FL_METHODS_ALL + ["sable_ln"]
+FL_COST_CLIENTS = [10, 50, 100, 200, 500, 1000]
 
 
 def _task(family: str, kind: str, cfg: dict[str, Any], mem_gb: float = 2.0, timeout_s: int = 6 * 3600) -> dict[str, Any]:
@@ -29,17 +31,28 @@ def _fl_cfg(dataset: str, model: str, partition: str, K: int, seed: int, method:
     if method == "paillier":
         cfg["crypto"] = "sampled"
         cfg["backend_opts"] = {"key_bits": 3072, "coord_limit": 256, "client_limit": 3}
-    if method == "sable":
-        # replicas chosen from the plurality bound: R=25 keeps failures < 1e-9 up to K=100, R=51 up to K=250
-        cfg["backend_opts"] = {"param_set": "fl_k5_n65536_r25" if K <= 100 else "fl_k5_n65536_r51"}
+    if method == "sable":  # main row: n=65536, eta=0.003; replicas from the bound (failure <= 1e-12 per coordinate)
+        cfg["backend_opts"] = {"n": 65536, "eta": 0.003, "target_failure": 1e-12}
+    if method == "sable_ln":  # low-noise row for many clients: n=131072, eta=0.001
+        cfg["backend_opts"] = {"n": 131072, "eta": 0.001, "target_failure": 1e-12}
     return cfg
 
 
+def sable_replicas(method: str, K: int) -> int:
+    from sable.fast_regev import choose_replicas
+
+    n, eta = (131072, 0.001) if method == "sable_ln" else (65536, 0.003)
+    return choose_replicas(n, 5, 2147483647, eta, K, 1e-12)
+
+
 def _fl_mem(model: str, K: int, method: str) -> float:
-    base = 2.0
-    if method in ("sable", "ckks", "bfv", "lwe") and model == "mlp":
+    base = 2.0 + (0.5 if K >= 100 else 0.0) + (0.5 if K >= 200 else 0.0) + (1.0 if K >= 500 else 0.0)
+    if method in ("ckks", "bfv", "lwe") and model == "mlp":
         base += 1.5
-    return base + (0.5 if K >= 100 else 0.0) + (0.5 if K >= 200 else 0.0)
+    if method in ("sable", "sable_ln"):
+        d = {"lr": 7850, "mlp": 101770, "cnn": 18378}[model]
+        base += 3 * d * sable_replicas(method, K) * 8 / 1e9 + (1.5 if model == "mlp" else 0.5)
+    return round(base, 1)
 
 
 # --------------------------------------------------------------------------- smoke
@@ -116,9 +129,10 @@ def fl_tasks(rounds: int = 100) -> list[dict[str, Any]]:
     for ds, model, part, K, seed, m in product(["mnist", "fmnist"], ["lr", "mlp", "cnn"], ["iid", "dir0.5", "dir0.1"],
                                               [10, 50, 100, 200], [0, 1, 2, 3, 4], ["plain", "sable", "ckks"]):
         t.append(_task("fl_acc", "fl_run", _fl_cfg(ds, model, part, K, seed, m, rounds, "full"), mem_gb=_fl_mem(model, K, m), timeout_s=48 * 3600))
-    # cost study: every method, crypto measured on the first rounds
-    for model, K, m in product(["lr", "mlp", "cnn"], [10, 50, 100, 200], FL_METHODS_ALL):
-        t.append(_task("fl_cost", "fl_run", _fl_cfg("mnist", model, "iid", K, 0, m, rounds, "sampled"), mem_gb=_fl_mem(model, K, m), timeout_s=48 * 3600))
+    # cost and client-scaling study: every method, K up to 1000, crypto measured on the first 3 rounds
+    for model, K, m in product(["lr", "mlp", "cnn"], FL_COST_CLIENTS, FL_COST_METHODS):
+        t.append(_task("fl_cost", "fl_run", _fl_cfg("mnist", model, "iid", K, 0, m, rounds, "sampled"), mem_gb=_fl_mem(model, K, m),
+                       timeout_s=96 * 3600))
     return t
 
 
@@ -152,7 +166,12 @@ def pilot_tasks() -> list[dict[str, Any]]:
     # FL: one run per model size for the three accuracy methods, MNIST, K=100 (the slowest), 10 rounds
     take(lambda x: x["family"] == "fl_acc" and x["cfg"]["dataset"] == "mnist" and x["cfg"]["partition"] == "iid"
          and x["cfg"]["clients"] == 200 and x["cfg"]["seed"] == 0, 9, fl)
-    take(lambda x: x["family"] == "fl_cost" and x["cfg"]["model"] == "mlp" and x["cfg"]["clients"] == 200, 7, fl)
+    # cost study: every method at the largest K (SABLE main row at K=500; K=1000 needs R=755 and is extrapolated)
+    take(lambda x: x["family"] == "fl_cost" and x["cfg"]["model"] == "mlp" and x["cfg"]["clients"] == 1000
+         and x["cfg"]["method"] != "sable", 7, fl)
+    take(lambda x: x["family"] == "fl_cost" and x["cfg"]["clients"] == 500 and x["cfg"]["method"] == "sable", 3, fl)
+    take(lambda x: x["family"] == "fl_cost" and x["cfg"]["clients"] == 1000 and x["cfg"]["method"] == "sable_ln"
+         and x["cfg"]["model"] != "mlp", 2, fl)
     return pick
 
 
@@ -225,10 +244,10 @@ def science_checks(stage: str, results: list[dict[str, Any]]) -> list[dict[str, 
             c = r["cfg"]
             key = (c["dataset"], c["model"], c["partition"], c["clients"], c["seed"], c["rounds"])
             by_key.setdefault(key, {})[c["method"]] = r["result"]["final_test_acc"]
-        gaps = [abs(v["sable"] - v["plain"]) for v in by_key.values() if "sable" in v and "plain" in v]
+        gaps = [abs(v[m] - v["plain"]) for v in by_key.values() for m in ("sable", "sable_ln") if m in v and "plain" in v]
         if gaps:
             out.append(_check("SABLE FedAvg matches plaintext accuracy (|gap| <= 0.01)", max(gaps) <= 0.01, f"max gap {max(gaps):.4f} over {len(gaps)} pairs"))
-        sable_fail = sum(r["result"]["total_coord_failures"] for r in fl if r["cfg"]["method"] == "sable")
+        sable_fail = sum(r["result"]["total_coord_failures"] for r in fl if r["cfg"]["method"] in ("sable", "sable_ln"))
         out.append(_check("SABLE decoding failures in FL runs", sable_fail == 0 or stage in ("crypto", "fl"), f"{sable_fail} coordinate failures"))
     return out
 
@@ -253,7 +272,10 @@ def _cost_units(t: dict[str, Any]) -> float:
     if f == "bench_agg":
         return float(c["d"] * c["K"] * c.get("rounds", 2))
     if f in FL_FAMILIES:
-        return float(c["rounds"] * c["clients"])
+        units = float(c["rounds"] * c["clients"])
+        if c["method"] in ("sable", "sable_ln"):  # SABLE cost per client grows with the replica count
+            units *= sable_replicas(c["method"], c["clients"])
+        return units
     return 1.0
 
 
@@ -266,34 +288,79 @@ def _cost_group(t: dict[str, Any]) -> tuple:
     return (f,)
 
 
+def _replica_factor(cfg: dict[str, Any]) -> float:
+    return float(sable_replicas(cfg["method"], cfg["clients"])) if cfg["method"] in ("sable", "sable_ln") else 1.0
+
+
+def _fl_round_rates(r: dict[str, Any]) -> tuple[float, float] | None:
+    """(seconds per encrypted round per client per replica, seconds per plain round per client) from a pilot run."""
+    hist = r.get("result", {}).get("history", [])
+    if not hist or "round_wall_s" not in hist[0]:
+        return None
+    K = r["cfg"]["clients"]
+    enc = [h["round_wall_s"] for h in hist if h.get("measured")]
+    pln = [h["round_wall_s"] for h in hist if not h.get("measured")]
+    c = (max(enc) / (K * _replica_factor(r["cfg"]))) if enc else 0.0
+    p = (max(pln) / K) if pln else 0.0
+    return c, p
+
+
 def pilot_projection(results: list[dict[str, Any]], workers: int, mem_gb: float) -> dict[str, Any]:
     """Project full-stage wall time from pilot timings.
 
-    Each family has a cost model (_cost_units).  The pilot gives a rate
-    (seconds per unit) for each group, for example (fl_acc, mlp, sable); a
-    group the pilot did not run uses the slowest rate of its family, so the
-    estimate errs on the long side.  Wall time is the larger of the total
-    work spread over the workers and the single longest task.
+    Crypto families use a cost model (_cost_units) whose rate comes from the
+    pilot.  FL runs use per-round wall times recorded by the pilot runs:
+    encrypted rounds scale with clients x replicas, plain rounds with clients.
+    A group the pilot did not run uses the slowest rate of the same method
+    (FL) or family (crypto), so the estimate errs on the long side.  Wall time
+    is the larger of the total work spread over the workers and the single
+    longest task.
     """
     group_rate: dict[tuple, float] = {}
     fam_rate: dict[str, float] = {}
+    fl_group: dict[tuple, list[float]] = {}
+    fl_method: dict[tuple, list[float]] = {}
     for r in results:
         if r.get("status") != "ok":
+            continue
+        f = r["family"]
+        if f in FL_FAMILIES:
+            rates = _fl_round_rates(r)
+            if rates is None:
+                continue
+            for key, store in (((f, r["cfg"]["model"], r["cfg"]["method"]), fl_group), ((f, r["cfg"]["method"]), fl_method)):
+                cur = store.setdefault(key, [0.0, 0.0])
+                cur[0], cur[1] = max(cur[0], rates[0]), max(cur[1], rates[1])
             continue
         rate = max(0.0, r["seconds"] - TASK_OVERHEAD_S) / max(_cost_units(r), 1e-12)
         g = _cost_group(r)
         group_rate[g] = max(group_rate.get(g, 0.0), rate)
-        fam_rate[r["family"]] = max(fam_rate.get(r["family"], 0.0), rate)
+        fam_rate[f] = max(fam_rate.get(f, 0.0), rate)
+    # a plain-round rate missing for a group (fully encrypted runs) falls back to the method's
+    plain_by_model: dict[tuple, float] = {}
+    for (f, model, method), (c, p) in fl_group.items():
+        plain_by_model[(f, model)] = max(plain_by_model.get((f, model), 0.0), p)
     par = max(1, min(workers, int(mem_gb // 3) or 1))
     proj: dict[str, Any] = {}
     for stage, tasks in (("crypto", crypto_tasks()), ("fl", fl_tasks())):
         total, longest, uncalibrated = 0.0, 0.0, 0
         for t in tasks:
-            rate = group_rate.get(_cost_group(t), fam_rate.get(t["family"]))
-            if rate is None:
-                uncalibrated += 1
-                continue
-            est = TASK_OVERHEAD_S + rate * _cost_units(t)
+            f, c = t["family"], t["cfg"]
+            if f in FL_FAMILIES:
+                rates = fl_group.get((f, c["model"], c["method"])) or fl_method.get((f, c["method"]))
+                if rates is None:
+                    uncalibrated += 1
+                    continue
+                enc_rounds = c["rounds"] if c.get("crypto", "full") == "full" else min(c["rounds"], c.get("sample_rounds", 2))
+                plain_rate = rates[1] or plain_by_model.get(("fl_cost", c["model"]), 0.0) or plain_by_model.get(("fl_acc", c["model"]), 0.0)
+                est = TASK_OVERHEAD_S + enc_rounds * rates[0] * c["clients"] * _replica_factor(c) \
+                    + (c["rounds"] - enc_rounds) * plain_rate * c["clients"]
+            else:
+                rate = group_rate.get(_cost_group(t), fam_rate.get(f))
+                if rate is None:
+                    uncalibrated += 1
+                    continue
+                est = TASK_OVERHEAD_S + rate * _cost_units(t)
             total += est
             longest = max(longest, est)
         wall = max(total / par * 1.25, longest * 1.1)

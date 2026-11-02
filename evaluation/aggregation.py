@@ -99,11 +99,15 @@ class PlainBackend(Backend):
 
 class SableBackend(Backend):
     def __init__(self, d: int, K: int, seed: int, **opts: Any) -> None:
-        from sable.fast_regev import FL_PARAMS
+        from sable.fast_regev import FL_PARAMS, params_for_clients
 
-        pname = opts.get("param_set", "fl_k5_n65536_r25")
-        self.p = FL_PARAMS[pname]
-        super().__init__("sable-ka", f"sparse q-ary LPN (n={self.p.n}, k={self.p.k}, eta={self.p.eta})", True,
+        if "param_set" in opts:
+            self.p = FL_PARAMS[opts["param_set"]]
+        else:  # replicas chosen from the plurality bound for this number of clients
+            self.p = params_for_clients(int(opts.get("n", 65536)), float(opts.get("eta", 0.003)), K,
+                                        k=int(opts.get("k", 5)), target_failure=float(opts.get("target_failure", 1e-12)))
+        label = opts.get("label", "sable")
+        super().__init__(label, f"sparse q-ary LPN (n={self.p.n}, k={self.p.k}, eta={self.p.eta}, R={self.p.replicas})", True,
                          "key-additive (server sees only the summed key)", True, d, K, seed, opts)
         self.keys: list[np.ndarray] = []
 
@@ -381,6 +385,7 @@ class TensealBackend(Backend):
 BACKENDS = {
     "plain": PlainBackend,
     "sable": SableBackend,
+    "sable_ln": lambda d, K, seed, **o: SableBackend(d, K, seed, **{"n": 131072, "eta": 0.001, "label": "sable_ln", **o}),
     "lwe": LweKaheBackend,
     "secagg": SecAggPlusBackend,
     "paillier": PaillierBackend,
@@ -397,7 +402,7 @@ def make_backend(method: str, d: int, K: int, seed: int, **opts: Any) -> Backend
 
 def available_backends() -> dict[str, str]:
     """Check which optional libraries are importable."""
-    out = {"plain": "ok", "sable": "ok", "lwe": "ok", "secagg": "ok"}
+    out = {"plain": "ok", "sable": "ok", "sable_ln": "ok", "lwe": "ok", "secagg": "ok"}
     for name, mod in [("paillier", "phe"), ("ckks", "tenseal"), ("bfv", "tenseal")]:
         try:
             __import__(mod)

@@ -17,10 +17,11 @@ import numpy as np
 
 # fixed slots (validated light-mode palette); plaintext is a neutral reference
 METHOD_COLOR = {"plain": "#52514e", "sable": "#2a78d6", "lwe": "#eb6834", "secagg": "#1baf7a",
-                "ckks": "#eda100", "bfv": "#e87ba4", "paillier": "#008300"}
+                "ckks": "#eda100", "bfv": "#e87ba4", "paillier": "#008300", "sable_ln": "#6250d6"}
 METHOD_LABEL = {"plain": "Plaintext FedAvg", "sable": "SABLE-HE (sparse LPN)", "lwe": "LWE-KAHE", "secagg": "SecAgg+",
-                "ckks": "CKKS", "bfv": "BFV", "paillier": "Paillier-3072"}
-MARKERS = {"plain": "o", "sable": "s", "lwe": "^", "secagg": "D", "ckks": "v", "bfv": "P", "paillier": "X"}
+                "ckks": "CKKS", "bfv": "BFV", "paillier": "Paillier-3072",
+                "sable_ln": "SABLE-HE low-noise (sparse LPN)"}
+MARKERS = {"plain": "o", "sable": "s", "lwe": "^", "secagg": "D", "ckks": "v", "bfv": "P", "paillier": "X", "sable_ln": "*"}
 INK, MUTED, GRID = "#0b0b0b", "#52514e", "#e4e3df"
 
 
@@ -247,7 +248,7 @@ def crypto_section(rows: list[dict[str, Any]], out: Path, written: list[str], no
 
 
 def _bar_methods(plt: Any, sub: Any, col: str, ylabel: str, out: Path, name: str, written: list[str]) -> None:
-    order = [m for m in ["plain", "secagg", "lwe", "bfv", "ckks", "sable", "paillier"] if m in set(sub["method"])]
+    order = [m for m in ["plain", "secagg", "lwe", "bfv", "ckks", "sable_ln", "sable", "paillier"] if m in set(sub["method"])]
     sub = sub.drop_duplicates("method").set_index("method").loc[order]
     fig, ax = plt.subplots(figsize=(3.4, 2.4))
     x = np.arange(len(order))
@@ -346,10 +347,34 @@ def fl_section(rows: list[dict[str, Any]], out: Path, written: list[str], notes:
             s2["crypto_s"] = s2["client_encrypt_s"].fillna(0)
             _bar_methods(plt, s2[s2["method"] != "plain"], "crypto_s", "client encrypt time per round (s)", out,
                          "fig_fl_client_time", written)
-        for m in ("sable", "lwe", "ckks"):
-            row = g[(g["method"] == m) & (g["model"] == "mlp")]
+        for m in ("sable", "sable_ln", "lwe", "ckks"):
+            row = g[(g["method"] == m) & (g["model"] == "mlp")].sort_values("clients")
             if len(row):
-                notes.append(f"FL cost (MLP, d={int(row['d'].iloc[0])}): {METHOD_LABEL[m]} uploads {row['upload_vs_plain'].mean():.1f}x the plaintext update.")
+                lo, hi = row.iloc[0], row.iloc[-1]
+                notes.append(f"FL cost (MLP, d={int(lo['d'])}): {METHOD_LABEL[m]} uploads {lo['upload_vs_plain']:.1f}x the plaintext "
+                             f"update at K={int(lo['clients'])} and {hi['upload_vs_plain']:.1f}x at K={int(hi['clients'])}.")
+        # client scaling: one panel per metric, one line per method (fixed colour per method)
+        for model in [m for m in ("mlp", "lr", "cnn") if m in set(g["model"])][:1]:
+            gm = g[g["model"] == model]
+            metrics = [("upload_bytes", "bytes per client per round"), ("client_encrypt_s", "client encrypt time per round (s)"),
+                       ("server_aggregate_s", "server aggregation time per round (s)")]
+            fig, axes = plt.subplots(1, 3, figsize=(7.0, 2.4))
+            for ax, (col, ylabel) in zip(axes, metrics):
+                for m in ["plain", "secagg", "lwe", "bfv", "ckks", "sable_ln", "sable", "paillier"]:
+                    sm = gm[gm["method"] == m].sort_values("clients")
+                    vals = sm[col].astype(float)
+                    if not len(sm) or (col != "upload_bytes" and m == "plain"):
+                        continue
+                    ax.plot(sm["clients"], vals.clip(lower=1e-4), color=METHOD_COLOR[m], marker=MARKERS[m], markersize=3.5,
+                            label=METHOD_LABEL[m].replace(" (sparse LPN)", ""), linestyle="--" if m == "plain" else "-")
+                ax.set_xscale("log")
+                ax.set_yscale("log")
+                ax.set_xlabel("clients K")
+                ax.set_ylabel(ylabel)
+            handles, labels = axes[0].get_legend_handles_labels()
+            fig.legend(handles, labels, loc="upper center", ncol=4, bbox_to_anchor=(0.5, 1.12))
+            fig.tight_layout()
+            _save(fig, out, f"fig_fl_client_scaling_{model}", written)
 
 
 def build_report(project: Path, commit: str) -> dict[str, Any]:

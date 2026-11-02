@@ -19,6 +19,19 @@ curl -fsSL https://raw.githubusercontent.com/rtqayyum/sable-he-research/experime
 python3 ~/sable-he/code/current/scripts/hpc/submit_hpc.py --project ~/sable-he --next --submit
 ```
 
+**(b′) Or queue every remaining stage at once** (smoke → pilot → crypto → fl → report):
+
+```bash
+python3 ~/sable-he/code/current/scripts/hpc/submit_hpc.py --project ~/sable-he --chain --submit
+```
+
+The chain uses Slurm dependencies.  Each stage starts only after the one
+before it ends, so jobs still run one at a time.  Every stage after the pilot
+needs the pilot to exit 0, which happens only when its checks PASS; if a
+gating stage fails, Slurm cancels the stages that depend on it.  Each job also
+re-checks its prerequisite on start.  The report runs after fl whatever fl's
+result, so tables are built from whatever finished.
+
 `--status` prints every stage's state.  The script refuses a stage whose
 prerequisite has not PASSED on the same commit, and refuses to queue while
 another `sable-*` job is pending or running.
@@ -29,9 +42,9 @@ another `sable-*` job is pending or running.
 |---|---|---|---|---|
 | setup | longq / 5 | 6 h | uv-managed Python 3.11 venv in `work/venv`, pinned packages, MNIST + Fashion-MNIST download, unit tests, `sinfo` resource scan | packages import, all 7 backends load, both datasets have 60k/10k images, tests pass |
 | smoke | shortq / 5 | 1 h | 22 tiny tasks covering every task type | all tasks ok, attacks work, SABLE FedAvg equals plaintext, plain MNIST LR ≥ 0.5 after 2 rounds |
-| pilot | longq / 40 | 24 h | 49 of the most expensive tasks, 10 FL rounds | all checks pass, MNIST LR ≥ 0.8, projected crypto and FL stages each fit in 9 days |
-| crypto | longq / 40 | auto (from pilot) | 949 tasks: attacks, correctness, SHE and aggregation benchmarks, parameter tables | all tasks ok and science checks pass |
-| fl | longq / 40 | auto (from pilot) | 549 FL runs: accuracy study (plain/SABLE/CKKS × 2 datasets × 3 models × 3 partitions × 3 client counts × 3 seeds) and cost study (7 methods) | all tasks ok and SABLE accuracy within 0.01 of plaintext |
+| pilot | longq / 40 | 24 h | 55 of the most expensive tasks, 10 FL rounds | all checks pass, MNIST LR ≥ 0.8, projected crypto and FL stages each fit in 9 days |
+| crypto | longq / 40 | auto (from pilot; 36 h with --chain) | 1,014 tasks: attacks, correctness, SHE and aggregation benchmarks, parameter tables | all tasks ok and science checks pass |
+| fl | longq / 40 | auto (from pilot; 4 days with --chain) | 1,224 FL runs: accuracy study (plain/SABLE/CKKS × 2 datasets × 3 models × 3 partitions × K ∈ {10, 50, 100, 200} × 5 seeds, 100 rounds) and cost/scaling study (8 methods × 3 models × K ∈ {10, 50, 100, 200, 500, 1000}) | all tasks ok and SABLE accuracy within 0.01 of plaintext |
 | report | shortq / 5 | 1 h | CSV tables, PDF/PNG figures and `REPORT.md` in `results/<commit>/` | tables and figures built |
 
 Memory for 40-CPU stages is set from the setup stage's `sinfo` scan (85% of
@@ -85,3 +98,15 @@ SABLE_DATA_DIR=~/sable-he/data ~/sable-he/work/venv/bin/python -c \
   configs/               sbatch files, jobs.jsonl, code_history.jsonl
   LAST_JOB_ID
 ```
+
+## SABLE replica count
+
+SABLE's replica count R is chosen per run from the plurality bound so that a
+decoded coordinate fails with probability at most 1e-12.  The summed noise of
+K uploads makes one replica correct with probability (1−η)^K, so R grows with
+the number of clients:
+
+| row | K = 10 | 50 | 100 | 200 | 500 | 1000 |
+|---|---|---|---|---|---|---|
+| main (n = 65,536, η = 0.003) | 13 | 21 | 29 | 47 | 143 | 755 |
+| low-noise (n = 131,072, η = 0.001) | 11 | 13 | 17 | 23 | 41 | 79 |

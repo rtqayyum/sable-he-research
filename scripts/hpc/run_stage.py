@@ -57,7 +57,17 @@ def main() -> int:
     atomic_write_json(out_dir / "RUN_CONFIG.json", {"args": vars(args), "commit": commit, "env": env_info()})
     print(f"[stage] {args.stage} commit={commit[:12]} job={job_id} workers={args.workers} mem_budget={mem_gb:.0f}GB", flush=True)
 
+    prereq = {"pilot": ["smoke"], "crypto": ["pilot"], "fl": ["pilot"], "report": ["pilot"]}.get(args.stage, [])
+    if not args.local:
+        for pre in prereq:
+            st = read_json(project / "outputs" / pre / commit[:12] / "FINAL_STATUS.json") \
+                if (project / "outputs" / pre / commit[:12] / "FINAL_STATUS.json").exists() else {}
+            if st.get("scientific_status") != "PASSED":
+                status["checks"].append({"name": f"prerequisite {pre} PASSED on this commit", "passed": False,
+                                         "detail": f"{pre} status: {st.get('scientific_status', 'missing')}"})
     try:
+        if status["checks"]:
+            raise RuntimeError("prerequisite stage not PASSED on this commit; refusing to run")
         if args.stage == "setup":
             status.update(run_setup(project, code, out_dir))
         elif args.stage == "report":
