@@ -35,7 +35,7 @@ another `sable-*` job is pending or running.
 | report | shortq / 5 | 1 h | CSV tables, PDF/PNG figures and `REPORT.md` in `results/<commit>/` | tables and figures built |
 
 Memory for 40-CPU stages is set from the setup stage's `sinfo` scan (85% of
-the smallest longq node, at most 360G); override with `--mem`.  Time for
+the smallest longq node, at most 200G); override with `--mem`.  Time for
 crypto/fl is 1.5× the pilot projection plus 2 h (12 h to 10 days).
 
 ## Monitoring

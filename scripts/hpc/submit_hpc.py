@@ -74,8 +74,9 @@ def auto_mem(project):
     res = read_json(os.path.join(project, "outputs", "setup", "hpc_resources.json")) or {}
     mb = res.get("longq_min_node_mem_mb")
     if mb:
-        return "%dG" % max(32, min(360, int(mb * 0.85 / 1024)))
-    return "120G"
+        # 200G covers the largest tasks (about 30 GB) with 40 workers and schedules faster than a near-full node
+        return "%dG" % max(32, min(200, int(mb * 0.85 / 1024)))
+    return "160G"
 
 
 def auto_time(project, stage, commit):

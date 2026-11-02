@@ -233,28 +233,72 @@ def science_checks(stage: str, results: list[dict[str, Any]]) -> list[dict[str, 
     return out
 
 
-def pilot_projection(results: list[dict[str, Any]], workers: int, mem_gb: float) -> dict[str, Any]:
-    """Project full-stage wall time from pilot timings (per family, slowest member)."""
-    import statistics
+FL_FAMILIES = ("fl", "fl_acc", "fl_cost")
+TASK_OVERHEAD_S = 10.0  # process spawn and imports
 
-    secs: dict[str, list[float]] = {}
+
+def _cost_units(t: dict[str, Any]) -> float:
+    """Relative cost of a task inside its family (calibrated by the pilot)."""
+    f, c = t["family"], t["cfg"]
+    if f == "bench_she":
+        return (c["n"] + 1) * (c["k"] + 1) ** 4 * c.get("reps", 3)
+    if f == "corr_she":
+        return (c["n"] + 1) * (c["k"] + 1) ** 4 * c["trials"] * {"add": 0.1, "mul": 1.0, "dot4": 4.0}[c["op"]]
+    if f == "corr_agg":
+        return float(c["K"] * c["R"] * c["d"] * c["trials"])
+    if f == "attack2":
+        return float(c["n"] * c["ratio"])
+    if f == "attack_kp":
+        return float((c["n"] + 1) ** 3)
+    if f == "bench_agg":
+        return float(c["d"] * c["K"] * c.get("rounds", 2))
+    if f in FL_FAMILIES:
+        return float(c["rounds"] * c["clients"])
+    return 1.0
+
+
+def _cost_group(t: dict[str, Any]) -> tuple:
+    f, c = t["family"], t["cfg"]
+    if f in FL_FAMILIES:
+        return (f, c["model"], c["method"])
+    if f == "bench_agg":
+        return (f, c.get("label", c["method"]))
+    return (f,)
+
+
+def pilot_projection(results: list[dict[str, Any]], workers: int, mem_gb: float) -> dict[str, Any]:
+    """Project full-stage wall time from pilot timings.
+
+    Each family has a cost model (_cost_units).  The pilot gives a rate
+    (seconds per unit) for each group, for example (fl_acc, mlp, sable); a
+    group the pilot did not run uses the slowest rate of its family, so the
+    estimate errs on the long side.  Wall time is the larger of the total
+    work spread over the workers and the single longest task.
+    """
+    group_rate: dict[tuple, float] = {}
+    fam_rate: dict[str, float] = {}
     for r in results:
-        if r.get("status") == "ok":
-            secs.setdefault(r["family"], []).append(r["seconds"])
+        if r.get("status") != "ok":
+            continue
+        rate = max(0.0, r["seconds"] - TASK_OVERHEAD_S) / max(_cost_units(r), 1e-12)
+        g = _cost_group(r)
+        group_rate[g] = max(group_rate.get(g, 0.0), rate)
+        fam_rate[r["family"]] = max(fam_rate.get(r["family"], 0.0), rate)
+    par = max(1, min(workers, int(mem_gb // 3) or 1))
     proj: dict[str, Any] = {}
     for stage, tasks in (("crypto", crypto_tasks()), ("fl", fl_tasks())):
-        total = 0.0
+        total, longest, uncalibrated = 0.0, 0.0, 0
         for t in tasks:
-            fam = t["family"]
-            if fam not in secs:
+            rate = group_rate.get(_cost_group(t), fam_rate.get(t["family"]))
+            if rate is None:
+                uncalibrated += 1
                 continue
-            est = max(secs[fam])  # pilot ran the expensive members
-            if fam in ("fl_acc", "fl_cost"):
-                est *= t["cfg"]["rounds"] / 10.0  # pilot ran 10 rounds
+            est = TASK_OVERHEAD_S + rate * _cost_units(t)
             total += est
-        par = max(1, min(workers, int(mem_gb // 3) or 1))
-        proj[stage] = {"tasks": len(tasks), "cpu_hours": total / 3600, "parallel_workers": par,
-                       "projected_wall_hours": total / 3600 / par * 1.25}
+            longest = max(longest, est)
+        wall = max(total / par * 1.25, longest * 1.1)
+        proj[stage] = {"tasks": len(tasks), "uncalibrated_tasks": uncalibrated, "cpu_hours": total / 3600,
+                       "longest_task_hours": longest / 3600, "parallel_workers": par, "projected_wall_hours": wall / 3600}
     return proj
 
 
@@ -264,5 +308,8 @@ def stage_checks(stage: str, tasks: list[dict[str, Any]], results: list[dict[str
     if stage == "pilot" and projection:
         for s in ("crypto", "fl"):
             h = projection[s]["projected_wall_hours"]
-            checks.append(_check(f"projected {s} stage fits in 9 days", h < 9 * 24, f"{h:.1f} h projected"))
+            unc = projection[s]["uncalibrated_tasks"]
+            checks.append(_check(f"projected {s} stage fits in 9 days", h < 9 * 24 and unc == 0,
+                                 f"{h:.1f} h projected (longest task {projection[s]['longest_task_hours']:.1f} h, "
+                                 f"{unc} tasks without a pilot timing)"))
     return checks
