@@ -369,7 +369,7 @@ def solve_two_sparse_lpn(
         x, top = 0, 0
     s_hat = [((a * x + bb) % q) if a is not None else 0 for a, bb in zip(alpha, beta)]
 
-    for _ in range(max(0, rounds)):
+    for it in range(max(0, rounds) + 5):  # extra rounds only while the estimate keeps changing
         new = list(s_hat)
         for v in range(n):
             c: Counter[int] = Counter()
@@ -382,7 +382,10 @@ def solve_two_sparse_lpn(
                 c[((bl[idx] - au * s_hat[u]) * inv(av)) % q] += 1
             if c:
                 new[v] = c.most_common(1)[0][0]
+        changed = new != s_hat
         s_hat = new
+        if it >= rounds - 1 and not changed:
+            break
     return {"s": np.asarray(s_hat, dtype=np.int64), "reached": reached, "root_votes": top}
 
 

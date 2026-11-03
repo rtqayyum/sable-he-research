@@ -94,6 +94,7 @@ def run_tasks(tasks: list[dict[str, Any]], out_dir: Path, *, workers: int, mem_g
     t_start = time.time()
     last_progress = 0.0
     finished = 0
+    cpu_s_done = 0.0
     while pending or running:
         launched = True
         while launched and pending and len(running) < workers:
@@ -122,6 +123,7 @@ def run_tasks(tasks: list[dict[str, Any]], out_dir: Path, *, workers: int, mem_g
             used_mem -= min(t["mem_gb"], mem_gb)
             del running[tid]
             finished += 1
+            cpu_s_done += time.time() - started
             path = task_dir / f"{tid}.json"
             if timed_out or not path.exists():
                 if timed_out:
@@ -140,7 +142,10 @@ def run_tasks(tasks: list[dict[str, Any]], out_dir: Path, *, workers: int, mem_g
             rate = finished / el if el > 0 and finished else 0.0
             eta = (len(pending) + len(running)) / rate / 3600 if rate else float("nan")
             prog = {"total": total, "done": done_now, "running": len(running), "pending": len(pending),
-                    "elapsed_h": el / 3600, "eta_h": eta, "updated": time.strftime("%Y-%m-%d %H:%M:%S")}
+                    "elapsed_h": el / 3600, "cpu_hours_done": cpu_s_done / 3600,
+                    "eta_h_by_task_count": eta,
+                    "note": "heaviest tasks run first, so the task-count ETA overestimates early in a stage",
+                    "updated": time.strftime("%Y-%m-%d %H:%M:%S")}
             atomic_write_json(out_dir / "PROGRESS.json", prog)
             log(f"[runner] {done_now}/{total} done, {len(running)} running, ETA {eta:.2f} h")
     results = load_results(task_dir)
