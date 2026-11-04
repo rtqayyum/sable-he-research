@@ -110,6 +110,11 @@ def sbatch_text(project, code, commit, stage, part, cpus, mem, wall, email, extr
 #SBATCH --mail-user={email}
 
 set -euo pipefail
+# Start from a clean Python environment.  Slurm copies the submitting shell's variables into the job,
+# and a conda env, a Python module or PYTHONPATH from another project can make the venv load another numpy.
+echo "inherited: PYTHONPATH=${{PYTHONPATH:-}} PYTHONHOME=${{PYTHONHOME:-}} CONDA_PREFIX=${{CONDA_PREFIX:-}} VIRTUAL_ENV=${{VIRTUAL_ENV:-}} LD_LIBRARY_PATH=${{LD_LIBRARY_PATH:-}} LD_PRELOAD=${{LD_PRELOAD:-}}"
+unset PYTHONPATH PYTHONHOME PYTHONSTARTUP PYTHONUSERBASE PYTHONSAFEPATH CONDA_PREFIX CONDA_DEFAULT_ENV CONDA_PYTHON_EXE VIRTUAL_ENV LD_PRELOAD
+export PYTHONNOUSERSITE=1 LD_LIBRARY_PATH=
 PROJECT={project}
 CODE={code}
 VENV=$PROJECT/work/venv

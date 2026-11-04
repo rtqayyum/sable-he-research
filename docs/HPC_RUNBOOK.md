@@ -127,3 +127,12 @@ experiment.  Copied records keep their numbers and gain `reused_from_commit`,
 and `REPORT.md` lists how many results came from each commit.  Failed tasks
 are never copied.  List every family whose code changed in
 `--rerun-families`.
+
+## Submit from a clean shell
+
+Slurm copies the submitting shell's environment into the job.  A conda
+environment, a Python module or a `PYTHONPATH` set for another project can
+make the job's venv load a different numpy, and every task then fails with
+"Error importing numpy".  Jobs now unset these variables at start, print what
+they inherited, and stop before running tasks if numpy or scipy does not
+import.  It is still best to submit from a fresh login shell in `~`.

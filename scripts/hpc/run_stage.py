@@ -69,9 +69,15 @@ def main() -> int:
             if st.get("scientific_status") != "PASSED":
                 status["checks"].append({"name": f"prerequisite {pre} PASSED on this commit", "passed": False,
                                          "detail": f"{pre} status: {st.get('scientific_status', 'missing')}"})
+    if args.stage != "setup":
+        pre = preflight_imports()
+        status["preflight"] = pre
+        if not pre["ok"]:
+            status["checks"].append({"name": "numpy/scipy import in the job environment", "passed": False,
+                                     "detail": pre["error"] + " | " + pre["env"]})
     try:
         if status["checks"]:
-            raise RuntimeError("prerequisite stage not PASSED on this commit; refusing to run")
+            raise RuntimeError("prerequisite or preflight check failed; refusing to run tasks (see checks)")
         if args.stage == "setup":
             status.update(run_setup(project, code, out_dir))
         elif args.stage == "report":
@@ -122,6 +128,24 @@ def main() -> int:
         (job_dir / "SUMMARY.md").write_text(summary)
         print(summary, flush=True)
     return 0 if status["scientific_status"] == "PASSED" else 1
+
+
+def preflight_imports() -> dict:
+    """Import numpy and scipy in this process; worker processes inherit its sys.path and environment."""
+    env = " ".join(f"{k}={os.environ.get(k, '')}" for k in ("PYTHONPATH", "PYTHONHOME", "CONDA_PREFIX", "VIRTUAL_ENV",
+                                                           "LD_LIBRARY_PATH", "LD_PRELOAD", "PYTHONNOUSERSITE"))
+    info = {"python": sys.executable, "sys_path_head": sys.path[:6], "env": env}
+    try:
+        import numpy
+        import scipy
+
+        info.update(ok=True, numpy=f"{numpy.__version__} at {numpy.__file__}", scipy=scipy.__version__)
+    except Exception as exc:  # noqa: BLE001
+        cause = exc.__cause__ or exc.__context__
+        info.update(ok=False, error=f"{type(exc).__name__}: {str(exc).splitlines()[0]}"
+                    + (f" (cause: {type(cause).__name__}: {cause})" if cause else ""))
+    print(f"[stage] preflight: {info}", flush=True)
+    return info
 
 
 def reuse_results(project: Path, stage: str, old_commit: str, out_dir: Path, tasks: list, rerun: set) -> dict:
