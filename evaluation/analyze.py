@@ -152,10 +152,11 @@ def crypto_section(rows: list[dict[str, Any]], out: Path, written: list[str], no
         axes[0].set_ylabel("secret dimension n")
         fig.colorbar(im, ax=axes, shrink=0.8, label="exact recovery rate")
         _save(fig, out, "fig_attack_two_sparse", written)
-        big = g[(g["eta"] <= 0.003) & (g["ratio"] >= 10)]
-        if len(big):
-            notes.append(f"2-sparse LPN: exact recovery in {big['exact_rate'].mean():.0%} of configurations with eta<=0.003 and m>=10n "
-                         f"(largest n={int(big['n'].max())}, median {big['seconds'].median():.0f} s).")
+        strong = df[(df["eta"] <= 0.003) & (df["ratio"] >= 10)]
+        if len(strong):
+            notes.append(f"2-sparse LPN (eta<=0.003, m>=10n): exact secret in {int(strong['exact'].sum())} of {len(strong)} runs, "
+                         f"worst fraction of coordinates recovered {strong['fraction_correct'].min():.6f}, "
+                         f"largest n={int(strong['n'].max())}, slowest {strong['seconds'].max():.0f} s.")
 
     # known-plaintext attack vs prediction
     kp = fam("attack_kp")
@@ -277,13 +278,21 @@ def fl_section(rows: list[dict[str, Any]], out: Path, written: list[str], notes:
                           "family": r["family"], "d": r["result"]["d"],
                           **{k: r["result"][k] for k in ("final_test_acc", "best_test_acc", "total_coord_failures",
                                                           "mean_upload_bytes_client", "mean_client_encrypt_s", "mean_server_aggregate_s",
-                                                          "mean_decrypt_s", "mean_client_train_s", "wall_s")}} for r in runs])
+                                                          "mean_decrypt_s", "mean_client_train_s", "wall_s")},
+                          "last10_test_acc": _last_k_acc(r["result"]["history"], 10),
+                          "reused_from_commit": r.get("reused_from_commit", "")} for r in runs])
     _csv(flat, out, "table_fl_runs", written)
     acc = flat[flat["family"].isin(["fl_acc", "fl"])]
     if len(acc):
         g = acc.groupby(["dataset", "model", "partition", "clients", "method"]).agg(
-            acc_mean=("final_test_acc", "mean"), acc_std=("final_test_acc", "std"), seeds=("seed", "nunique"),
+            acc_mean=("final_test_acc", "mean"), acc_std=("final_test_acc", "std"),
+            last10_mean=("last10_test_acc", "mean"), last10_std=("last10_test_acc", "std"), seeds=("seed", "nunique"),
             sable_failures=("total_coord_failures", "sum")).reset_index()
+        for part in sorted(acc["partition"].unique()):
+            sub = g[(g["method"] == "plain") & (g["partition"] == part) & (g["dataset"] == "mnist")]
+            if len(sub):
+                notes.append(f"Plain FedAvg, MNIST, {part}: last-10-round mean accuracy {sub['last10_mean'].min():.3f} to "
+                             f"{sub['last10_mean'].max():.3f} across models and client counts.")
         piv = g.pivot_table(index=["dataset", "model", "partition", "clients"], columns="method", values="acc_mean").reset_index()
         if "plain" in piv and "sable" in piv:
             piv["gap_sable_minus_plain"] = piv["sable"] - piv["plain"]
@@ -377,6 +386,11 @@ def fl_section(rows: list[dict[str, Any]], out: Path, written: list[str], notes:
             _save(fig, out, f"fig_fl_client_scaling_{model}", written)
 
 
+def _last_k_acc(history: list[dict[str, Any]], k: int) -> float:
+    vals = [h["test_acc"] for h in history if "test_acc" in h][-k:]
+    return float(np.mean(vals)) if vals else float("nan")
+
+
 def build_report(project: Path, commit: str) -> dict[str, Any]:
     out = project / "results" / commit[:12]
     out.mkdir(parents=True, exist_ok=True)
@@ -386,7 +400,11 @@ def build_report(project: Path, commit: str) -> dict[str, Any]:
     sources = {}
     for stage, fn in (("crypto", crypto_section), ("fl", fl_section)):
         rows, used = _load_stage(project, stage, commit)
-        sources[stage] = {"commit": used, "tasks_ok": len(rows)}
+        reused: dict[str, int] = {}
+        for r in rows:
+            if r.get("reused_from_commit"):
+                reused[r["reused_from_commit"]] = reused.get(r["reused_from_commit"], 0) + 1
+        sources[stage] = {"commit": used, "tasks_ok": len(rows), "reused": reused}
         if not rows:
             checks.append({"name": f"{stage} results present", "passed": False, "detail": "no task results found"})
             continue
@@ -399,7 +417,9 @@ def build_report(project: Path, commit: str) -> dict[str, Any]:
             checks.append({"name": f"{stage} tables and figures built", "passed": False, "detail": f"{type(exc).__name__}: {exc}"})
             (out / f"error_{stage}.txt").write_text(traceback.format_exc())
     lines = ["# SABLE-HE experiment results", "", f"Code commit: {commit}", "",
-             "## Sources", ""] + [f"- {k}: {v['tasks_ok']} task results (commit {v['commit']})" for k, v in sources.items()]
+             "## Sources", ""] + [f"- {k}: {v['tasks_ok']} task results (commit {v['commit']})"
+                                  + ("; copied unchanged from " + ", ".join(f"{c} ({n})" for c, n in v["reused"].items()) if v["reused"] else "")
+                                  for k, v in sources.items()]
     lines += ["", "## Key findings (computed from the tables)", ""] + [f"- {n}" for n in notes]
     lines += ["", "## Files", ""] + [f"- {w}" for w in written] + [""]
     (out / "REPORT.md").write_text("\n".join(lines))

@@ -96,7 +96,7 @@ def auto_time(project, stage, commit):
     return "%d-%02d:00:00" % (d, h)
 
 
-def sbatch_text(project, code, commit, stage, part, cpus, mem, wall, email):
+def sbatch_text(project, code, commit, stage, part, cpus, mem, wall, email, extra=""):
     setup_line = 'bash "$CODE/scripts/hpc/setup_env.sh" "$PROJECT"' if stage == "setup" else 'echo "using $VENV"'
     return """#!/bin/bash
 #SBATCH --job-name=sable-{stage}
@@ -118,9 +118,9 @@ export OMP_NUM_THREADS=1 MKL_NUM_THREADS=1 OPENBLAS_NUM_THREADS=1
 echo "job $SLURM_JOB_ID stage={stage} commit={commit} host=$(hostname) cpus=$SLURM_CPUS_PER_TASK mem=${{SLURM_MEM_PER_NODE:-?}}MB"
 cd "$CODE"
 {setup_line}
-"$VENV/bin/python" "$CODE/scripts/hpc/run_stage.py" --project "$PROJECT" --code "$CODE" --stage {stage}
+"$VENV/bin/python" "$CODE/scripts/hpc/run_stage.py" --project "$PROJECT" --code "$CODE" --stage {stage}{extra}
 """.format(stage=stage, part=part, cpus=cpus, mem=mem, wall=wall, project=project, code=code, commit=commit,
-           email=email, setup_line=setup_line)
+           email=email, setup_line=setup_line, extra=extra)
 
 
 def main():
@@ -136,6 +136,10 @@ def main():
     ap.add_argument("--time")
     ap.add_argument("--email", default=DEFAULT_EMAIL)
     ap.add_argument("--force", action="store_true", help="ignore prerequisite and queue checks")
+    ap.add_argument("--reuse-from", default=None,
+                    help="copy finished pilot/crypto/fl results of this earlier commit instead of rerunning them")
+    ap.add_argument("--rerun-families", default="",
+                    help="with --reuse-from: comma-separated task families to rerun anyway (e.g. attack2)")
     ap.add_argument("--chain", action="store_true",
                     help="queue every remaining stage (smoke..report) at once, linked by Slurm dependencies")
     args = ap.parse_args()
@@ -248,10 +252,15 @@ def submit_chain(project, code, commit, statuses, args):
             wall = spec["time"]
         deps = [(kind, ids[s]) for kind, s in CHAIN_DEPS[stage] if s in ids]
         path = os.path.join(sb_dir, "%s_%s_%s.sbatch" % (stage, commit[:12], time.strftime("%Y%m%d-%H%M%S")))
+        extra = ""
+        if args.reuse_from and stage in ("pilot", "crypto", "fl"):
+            extra = " --reuse-from %s" % args.reuse_from[:12]
+            if args.rerun_families:
+                extra += " --rerun-families %s" % args.rerun_families
         with open(path, "w") as fh:
-            fh.write(sbatch_text(project, code, commit, stage, part, cpus, mem, wall, args.email))
-        print("  %-7s partition=%s cpus=%s mem=%s time=%s after=%s" % (stage, part, cpus, mem, wall,
-                                                                        ",".join("%s:%s" % d for d in deps) or "-"))
+            fh.write(sbatch_text(project, code, commit, stage, part, cpus, mem, wall, args.email, extra))
+        print("  %-7s partition=%s cpus=%s mem=%s time=%s after=%s%s" % (stage, part, cpus, mem, wall,
+                                                                          ",".join("%s:%s" % d for d in deps) or "-", extra))
         if args.submit:
             ids[stage] = sbatch(project, path, stage, commit, part, cpus, mem, wall, deps)
         else:

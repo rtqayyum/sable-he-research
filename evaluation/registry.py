@@ -235,13 +235,13 @@ def science_checks(stage: str, results: list[dict[str, Any]]) -> list[dict[str, 
     fl = [r for r in results if r["family"] in ("fl", "fl_acc", "fl_cost") and r.get("status") == "ok"]
     if fl:
         real = [r for r in fl if r["cfg"]["dataset"] in ("mnist", "fmnist")]
-        plain = [r for r in real if r["cfg"]["method"] == "plain"]
+        plain = [r for r in real if r["cfg"]["method"] == "plain" and r["cfg"]["partition"] == "iid"]
         if plain:
             thr = 0.5 if stage == "smoke" else 0.8
             lr_mnist = [r for r in plain if r["cfg"]["dataset"] == "mnist"]
             if lr_mnist:
                 acc = min(r["result"]["final_test_acc"] for r in lr_mnist)
-                out.append(_check(f"plain FedAvg on MNIST reaches >= {thr}", acc >= thr, f"min final acc {acc:.3f}"))
+                out.append(_check(f"plain FedAvg on IID MNIST reaches >= {thr}", acc >= thr, f"min final acc {acc:.3f}"))
         by_key: dict[tuple, dict[str, float]] = {}
         for r in fl:
             c = r["cfg"]

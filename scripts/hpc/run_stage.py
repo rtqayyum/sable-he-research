@@ -33,6 +33,10 @@ def main() -> int:
     ap.add_argument("--workers", type=int, default=int(os.environ.get("SLURM_CPUS_PER_TASK", os.cpu_count() or 1)))
     ap.add_argument("--mem-gb", type=float, default=None)
     ap.add_argument("--local", action="store_true", help="local test run without Slurm")
+    ap.add_argument("--reuse-from", default=None,
+                    help="12-char commit whose finished task results are copied instead of rerun (same task id = same config)")
+    ap.add_argument("--rerun-families", default="",
+                    help="comma-separated task families that are always rerun even when --reuse-from has a result")
     args = ap.parse_args()
 
     code = Path(args.code).resolve()
@@ -83,6 +87,11 @@ def main() -> int:
             tasks = registry.stage_tasks(args.stage)
             manifest = hashlib.sha256(json.dumps(tasks, sort_keys=True).encode()).hexdigest()[:16]
             atomic_write_json(out_dir / "TASKS.json", {"manifest_hash": manifest, "tasks": tasks})
+            if args.reuse_from:
+                status["reuse"] = reuse_results(project, args.stage, args.reuse_from, out_dir, tasks,
+                                                {f for f in args.rerun_families.split(",") if f})
+                print(f"[stage] reused {status['reuse']['copied']} results from {args.reuse_from}; "
+                      f"{status['reuse']['to_run']} tasks will run", flush=True)
             results = run_tasks(tasks, out_dir, workers=args.workers, mem_gb=mem_gb)
             projection = registry.pilot_projection(results, args.workers, mem_gb) if args.stage == "pilot" else None
             status["checks"] = registry.stage_checks(args.stage, tasks, results, projection=projection)
@@ -113,6 +122,38 @@ def main() -> int:
         (job_dir / "SUMMARY.md").write_text(summary)
         print(summary, flush=True)
     return 0 if status["scientific_status"] == "PASSED" else 1
+
+
+def reuse_results(project: Path, stage: str, old_commit: str, out_dir: Path, tasks: list, rerun: set) -> dict:
+    """Copy 'ok' results of an earlier commit into this stage's task folder.
+
+    A task id is a hash of its kind and config, so a copied result is for the
+    same experiment.  Use this only when the code a family runs did not change
+    between the two commits; list changed families in --rerun-families.
+    Copied records keep their numbers and gain 'reused_from_commit'.
+    """
+    from evaluation.common import atomic_write_json, read_json
+
+    src = project / "outputs" / stage / old_commit[:12] / "tasks"
+    dst = out_dir / "tasks"
+    dst.mkdir(parents=True, exist_ok=True)
+    copied, skipped_family, missing = 0, 0, 0
+    for t in tasks:
+        if (dst / f"{t['id']}.json").exists():
+            continue
+        if t["family"] in rerun:
+            skipped_family += 1
+            continue
+        f = src / f"{t['id']}.json"
+        rec = read_json(f) if f.exists() else None
+        if not rec or rec.get("status") != "ok":
+            missing += 1
+            continue
+        rec["reused_from_commit"] = rec.get("reused_from_commit", old_commit[:12])
+        atomic_write_json(dst / f"{t['id']}.json", rec)
+        copied += 1
+    return {"from_commit": old_commit[:12], "copied": copied, "rerun_families": sorted(rerun),
+            "to_run": skipped_family + missing}
 
 
 def run_setup(project: Path, code: Path, out_dir: Path) -> dict:
@@ -187,6 +228,8 @@ def render_summary(st: dict) -> str:
         f"- Runtime: {st.get('runtime_hours', 0):.2f} h",
         f"- CPUs (workers) / memory budget: {st.get('workers')} / {st.get('memory_budget_gb', 0):.0f} GB",
         f"- Tasks: {st.get('tasks_ok', '-')} ok of {st.get('tasks_total', '-')}",
+        f"- Reused results: {st['reuse']['copied']} from commit {st['reuse']['from_commit']} "
+        f"(rerun families: {', '.join(st['reuse']['rerun_families']) or 'none'})" if st.get("reuse") else "- Reused results: none",
         f"- **Scientific status: {st['scientific_status']}**",
         f"- Next permitted stage: {st.get('next_stage')}",
         "",

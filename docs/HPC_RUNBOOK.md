@@ -110,3 +110,20 @@ the number of clients:
 |---|---|---|---|---|---|---|
 | main (n = 65,536, η = 0.003) | 13 | 21 | 29 | 47 | 143 | 755 |
 | low-noise (n = 131,072, η = 0.001) | 11 | 13 | 17 | 23 | 41 | 79 |
+
+## Rerunning part of a stage after a code fix
+
+A new commit normally starts every stage from scratch.  When a fix touches
+only some task families, copy the finished results of the earlier commit and
+rerun the rest:
+
+```bash
+python3 ~/sable-he/code/current/scripts/hpc/submit_hpc.py --project ~/sable-he --chain --submit \
+  --reuse-from <old-commit-12> --rerun-families attack2
+```
+
+A task id is a hash of its configuration, so a copied result is for the same
+experiment.  Copied records keep their numbers and gain `reused_from_commit`,
+and `REPORT.md` lists how many results came from each commit.  Failed tasks
+are never copied.  List every family whose code changed in
+`--rerun-families`.

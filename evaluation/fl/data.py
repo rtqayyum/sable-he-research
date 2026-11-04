@@ -79,4 +79,15 @@ def partition(y: np.ndarray, clients: int, scheme: str, seed: int, min_size: int
                 parts[k].extend(chunk.tolist())
         if min(len(p) for p in parts) >= min_size:
             return [np.sort(np.asarray(p, dtype=np.int64)) for p in parts]
-    raise RuntimeError("could not draw a Dirichlet partition with the minimum client size")
+    # Every draw left some client below min_size (common for alpha=0.1 with many clients).
+    # Repair the last draw: move random samples from the largest clients to the small ones.
+    if min_size * clients > n:
+        raise RuntimeError("not enough samples for the minimum client size")
+    sizes = [len(p) for p in parts]
+    for k in sorted(range(clients), key=lambda i: sizes[i]):
+        while len(parts[k]) < min_size:
+            donor = max(range(clients), key=lambda i: len(parts[i]))
+            j = int(rng.integers(len(parts[donor])))
+            parts[donor][j], parts[donor][-1] = parts[donor][-1], parts[donor][j]
+            parts[k].append(parts[donor].pop())
+    return [np.sort(np.asarray(p, dtype=np.int64)) for p in parts]
