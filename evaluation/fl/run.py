@@ -61,8 +61,12 @@ def run_fl(cfg: dict[str, Any]) -> dict[str, Any]:
             agg = backend.reference(deltas, weights)
             met = dict(last_measured or {}, measured=False)
         w_global = (w_global + agg.astype(np.float32)).astype(np.float32)
+        update_l2 = float(np.sqrt(np.average([float(np.dot(dlt, dlt)) for dlt in deltas], weights=weights)))
+        ref = backend.reference(deltas, weights)
         row: dict[str, Any] = {"round": r + 1, "train_loss": float(np.average(losses, weights=weights)),
-                               "client_train_s": float(np.mean(train_t))}
+                               "client_train_s": float(np.mean(train_t)), "client_update_l2": update_l2,
+                               "agg_l2": float(np.linalg.norm(agg)),
+                               "agg_max_abs_err_vs_reference": float(np.max(np.abs(agg - ref)))}
         row.update({k: v for k, v in met.items() if not isinstance(v, (list, dict))})
         if (r + 1) % eval_every == 0 or r == rounds - 1:
             fmodels.set_vector(model, w_global)

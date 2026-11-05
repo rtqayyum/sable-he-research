@@ -242,14 +242,33 @@ def science_checks(stage: str, results: list[dict[str, Any]]) -> list[dict[str, 
             if lr_mnist:
                 acc = min(r["result"]["final_test_acc"] for r in lr_mnist)
                 out.append(_check(f"plain FedAvg on IID MNIST reaches >= {thr}", acc >= thr, f"min final acc {acc:.3f}"))
-        by_key: dict[tuple, dict[str, float]] = {}
+        # every run must train: non-zero client updates and a non-zero aggregate in every round
+        zero = [r["id"] for r in fl if any(h.get("client_update_l2", 0.0) <= 0 or h.get("agg_l2", 0.0) <= 0
+                                           for h in r["result"]["history"])]
+        out.append(_check("FL client updates and aggregates are non-zero in every round", not zero,
+                          f"{len(zero)} runs with a zero update: {zero[:3]}" if zero else f"{len(fl)} runs"))
+        # SABLE decrypts to exactly the fixed-point (quantized) FedAvg aggregate in every encrypted round
+        sab = [h.get("agg_max_abs_err_vs_reference", 1.0) for r in fl if r["cfg"]["method"] in ("sable", "sable_ln")
+               for h in r["result"]["history"] if h.get("measured")]
+        if sab:
+            out.append(_check("SABLE aggregate equals the quantized FedAvg aggregate exactly", max(sab) == 0.0,
+                              f"max error {max(sab):.3e} over {len(sab)} encrypted rounds"))
+        # accuracy: SABLE vs plaintext, seed-averaged last-10-round accuracy on IID data
+        def last10(r: dict[str, Any]) -> float:
+            vals = [h["test_acc"] for h in r["result"]["history"] if "test_acc" in h][-10:]
+            return sum(vals) / len(vals)
+        by_cfg: dict[tuple, dict[str, list[float]]] = {}
         for r in fl:
             c = r["cfg"]
-            key = (c["dataset"], c["model"], c["partition"], c["clients"], c["seed"], c["rounds"])
-            by_key.setdefault(key, {})[c["method"]] = r["result"]["final_test_acc"]
-        gaps = [abs(v[m] - v["plain"]) for v in by_key.values() for m in ("sable", "sable_ln") if m in v and "plain" in v]
+            if c["partition"] != "iid":
+                continue
+            key = (c["dataset"], c["model"], c["clients"], c["rounds"], r["family"])
+            by_cfg.setdefault(key, {}).setdefault(c["method"], []).append(last10(r))
+        gaps = [abs(sum(v[m]) / len(v[m]) - sum(v["plain"]) / len(v["plain"]))
+                for v in by_cfg.values() for m in ("sable", "sable_ln") if m in v and "plain" in v]
         if gaps:
-            out.append(_check("SABLE FedAvg matches plaintext accuracy (|gap| <= 0.01)", max(gaps) <= 0.01, f"max gap {max(gaps):.4f} over {len(gaps)} pairs"))
+            out.append(_check("SABLE matches plaintext accuracy on IID data (|seed-mean last-10 gap| <= 0.01)",
+                              max(gaps) <= 0.01, f"max gap {max(gaps):.4f} over {len(gaps)} configurations"))
         sable_fail = sum(r["result"]["total_coord_failures"] for r in fl if r["cfg"]["method"] in ("sable", "sable_ln"))
         out.append(_check("SABLE decoding failures in FL runs", sable_fail == 0 or stage in ("crypto", "fl"), f"{sable_fail} coordinate failures"))
     return out

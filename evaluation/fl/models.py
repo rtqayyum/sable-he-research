@@ -51,7 +51,16 @@ def get_vector(model: nn.Module) -> np.ndarray:
 
 
 def set_vector(model: nn.Module, vec: np.ndarray) -> None:
-    torch.nn.utils.vector_to_parameters(torch.from_numpy(np.asarray(vec, dtype=np.float32)), model.parameters())
+    """Copy vec into the model's parameters.
+
+    The copy matters: vector_to_parameters makes each parameter a view of the
+    tensor it is given, and torch.from_numpy shares memory with the array.
+    Without the copy, local training would modify the caller's global weight
+    vector in place and every client update (new - global) would be zero.
+    """
+    src = torch.tensor(np.asarray(vec, dtype=np.float32))  # torch.tensor always copies
+    with torch.no_grad():
+        torch.nn.utils.vector_to_parameters(src, model.parameters())
 
 
 def train_local(model: nn.Module, x: torch.Tensor, y: torch.Tensor, epochs: int, batch: int, lr: float, seed: int) -> float:

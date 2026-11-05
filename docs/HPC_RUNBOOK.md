@@ -136,3 +136,15 @@ make the job's venv load a different numpy, and every task then fails with
 "Error importing numpy".  Jobs now unset these variables at start, print what
 they inherited, and stop before running tasks if numpy or scipy does not
 import.  It is still best to submit from a fresh login shell in `~`.
+
+## Known issue fixed in this version
+
+FL results produced before this commit are invalid for accuracy.
+`evaluation.fl.models.set_vector` did not copy the global weights, so each
+model parameter shared memory with the global vector.  Local training then
+changed the global vector in place: clients trained one after another and
+every aggregated update was zero.  Encryption cost and size do not depend on
+the values, but all FL results must come from this commit or later.  The
+crypto stage never used this code and is unaffected.  New checks now fail any
+FL stage with a zero client update or a SABLE aggregate that differs from the
+fixed-point FedAvg aggregate.
