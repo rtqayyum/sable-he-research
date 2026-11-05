@@ -148,3 +148,14 @@ the values, but all FL results must come from this commit or later.  The
 crypto stage never used this code and is unaffected.  New checks now fail any
 FL stage with a zero client update or a SABLE aggregate that differs from the
 fixed-point FedAvg aggregate.
+
+A second issue showed up once updates were non-zero.  All exact backends
+shared one fixed-point grid of 2^-17, set by the smallest plaintext space
+(20 bits for LWE-KAHE and BFV).  Each client encodes its update times its
+FedAvg weight, so with K = 1000 clients 99% of the per-client values rounded
+to zero and SABLE trailed plaintext by 0.40 accuracy in the pilot.  Each
+exact backend now uses the finest grid its plaintext space allows
+(`scale_for_capacity`): SABLE 2^-28, SecAgg+ 2^-29, BFV 2^-28 (31-bit
+batching prime), Paillier 2^-40, and LWE-KAHE 2^-37 after moving it to
+n = 4096, q = 2^64 (128-bit by the HE standard).  The rounding error is now
+below 1e-7 per coordinate.

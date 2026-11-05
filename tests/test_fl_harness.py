@@ -37,8 +37,27 @@ def test_fedavg_round_updates_are_nonzero_and_sable_equals_quantized_reference()
             assert h["client_update_l2"] > 0, f"{method}: zero client updates"
             assert h["agg_l2"] > 0, f"{method}: zero aggregate"
     assert all(h["agg_max_abs_err_vs_reference"] == 0.0 for h in out["sable"]["history"])
-    # plain (float) and SABLE (2^-17 fixed point) runs follow nearly the same path, but not bit-identical losses
     lp = [h["test_loss"] for h in out["plain"]["history"]]
     ls = [h["test_loss"] for h in out["sable"]["history"]]
-    assert lp != ls
-    assert max(abs(a - b) for a, b in zip(lp, ls)) < 1e-2
+    assert max(abs(a - b) for a, b in zip(lp, ls)) < 1e-4
+
+
+def test_fixed_point_grids_keep_small_updates_with_many_clients():
+    """With K=1000 the weighted per-client values are ~1e-7; every exact backend must still resolve them."""
+    from evaluation.aggregation import float_reference, make_backend
+
+    from evaluation.aggregation import quantized_reference
+
+    d, K = 2000, 1000
+    rng = np.random.default_rng(0)
+    common = rng.normal(0, 6e-4, d)  # clients follow roughly the same gradient direction
+    deltas = [(common + rng.normal(0, 3e-4, d)).astype(np.float32) for _ in range(K)]
+    w = np.full(K, 1.0 / K)
+    f = float_reference(deltas, w)
+    old = np.linalg.norm(quantized_reference(deltas, w, 2**17) - f) / np.linalg.norm(f)
+    assert old > 0.5, "the old shared 2^-17 grid should lose most of this signal"
+    for method in ("sable", "lwe", "secagg", "bfv"):
+        b = make_backend(method, d, K, 1)
+        rel = np.linalg.norm(b.reference(deltas, w) - f) / np.linalg.norm(f)
+        assert rel < 1e-4, f"{method}: fixed-point grid too coarse (relative error {rel:.2e})"
+        assert b.scale >= 2**27, method

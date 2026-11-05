@@ -148,7 +148,7 @@ def bench_she(cfg: dict[str, Any]) -> dict[str, Any]:
 
 def bench_agg(cfg: dict[str, Any]) -> dict[str, Any]:
     """One aggregation round of a backend on random client vectors."""
-    from evaluation.aggregation import make_backend, quantized_reference
+    from evaluation.aggregation import float_reference, make_backend, quantized_reference
 
     d, K = int(cfg["d"]), int(cfg["K"])
     rng = np.random.default_rng(stable_seed(cfg["seed"], d, K))
@@ -161,7 +161,8 @@ def bench_agg(cfg: dict[str, Any]) -> dict[str, Any]:
     rounds = []
     for r in range(int(cfg.get("rounds", 2))):
         agg, met = b.run_round(r, deltas, w)
-        met["max_abs_err_vs_quantized"] = float(np.max(np.abs(agg - quantized_reference(deltas, w))))
+        met["max_abs_err_vs_quantized"] = float(np.max(np.abs(agg - quantized_reference(deltas, w, b.scale))))
+        met["max_abs_err_vs_float"] = float(np.max(np.abs(agg - float_reference(deltas, w))))
         rounds.append(met)
     keys = [k for k, v in rounds[0].items() if isinstance(v, (int, float)) and not isinstance(v, bool)]
     res = {k: float(np.median([m[k] for m in rounds])) for k in keys}
