@@ -35,24 +35,35 @@ python -m pytest -q
 
 ## Key-additive secure aggregation (FL case study)
 
+This is the configuration evaluated in the paper (results at commit `ac36e72`, key-sum attack at `7af1293`).
+Replica counts come from the decoding-failure bound for the number of clients, and the summed key stays with a key authority.
+
 ```python
 import numpy as np
-from sable.fast_regev import FL_PARAMS, FixedPoint, aggregate, decrypt_sum, encrypt, keygen
+from sable.fast_regev import FixedPoint, aggregate, decrypt_sum, encrypt, keygen, params_for_clients
 
-p = FL_PARAMS["fl_k5_n65536_r25"]             # n=65536, k=5, eta=0.003, 25 replicas (review target)
-fp = FixedPoint(p.q, scale=2**17, clip=3.9)
-updates = [np.random.normal(0, 0.01, 7850) for _ in range(3)]
+K = 3
+p = params_for_clients(n=65536, eta=0.003, clients=K)   # k=5, q=2^31-1, R from the bound (screened candidate, not certified)
+fp = FixedPoint(p.q, scale=2**28, clip=3.9)             # 2^28 = scale_for_capacity(q//2, K) for K <= 1000
+updates = [np.random.normal(0, 0.01, 7850) for _ in range(K)]
 weights = [0.5, 0.3, 0.2]
 
-keys = [keygen(p, seed=c) for c in range(3)]   # one secret per client
-round_seed = 1234                             # public; derives the sparse vectors
-uploads = [encrypt(p, keys[c], fp.encode(updates[c], weights[c]), round_seed, noise_seed=100 + c) for c in range(3)]
-B = aggregate(uploads, p.q)                   # server
-T = sum(keys) % p.q                           # summed key (committee / secret sharing in a deployment)
-avg = fp.decode(decrypt_sum(p, T, B, round_seed)["value"])
+keys = [keygen(p, seed=c) for c in range(K)]            # one secret per client
+round_seed = 1234                                       # public; derives the sparse vectors
+uploads = [encrypt(p, keys[c], fp.encode(updates[c], weights[c]), round_seed, noise_seed=100 + c) for c in range(K)]
+
+B = aggregate(uploads, p.q)                             # aggregation server: sees uploads, never T
+
+T = sum(keys) % p.q                                     # key authority only (committee or HSM)
+avg = fp.decode(decrypt_sum(p, T, B, round_seed)["value"])   # key authority returns only the decoded sum
 ```
 
-The server only ever sees the summed key, so it can decrypt the aggregate but not an individual update.
+**Never give `T` to the party that sees individual uploads.**
+With `T` and the uploads, the zero pattern of the summed LPN noise yields exact linear equations in every client key, and one round is enough to recover keys and individual updates (`sable.keysum_attack`, `tests/test_keysum_attack.py`).
+The server and the key authority must not collude.
+
+The presets in `sable.PRESETS` (for example `fl_demo_clean`, k = 1, η = 0) are insecure teaching examples for the readable reference implementation.
+Do not use them for encrypted FL.
 
 ## Somewhat-homomorphic operations
 
@@ -97,8 +108,9 @@ sable-he candidate-parameters
 - `sable.sable`, `sable.operations`: reference scheme and encrypted arithmetic.
 - `sable.fast_regev`, `sable.fast_she`: vectorized kernels.
 - `sable.sparse_attacks`: sparse-LPN screens and executable attacks.
+- `sable.keysum_attack`: key-sum attack on key-additive aggregation when the server learns the summed key.
 - `sable.parameter_sets`: candidate rows and the combined screen.
-- `sable.fl`: FL utilities for the reference implementation (toy presets only).
+- `sable.fl`: FL utilities for the reference implementation (insecure toy presets only; use `sable.fast_regev` for encrypted FL).
 - `sable.pqc`: backend-neutral PQC envelope format.
 
 ## Tooling history
