@@ -9,8 +9,10 @@ federated aggregation:
 * Client c holds a fresh secret t_c and uploads only
   b_c[j, r] = <a_{j,r}, t_c> + m_c[j] + e_c[j, r]   (mod q).
 * The server adds the uploads.  The sum decrypts with T = sum_c t_c, which
-  the key holder (a committee, or a trusted key server in the simulation)
-  releases.  The server never holds any individual t_c.
+  a key authority (a committee, or one trusted process in the simulation)
+  holds.  The server forwards the aggregate to the key authority and gets back
+  only the decoded sum.  The server must never hold T: with T and the
+  individual uploads it can recover every client key (sable.keysum_attack).
 * Decryption computes B - <a, T> and takes the plurality over the R
   replicas, which absorbs the accumulated sparse noise.
 
